@@ -127,8 +127,37 @@ export default function LearnScreen() {
                     </View>
                 </View>
 
-                {/* Course Grid */}
+                {/* Learning Progress & Daily Tip */}
                 <View style={styles.content}>
+                    <View style={styles.progressCard}>
+                        <View style={styles.progressHeader}>
+                            <Text style={styles.progressTitle}>ଆପଣଙ୍କ ଅଗ୍ରଗତି (Course Progress)</Text>
+                            <Text style={styles.progressPercent}>୪୫%</Text>
+                        </View>
+                        <View style={styles.progressBarBg}>
+                            <LinearGradient
+                                colors={['#FF8C00', '#FF4500']}
+                                style={[styles.progressBarFill, { width: '45%' }]}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 0 }}
+                            />
+                        </View>
+                        <Text style={styles.progressInfo}>୩/୬ ପାଠ୍ୟକ୍ରମ ସମାପ୍ତ</Text>
+                    </View>
+
+                    <TouchableOpacity style={styles.tipCard} activeOpacity={0.9}>
+                        <LinearGradient colors={['#E1F5FE', '#B3E5FC']} style={styles.tipGradient}>
+                            <View style={styles.tipIconBox}>
+                                <Ionicons name="sunny" size={24} color="#0277BD" />
+                            </View>
+                            <View style={styles.tipContent}>
+                                <Text style={styles.tipTitle}>ଦିନର କୃଷି ପରାମର୍ଶ</Text>
+                                <Text style={styles.tipText}>ଖରାଦିନେ ଗଛ ମୂଳେ ହାଲୁକା ପାଣି ଦିଅନ୍ତୁ ଏବଂ ମଲଚିଂ ବ୍ୟବହାର କରନ୍ତୁ ।</Text>
+                            </View>
+                            <Ionicons name="chevron-forward" size={20} color="#0277BD" />
+                        </LinearGradient>
+                    </TouchableOpacity>
+
                     <Text style={styles.sectionTitle}>ଆମର ପାଠ୍ୟକ୍ରମ</Text>
                     <View style={styles.grid}>
                         {COURSES.map((course, index) => (
@@ -276,6 +305,83 @@ const styles = StyleSheet.create({
         color: '#888',
         textAlign: 'center',
         marginBottom: 10,
+    },
+    progressCard: {
+        backgroundColor: '#FFF',
+        borderRadius: 25,
+        padding: 20,
+        marginBottom: 20,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+    },
+    progressHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    progressTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#444',
+    },
+    progressPercent: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#FF4500',
+    },
+    progressBarBg: {
+        height: 8,
+        backgroundColor: '#F0F0F0',
+        borderRadius: 4,
+        overflow: 'hidden',
+        marginBottom: 10,
+    },
+    progressBarFill: {
+        height: '100%',
+        borderRadius: 4,
+    },
+    progressInfo: {
+        fontSize: 11,
+        color: '#888',
+        fontWeight: '500',
+    },
+    tipCard: {
+        marginBottom: 25,
+        borderRadius: 20,
+        overflow: 'hidden',
+        elevation: 3,
+    },
+    tipGradient: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+    },
+    tipIconBox: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: '#FFF',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 15,
+    },
+    tipContent: {
+        flex: 1,
+    },
+    tipTitle: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#0277BD',
+        marginBottom: 2,
+    },
+    tipText: {
+        fontSize: 12,
+        color: '#555',
+        lineHeight: 18,
     },
     arrowBox: {
         width: 28,

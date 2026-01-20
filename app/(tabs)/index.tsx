@@ -238,6 +238,47 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Community Impact Section */}
+        <View style={styles.communitySection}>
+          <Text style={styles.sectionHeading}>ସମୁଦାୟ ପ୍ରଭାବ (Community Impact)</Text>
+          <View style={styles.communityCard}>
+            <View style={styles.impactHeader}>
+              <View>
+                <Text style={styles.impactTitle}>ସାରା ଓଡ଼ିଶାରେ ସଫଳତା</Text>
+                <Text style={styles.impactSubtitle}>ଆମେ ସମସ୍ତେ ମିଶି ପରିବେଶ ବଞ୍ଚାଉଛୁ</Text>
+              </View>
+              <Ionicons name="globe-outline" size={32} color="#008000" />
+            </View>
+
+            <View style={styles.impactStats}>
+              <View style={styles.impactStatItem}>
+                <Text style={styles.impactStatValue}>1,250</Text>
+                <Text style={styles.impactStatLabel}>ଟନ୍ CO2 ବଞ୍ଚାଗଲା</Text>
+              </View>
+              <View style={styles.impactDivider} />
+              <View style={styles.impactStatItem}>
+                <Text style={styles.impactStatValue}>15,200</Text>
+                <Text style={styles.impactStatLabel}>ସକ୍ରିୟ ପରିବାର</Text>
+              </View>
+            </View>
+
+            <View style={styles.goalContainer}>
+              <View style={styles.goalHeader}>
+                <Text style={styles.goalText}>ମାସିକ ଲକ୍ଷ୍ୟ: ୮୦%</Text>
+                <Text style={styles.goalPercent}>2,000 ଟନ୍</Text>
+              </View>
+              <View style={styles.progressBarBg}>
+                <LinearGradient
+                  colors={['#4CAF50', '#81C784']}
+                  style={[styles.progressBarFill, { width: '80%' }]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+
         <View style={styles.bottomSpace} />
       </ScrollView>
     </SafeAreaView >
@@ -248,6 +289,101 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F0F7FF',
+  },
+  communitySection: {
+    padding: 20,
+    marginTop: 10,
+  },
+  sectionHeading: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 15,
+  },
+  communityCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 25,
+    padding: 20,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
+  impactHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  impactTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  impactSubtitle: {
+    fontSize: 12,
+    color: '#777',
+    marginTop: 2,
+  },
+  impactStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FA',
+    borderRadius: 15,
+    paddingVertical: 15,
+    marginBottom: 20,
+  },
+  impactStatItem: {
+    alignItems: 'center',
+  },
+  impactStatValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+  },
+  impactStatLabel: {
+    fontSize: 10,
+    color: '#666',
+    marginTop: 5,
+    fontWeight: '600',
+  },
+  impactDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: '#DDD',
+  },
+  goalContainer: {
+    marginTop: 5,
+  },
+  goalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  goalText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#444',
+  },
+  goalPercent: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#2E7D32',
+  },
+  progressBarBg: {
+    height: 10,
+    backgroundColor: '#E8F5E9',
+    borderRadius: 5,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 5,
+  },
+  bottomSpace: {
+    height: 30,
   },
   heroSection: {
     paddingTop: 20,
@@ -516,7 +652,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  bottomSpace: {
-    height: 30,
-  }
 });
