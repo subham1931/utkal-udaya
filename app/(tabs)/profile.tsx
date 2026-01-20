@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
@@ -9,12 +9,12 @@ export default function ProfileScreen() {
     const [darkMode, setDarkMode] = useState(false);
 
     const SettingItem = ({ icon, title, value, type = 'chevron', color = '#555' }: any) => (
-        <TouchableOpacity style={styles.item} activeOpacity={0.7}>
-            <View style={styles.itemLeft}>
-                <View style={[styles.iconBox, { backgroundColor: color + '15' }]}>
+        <TouchableOpacity className="flex-row items-center justify-between p-4 border-b border-[#F5F5F5]" activeOpacity={0.7}>
+            <View className="flex-row items-center">
+                <View style={{ backgroundColor: color + '15' }} className="w-10 h-10 rounded-xl justify-center items-center mr-[15px]">
                     <Ionicons name={icon} size={22} color={color} />
                 </View>
-                <Text style={styles.itemTitle}>{title}</Text>
+                <Text className="text-[15px] text-[#333] font-semibold">{title}</Text>
             </View>
             {type === 'switch' ? (
                 <Switch
@@ -33,276 +33,79 @@ export default function ProfileScreen() {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView className="flex-1 bg-[#F0F7FF]">
             <ScrollView showsVerticalScrollIndicator={false}>
-                {/* Modern Profile Hero */}
-                <LinearGradient colors={['#FF8C00', '#FF4500']} style={styles.hero}>
-                    <View style={styles.profileHeader}>
-                        <View style={styles.avatarContainer}>
-                            <View style={styles.avatar}>
-                                <Text style={styles.avatarText}>UU</Text>
+                {/* Profile Hero */}
+                <LinearGradient colors={['#FF8C00', '#FF4500']} className="pt-[30px] pb-10 rounded-b-[40px] items-center">
+                    <View className="items-center">
+                        <View className="relative mb-[15px]">
+                            <View className="w-[100px] h-[100px] rounded-full bg-white/30 border-2 border-white justify-center items-center">
+                                <Text className="text-white text-4xl font-bold">UU</Text>
                             </View>
-                            <TouchableOpacity style={styles.cameraIcon}>
+                            <TouchableOpacity className="absolute bottom-[5px] right-[5px] bg-[#FF4500] w-[30px] h-[30px] rounded-full justify-center items-center border-2 border-white">
                                 <Ionicons name="camera" size={16} color="#FFF" />
                             </TouchableOpacity>
                         </View>
-                        <Text style={styles.profileName}>ଉତ୍କଳ ଉଦୟ ବ୍ୟବହାରକାରୀ</Text>
-                        <Text style={styles.profileId}>ID: UU-2026-001</Text>
+                        <Text className="text-[22px] font-bold text-white mb-1">ଉତ୍କଳ ଉଦୟ ବ୍ୟବହାରକାରୀ</Text>
+                        <Text className="text-sm text-white/80 font-medium">ID: UU-2026-001</Text>
                     </View>
                 </LinearGradient>
 
-                <View style={styles.content}>
-                    {/* Achievement Summary Card */}
-                    <View style={styles.impactCard}>
-                        <View style={styles.impactItem}>
-                            <Text style={styles.impactValue}>୧୨.୫ କେଜି</Text>
-                            <Text style={styles.impactLabel}>CO2 ବଞ୍ଚାଗଲା</Text>
+                <View className="px-5 pt-5">
+                    {/* Impact Card */}
+                    <View className="flex-row bg-white rounded-[25px] p-5 mb-[25px] elevation-5 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-10 justify-around items-center">
+                        <View className="items-center">
+                            <Text className="text-xl font-bold text-[#1A1A1A]">୧୨.୫ କେଜି</Text>
+                            <Text className="text-[10px] color-[#666] mt-1 font-semibold">CO2 ବଞ୍ଚାଗଲା</Text>
                         </View>
-                        <View style={styles.impactDivider} />
-                        <View style={styles.impactItem}>
-                            <Text style={styles.impactValue}>୪</Text>
-                            <Text style={styles.impactLabel}>ପଦକ ଜିତିଛନ୍ତି</Text>
+                        <View className="w-[1px] h-[30px] bg-[#EEE]" />
+                        <View className="items-center">
+                            <Text className="text-xl font-bold text-[#1A1A1A]">୪</Text>
+                            <Text className="text-[10px] color-[#666] mt-1 font-semibold">ପଦକ ଜିତିଛନ୍ତି</Text>
                         </View>
                     </View>
 
                     {/* Badges Section */}
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>ମୋର ପଦକ (My Badges)</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.badgeScroll}>
+                    <View className="mb-[25px]">
+                        <Text className="text-base font-bold text-[#333] mb-3 ml-[5px]">ମୋର ପଦକ (My Badges)</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2.5">
                             {[
                                 { name: 'ପ୍ରକୃତି ବନ୍ଧୁ', icon: 'leaf', color: '#4CAF50' },
                                 { name: 'ସ୍ୱଚ୍ଛ ରନ୍ଧନ', icon: 'flame', color: '#FF8C00' },
                                 { name: 'ସଚେତନ କୃଷକ', icon: 'school', color: '#0288D1' },
                                 { name: 'ପରିବେଶ ରକ୍ଷକ', icon: 'shield', color: '#D81B60' },
                             ].map((badge, idx) => (
-                                <View key={idx} style={styles.badgeItem}>
-                                    <View style={[styles.badgeIcon, { backgroundColor: badge.color + '20' }]}>
+                                <View key={idx} className="items-center mr-5">
+                                    <View style={{ backgroundColor: badge.color + '20' }} className="w-[60px] h-[60px] rounded-full justify-center items-center mb-2">
                                         <Ionicons name={badge.icon as any} size={28} color={badge.color} />
                                     </View>
-                                    <Text style={styles.badgeText}>{badge.name}</Text>
+                                    <Text className="text-[11px] font-bold text-[#444]">{badge.name}</Text>
                                 </View>
                             ))}
                         </ScrollView>
                     </View>
 
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>ଆଭିମୁଖ୍ୟ ଓ ନୀତି (Preferences)</Text>
-                        <View style={styles.card}>
+                    {/* Preferences Section */}
+                    <View className="mb-[25px]">
+                        <Text className="text-base font-bold text-[#333] mb-3 ml-[5px]">ଆଭିମୁଖ୍ୟ ଓ ନୀତି (Preferences)</Text>
+                        <View className="bg-white rounded-[25px] overflow-hidden elevation-4 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-5">
                             <SettingItem icon="notifications-outline" title="ବାର୍ତ୍ତା (Notifications)" type="switch" value={notifications} color="#FF4500" />
                             <SettingItem icon="moon-outline" title="ଡାର୍କ ମୋଡ୍ (Dark Mode)" type="switch" value={darkMode} color="#5E35B1" />
                             <SettingItem icon="language-outline" title="ଭାଷା (Language)" color="#00897B" />
                         </View>
                     </View>
 
-                    <TouchableOpacity style={styles.logoutBtn} activeOpacity={0.8}>
-                        <LinearGradient
-                            colors={['#FFF', '#FFF']}
-                            style={styles.logoutGradient}
-                        >
+                    <TouchableOpacity className="mt-2.5 rounded-[20px] overflow-hidden elevation-2 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-3" activeOpacity={0.8}>
+                        <View className="flex-row items-center justify-center py-4 bg-white">
                             <Ionicons name="log-out-outline" size={22} color="#FF3B30" />
-                            <Text style={styles.logoutText}>ଲଗ୍ ଆଉଟ୍</Text>
-                        </LinearGradient>
+                            <Text className="text-[#FF3B30] font-bold text-base ml-2.5">ଲଗ୍ ଆଉଟ୍</Text>
+                        </View>
                     </TouchableOpacity>
 
-                    <Text style={styles.versionText}>ସଂସ୍କରଣ (Version) 1.0.0</Text>
-                    <View style={styles.bottomSpace} />
+                    <Text className="text-center text-[#AAA] text-[12px] mt-[30px] mb-10">ସଂସ୍କରଣ (Version) 1.0.0</Text>
+                    <View className="h-[100px]" />
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F0F7FF',
-    },
-    hero: {
-        paddingTop: 30,
-        paddingBottom: 40,
-        borderBottomLeftRadius: 40,
-        borderBottomRightRadius: 40,
-        alignItems: 'center',
-    },
-    profileHeader: {
-        alignItems: 'center',
-    },
-    avatarContainer: {
-        position: 'relative',
-        marginBottom: 15,
-    },
-    avatar: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: 'rgba(255,255,255,0.3)',
-        borderWidth: 3,
-        borderColor: '#FFF',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    avatarText: {
-        color: '#FFF',
-        fontSize: 36,
-        fontWeight: 'bold',
-    },
-    cameraIcon: {
-        position: 'absolute',
-        bottom: 5,
-        right: 5,
-        backgroundColor: '#FF4500',
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: '#FFF',
-    },
-    profileName: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#FFF',
-        marginBottom: 4,
-    },
-    profileId: {
-        fontSize: 14,
-        color: 'rgba(255,255,255,0.8)',
-        fontWeight: '500',
-    },
-    content: {
-        paddingHorizontal: 20,
-        paddingTop: 20,
-    },
-    section: {
-        marginBottom: 25,
-    },
-    sectionTitle: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#333',
-        marginBottom: 12,
-        marginLeft: 5,
-    },
-    card: {
-        backgroundColor: '#FFF',
-        borderRadius: 25,
-        overflow: 'hidden',
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-    },
-    item: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#F5F5F5',
-    },
-    itemLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    iconBox: {
-        width: 40,
-        height: 40,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 15,
-    },
-    itemTitle: {
-        fontSize: 15,
-        color: '#333',
-        fontWeight: '600',
-    },
-    logoutBtn: {
-        marginTop: 10,
-        borderRadius: 20,
-        overflow: 'hidden',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-    },
-    logoutGradient: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 16,
-        backgroundColor: '#FFF',
-    },
-    logoutText: {
-        color: '#FF3B30',
-        fontWeight: 'bold',
-        fontSize: 16,
-        marginLeft: 10,
-    },
-    impactCard: {
-        flexDirection: 'row',
-        backgroundColor: '#FFF',
-        borderRadius: 25,
-        padding: 20,
-        marginBottom: 25,
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        justifyContent: 'space-around',
-        alignItems: 'center',
-    },
-    impactItem: {
-        alignItems: 'center',
-    },
-    impactValue: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#1A1A1A',
-    },
-    impactLabel: {
-        fontSize: 10,
-        color: '#666',
-        marginTop: 4,
-        fontWeight: '600',
-    },
-    impactDivider: {
-        width: 1,
-        height: 30,
-        backgroundColor: '#EEE',
-    },
-    badgeScroll: {
-        marginBottom: 10,
-    },
-    badgeItem: {
-        alignItems: 'center',
-        marginRight: 20,
-    },
-    badgeIcon: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 8,
-    },
-    badgeText: {
-        fontSize: 11,
-        fontWeight: 'bold',
-        color: '#444',
-    },
-    versionText: {
-        textAlign: 'center',
-        color: '#AAA',
-        fontSize: 12,
-        marginTop: 30,
-        marginBottom: 40,
-    },
-    bottomSpace: {
-        height: 100,
-    },
-});

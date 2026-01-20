@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,95 +9,95 @@ export default function CookstoveScreen() {
     const [aadhaarNo, setAadhaarNo] = useState('');
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView className="flex-1 bg-[#F0F7FF]">
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
+                className="flex-1"
             >
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    {/* Modern Hero Header */}
-                    <LinearGradient colors={['#FF8C00', '#FF4500']} style={styles.heroHeader}>
-                        <Text style={styles.heroTitle}>ଉନ୍ନତ ଚୁଲି</Text>
-                        <Text style={styles.heroSubtitle}>ଆପଣଙ୍କ ସ୍ୱଚ୍ଛ ରୋଷେଇର ପ୍ରଭାବ ଦେଖନ୍ତୁ</Text>
+                    {/* Hero Header */}
+                    <LinearGradient colors={['#FF8C00', '#FF4500']} className="p-6 pb-[60px] rounded-b-[30px]">
+                        <Text className="text-[32px] font-bold text-white">ଉନ୍ନତ ଚୁଲି</Text>
+                        <Text className="text-base text-white/90 mt-1">ଆପଣଙ୍କ ସ୍ୱଚ୍ଛ ରୋଷେଇର ପ୍ରଭାବ ଦେଖନ୍ତୁ</Text>
                     </LinearGradient>
 
-                    <View style={styles.statsContainer}>
+                    <View className="p-5 -mt-10">
                         <LinearGradient
                             colors={['#4CAF50', '#2E7D32']}
-                            style={styles.mainStatCard}
+                            className="flex-row justify-between items-center p-6 rounded-[25px] mb-[15px] elevation-10 shadow-black shadow-offset-[0px,5px] shadow-opacity-20 shadow-radius-10"
                         >
                             <View>
-                                <Text style={styles.statLabel}>CO2 ବଞ୍ଚାଗଲା</Text>
-                                <Text style={styles.statValue}>12.5 କି.ଗ୍ରା</Text>
+                                <Text className="text-white/80 text-[15px] font-semibold">CO2 ବଞ୍ଚାଗଲା</Text>
+                                <Text className="text-white text-[32px] font-bold">12.5 କି.ଗ୍ରା</Text>
                             </View>
                             <Ionicons name="leaf-outline" size={50} color="rgba(255,255,255,0.4)" />
                         </LinearGradient>
 
-                        <View style={styles.secondaryStats}>
-                            <View style={styles.smallStatCard}>
-                                <Text style={styles.smallStatLabel}>ସ୍ଥିତି</Text>
-                                <Text style={styles.smallStatValue}>ସକ୍ରିୟ</Text>
+                        <View className="flex-row justify-between">
+                            <View className="bg-white w-[48%] p-[18px] rounded-[20px] elevation-4 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-5">
+                                <Text className="text-[#888] text-[13px] mb-[5px] font-semibold">ସ୍ଥିତି</Text>
+                                <Text className="text-[#1A1A1A] text-xl font-bold">ସକ୍ରିୟ</Text>
                             </View>
-                            <View style={styles.smallStatCard}>
-                                <Text style={styles.smallStatLabel}>ବ୍ୟବହାର ସମୟ</Text>
-                                <Text style={styles.smallStatValue}>24 ଘଣ୍ଟା</Text>
+                            <View className="bg-white w-[48%] p-[18px] rounded-[20px] elevation-4 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-5">
+                                <Text className="text-[#888] text-[13px] mb-[5px] font-semibold">ବ୍ୟବହାର ସମୟ</Text>
+                                <Text className="text-[#1A1A1A] text-xl font-bold">24 ଘଣ୍ଟା</Text>
                             </View>
                         </View>
                     </View>
 
                     {/* Village Leaderboard Snippet */}
-                    <View style={styles.leaderboardCard}>
-                        <View style={styles.leaderHeader}>
+                    <View className="bg-white mx-5 p-5 rounded-[25px] elevation-4 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-5 mb-5">
+                        <View className="flex-row items-center mb-[15px]">
                             <Ionicons name="trophy-outline" size={20} color="#FFD700" />
-                            <Text style={styles.leaderTitle}>ଗ୍ରାମ ସ୍ତରୀୟ ମାନ୍ୟତା (Village Rank)</Text>
+                            <Text className="text-[14px] font-bold text-[#444] ml-2">ଗ୍ରାମ ସ୍ତରୀୟ ମାନ୍ୟତା (Village Rank)</Text>
                         </View>
-                        <View style={styles.leaderRow}>
-                            <Text style={styles.leaderRank}># ୮</Text>
-                            <Text style={styles.leaderName}>ଆପଣଙ୍କ ସ୍ଥିତି</Text>
-                            <Text style={styles.leaderPoints}>୧୨୫ କାର୍ବନ ପଏଣ୍ଟ</Text>
+                        <View className="flex-row justify-between items-center bg-[#F8F9FA] p-3 rounded-[15px]">
+                            <Text className="text-lg font-bold text-[#FF8C00]"># ୮</Text>
+                            <Text className="text-[14px] text-[#333] font-semibold">ଆପଣଙ୍କ ସ୍ଥିତି</Text>
+                            <Text className="text-[12px] text-[#2E7D32] font-bold">୧୨୫ କାର୍ବନ ପଏଣ୍ଟ</Text>
                         </View>
                     </View>
 
                     {/* Maintenance Checklist */}
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.sectionTitle}>ପରିଚାଳନା ଯାଞ୍ଚ ତାଲିକା (Maintenance)</Text>
-                        <View style={styles.checklistCard}>
+                    <View className="px-5 mb-5">
+                        <Text className="text-base font-bold text-[#333] mb-3">ପରିଚାଳନା ଯାଞ୍ଚ ତାଲିକା (Maintenance)</Text>
+                        <View className="bg-white rounded-[25px] p-5 elevation-4 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-5">
                             {[
                                 { task: 'ଚୁଲିକୁ ସଫା ରଖନ୍ତୁ', status: true },
-                                { task: 'ଫାଟ ଯାଞ୍ଚ କରନ୍ତୁ', status: true },
+                                { task: 'ଫାଟ ଯାଞ୍କ କରନ୍ତୁ', status: true },
                                 { task: 'ଠିକ ଭାବେ କାଠ ବ୍ୟବହାର', status: false },
                             ].map((item, idx) => (
-                                <View key={idx} style={styles.checkItem}>
-                                    <View style={[styles.checkCircle, item.status && styles.checkActive]}>
+                                <View key={idx} className="flex-row items-center mb-3">
+                                    <View className={`w-6 h-6 rounded-full justify-center items-center mr-3 ${item.status ? 'bg-[#4CAF50]' : 'bg-[#E0E0E0]'}`}>
                                         <Ionicons name={item.status ? "checkmark" : "time-outline"} size={14} color="#FFF" />
                                     </View>
-                                    <Text style={[styles.checkText, !item.status && styles.checkPending]}>{item.task}</Text>
+                                    <Text className={`text-[14px] font-medium ${item.status ? 'text-[#333]' : 'text-[#888]'}`}>{item.task}</Text>
                                 </View>
                             ))}
                         </View>
                     </View>
 
-                    {/* Modern Callback Section */}
-                    <View style={styles.callbackCard}>
-                        <View style={styles.callbackHeader}>
-                            <View style={styles.iconCircle}>
+                    {/* Callback Section */}
+                    <View className="bg-white m-5 p-6 rounded-[25px] elevation-8 shadow-black shadow-offset-[0px,4px] shadow-opacity-10 shadow-radius-10">
+                        <View className="flex-row items-center mb-[15px]">
+                            <View className="w-11 h-11 rounded-full bg-[#FFF5F0] justify-center items-center mr-[15px]">
                                 <Ionicons name="call-outline" size={24} color="#FF4500" />
                             </View>
-                            <Text style={styles.callbackQuestion}>
+                            <Text className="flex-1 text-lg font-bold text-[#333] leading-6">
                                 ଆପଣ କୌଣସି ସମସ୍ୟାର ସମ୍ମୁଖୀନ ହେଉଛନ୍ତି କି?
                             </Text>
                         </View>
 
-                        <Text style={styles.callbackDesc}>
+                        <Text className="text-[14px] text-[#666] leading-5 mb-[25px]">
                             କେବଳ ଏକ କଲ ପାଇଁ ଅନୁରୋଧ କରନ୍ତୁ, ଏବଂ ଆମେ ଯଥାଶୀଘ୍ର ଆପଣଙ୍କ ନିକଟରେ ପହଞ୍ଚିବୁ ।
                         </Text>
 
-                        <View style={styles.formGroup}>
-                            <Text style={styles.inputLabel}>ଚୁଲି ସିରିଏଲ ନମ୍ବର (Serial No.)</Text>
-                            <View style={styles.inputWrapper}>
-                                <Ionicons name="barcode-outline" size={20} color="#666" style={styles.inputIcon} />
+                        <View className="mb-[18px]">
+                            <Text className="text-[13px] font-bold text-[#555] mb-2 ml-1">ଚୁଲି ସିରିଏଲ ନମ୍ବର (Serial No.)</Text>
+                            <View className="flex-row items-center bg-[#F8F9FA] rounded-[15px] border border-[#EDEFEF] px-[15px]">
+                                <Ionicons name="barcode-outline" size={20} color="#666" className="mr-2.5" />
                                 <TextInput
-                                    style={styles.input}
+                                    className="flex-1 h-[50px] text-[#333] text-[15px]"
                                     placeholder="Enter Serial Number"
                                     value={serialNo}
                                     onChangeText={setSerialNo}
@@ -106,12 +106,12 @@ export default function CookstoveScreen() {
                             </View>
                         </View>
 
-                        <View style={styles.formGroup}>
-                            <Text style={styles.inputLabel}>ଆଧାର ନମ୍ବର (Aadhaar No.)</Text>
-                            <View style={styles.inputWrapper}>
-                                <Ionicons name="card-outline" size={20} color="#666" style={styles.inputIcon} />
+                        <View className="mb-[18px]">
+                            <Text className="text-[13px] font-bold text-[#555] mb-2 ml-1">ଆଧାର ନମ୍ବର (Aadhaar No.)</Text>
+                            <View className="flex-row items-center bg-[#F8F9FA] rounded-[15px] border border-[#EDEFEF] px-[15px]">
+                                <Ionicons name="card-outline" size={20} color="#666" className="mr-2.5" />
                                 <TextInput
-                                    style={styles.input}
+                                    className="flex-1 h-[50px] text-[#333] text-[15px]"
                                     placeholder="xxxx xxxx xxxx"
                                     value={aadhaarNo}
                                     onChangeText={setAadhaarNo}
@@ -122,275 +122,22 @@ export default function CookstoveScreen() {
                             </View>
                         </View>
 
-                        <TouchableOpacity style={styles.submitBtn} activeOpacity={0.8}>
+                        <TouchableOpacity activeOpacity={0.8} className="mt-2.5 h-[55px] rounded-[15px] overflow-hidden">
                             <LinearGradient
                                 colors={['#4CAF50', '#388E3C']}
-                                style={styles.btnGradient}
+                                className="flex-1 flex-row items-center justify-center"
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
                             >
-                                <Text style={styles.submitText}>କଲବ୍ୟାକ୍ ଅନୁରୋଧ କରନ୍ତୁ</Text>
-                                <Ionicons name="paper-plane" size={18} color="#FFF" style={{ marginLeft: 10 }} />
+                                <Text className="text-white text-base font-bold">କଲବ୍ୟାକ୍ ଅନୁରୋଧ କରନ୍ତୁ</Text>
+                                <Ionicons name="paper-plane" size={18} color="#FFF" className="ml-2.5" />
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>
 
-                    <View style={styles.bottomSpace} />
+                    <View className="h-[100px]" />
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F0F7FF',
-    },
-    heroHeader: {
-        padding: 24,
-        paddingBottom: 60,
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
-    },
-    heroTitle: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#FFF',
-    },
-    heroSubtitle: {
-        fontSize: 16,
-        color: 'rgba(255,255,255,0.9)',
-        marginTop: 5,
-    },
-    statsContainer: {
-        padding: 20,
-        marginTop: -40,
-    },
-    mainStatCard: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 25,
-        borderRadius: 25,
-        marginBottom: 15,
-        elevation: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 0.2,
-        shadowRadius: 10,
-    },
-    statLabel: {
-        color: 'rgba(255,255,255,0.8)',
-        fontSize: 15,
-        fontWeight: '600',
-    },
-    statValue: {
-        color: '#FFF',
-        fontSize: 32,
-        fontWeight: 'bold',
-    },
-    secondaryStats: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    smallStatCard: {
-        backgroundColor: '#FFF',
-        width: '48%',
-        padding: 18,
-        borderRadius: 20,
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-    },
-    smallStatLabel: {
-        color: '#888',
-        fontSize: 13,
-        marginBottom: 5,
-        fontWeight: '600',
-    },
-    smallStatValue: {
-        color: '#1A1A1A',
-        fontSize: 20,
-        fontWeight: '700',
-    },
-    leaderboardCard: {
-        backgroundColor: '#FFF',
-        marginHorizontal: 20,
-        padding: 20,
-        borderRadius: 25,
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        marginBottom: 20,
-    },
-    leaderHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 15,
-    },
-    leaderTitle: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#444',
-        marginLeft: 8,
-    },
-    leaderRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: '#F8F9FA',
-        padding: 12,
-        borderRadius: 15,
-    },
-    leaderRank: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#FF8C00',
-    },
-    leaderName: {
-        fontSize: 14,
-        color: '#333',
-        fontWeight: '600',
-    },
-    leaderPoints: {
-        fontSize: 12,
-        color: '#2E7D32',
-        fontWeight: 'bold',
-    },
-    sectionContainer: {
-        paddingHorizontal: 20,
-        marginBottom: 20,
-    },
-    sectionTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 12,
-    },
-    checklistCard: {
-        backgroundColor: '#FFF',
-        borderRadius: 25,
-        padding: 20,
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-    },
-    checkItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-    checkCircle: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        backgroundColor: '#E0E0E0',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 12,
-    },
-    checkActive: {
-        backgroundColor: '#4CAF50',
-    },
-    checkText: {
-        fontSize: 14,
-        color: '#333',
-        fontWeight: '500',
-    },
-    checkPending: {
-        color: '#888',
-    },
-    callbackCard: {
-        backgroundColor: '#FFF',
-        margin: 20,
-        padding: 24,
-        borderRadius: 25,
-        elevation: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-    },
-    callbackHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 15,
-    },
-    iconCircle: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: '#FFF5F0',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 15,
-    },
-    callbackQuestion: {
-        flex: 1,
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-        lineHeight: 24,
-    },
-    callbackDesc: {
-        fontSize: 14,
-        color: '#666',
-        lineHeight: 20,
-        marginBottom: 25,
-    },
-    formGroup: {
-        marginBottom: 18,
-    },
-    inputLabel: {
-        fontSize: 13,
-        fontWeight: '700',
-        color: '#555',
-        marginBottom: 8,
-        marginLeft: 4,
-    },
-    inputWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#F8F9FA',
-        borderRadius: 15,
-        borderWidth: 1,
-        borderColor: '#EDEFEF',
-        paddingHorizontal: 15,
-    },
-    inputIcon: {
-        marginRight: 10,
-    },
-    input: {
-        flex: 1,
-        height: 50,
-        color: '#333',
-        fontSize: 15,
-    },
-    submitBtn: {
-        marginTop: 10,
-        height: 55,
-        borderRadius: 15,
-        overflow: 'hidden',
-    },
-    btnGradient: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    submitText: {
-        color: '#FFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    bottomSpace: {
-        height: 100,
-    },
-});

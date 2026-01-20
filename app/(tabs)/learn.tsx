@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Dimensions, FlatList } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Dimensions, FlatList } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -83,30 +83,30 @@ export default function LearnScreen() {
     }, [activeIndex]);
 
     const renderCarouselItem = ({ item }: any) => (
-        <View style={styles.carouselItem}>
-            <View style={styles.cardContainer}>
-                <Image source={item.image} style={styles.carouselImage} contentFit="cover" />
+        <View className="px-2" style={{ width: width - 40, height: 200 }}>
+            <View className="flex-1 rounded-3xl overflow-hidden bg-white elevation-10 shadow-black shadow-offset-[0px,5px] shadow-opacity-20 shadow-radius-10">
+                <Image source={item.image} className="w-full h-full" contentFit="cover" />
                 <LinearGradient
                     colors={['transparent', 'rgba(0,0,0,0.7)']}
-                    style={styles.carouselOverlay}
+                    className="absolute inset-0 justify-end p-[15px]"
                 >
-                    <Text style={styles.carouselTitle}>{item.title}</Text>
+                    <Text className="text-white text-lg font-bold leading-6">{item.title}</Text>
                 </LinearGradient>
             </View>
         </View>
     );
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView className="flex-1 bg-[#F8F9FA]">
             <ScrollView showsVerticalScrollIndicator={false}>
-                {/* Modern Hero Header */}
-                <LinearGradient colors={['#FF8C00', '#FF4500']} style={styles.heroHeader}>
-                    <Text style={styles.heroTitle}>ସମ୍ବାଦ କେନ୍ଦ୍ର</Text>
-                    <Text style={styles.heroSubtitle}>ନିତିଦିନିଆ କୃଷି ଓ ଯୋଜନା ଖବର</Text>
+                {/* Hero Header */}
+                <LinearGradient colors={['#FF8C00', '#FF4500']} className="p-6 pb-[60px] rounded-b-[30px]">
+                    <Text className="text-[32px] font-bold text-white tracking-[0.5px]">ସମ୍ବାଦ କେନ୍ଦ୍ର</Text>
+                    <Text className="text-base text-white/90 mt-1.5">ନିତିଦିନିଆ କୃଷି ଓ ଯୋଜନା ଖବର</Text>
                 </LinearGradient>
 
-                {/* Informational Carousel */}
-                <View style={styles.carouselWrapper}>
+                {/* Carousel */}
+                <View className="-mt-10 h-[240px]">
                     <FlatList
                         ref={flatListRef}
                         data={LEARN_CAROUSEL}
@@ -123,51 +123,54 @@ export default function LearnScreen() {
                         keyExtractor={(item) => item.id}
                         contentContainerStyle={{ paddingHorizontal: 20 }}
                     />
-                    <View style={styles.pagination}>
+                    <View className="flex-row justify-center mt-2.5">
                         {LEARN_CAROUSEL.map((_, i) => (
-                            <View key={i} style={[styles.dot, activeIndex === i && styles.activeDot]} />
+                            <View
+                                key={i}
+                                className={`h-1.5 rounded-full mx-[3px] ${activeIndex === i ? 'w-4 bg-[#FF8C00]' : 'w-1.5 bg-[#DDD]'}`}
+                            />
                         ))}
                     </View>
                 </View>
 
                 {/* News List */}
-                <View style={styles.content}>
-                    <TouchableOpacity style={styles.tipCard} activeOpacity={0.9}>
-                        <LinearGradient colors={['#FFEBEE', '#FFCDD2']} style={styles.tipGradient}>
-                            <View style={[styles.tipIconBox, { backgroundColor: '#FF5252' }]}>
+                <View className="p-5 mt-2.5">
+                    <TouchableOpacity className="mb-[25px] rounded-[20px] overflow-hidden elevation-3" activeOpacity={0.9}>
+                        <LinearGradient colors={['#FFEBEE', '#FFCDD2']} className="flex-row items-center p-4">
+                            <View className="w-11 h-11 rounded-full bg-[#FF5252] justify-center items-center mr-[15px]">
                                 <Ionicons name="flash" size={24} color="#FFF" />
                             </View>
-                            <View style={styles.tipContent}>
-                                <Text style={[styles.tipTitle, { color: '#C62828' }]}>ବ୍ରେକିଂ ନ୍ୟୁଜ୍ (Breaking News)</Text>
-                                <Text style={styles.tipText}>ସମ୍ବଲପୁରରେ କୃଷକ ମେଳା ଆଜିଠାରୁ ଆରମ୍ଭ ହେବାକୁ ଯାଉଛି ।</Text>
+                            <View className="flex-1">
+                                <Text className="text-sm font-bold text-[#C62828] mb-0.5">ବ୍ରେକିଂ ନ୍ୟୁଜ୍ (Breaking News)</Text>
+                                <Text className="text-[12px] text-[#555] leading-[18px]">ସମ୍ବଲପୁରରେ କୃଷକ ମେଳା ଆଜିଠାରୁ ଆରମ୍ଭ ହେବାକୁ ଯାଉଛି ।</Text>
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="#C62828" />
                         </LinearGradient>
                     </TouchableOpacity>
 
-                    <Text style={styles.sectionTitle}>ଆଜିର ମୁଖ୍ୟ ଖବର</Text>
-                    <View style={styles.grid}>
+                    <Text className="text-[22px] font-bold text-[#333] mb-5">ଆଜିର ମୁଖ୍ୟ ଖବର</Text>
+                    <View className="flex-row flex-wrap justify-between">
                         {NEWS_DATA.map((news, index) => (
-                            <TouchableOpacity key={index} style={styles.courseCard} activeOpacity={0.9}>
-                                <Image source={news.image} style={styles.courseBgImage} contentFit="cover" />
+                            <TouchableOpacity key={index} className="w-[48%] h-[220px] bg-white rounded-[24px] mb-4 elevation-10 shadow-black shadow-offset-[0px,6px] shadow-opacity-15 shadow-radius-10 overflow-hidden relative" activeOpacity={0.9}>
+                                <Image source={news.image} className="absolute inset-0 w-full h-full" contentFit="cover" />
                                 <LinearGradient
                                     colors={['transparent', 'rgba(0,0,0,0.8)']}
-                                    style={styles.courseOverlay}
+                                    className="absolute inset-0 p-[15px] justify-between"
                                 >
-                                    <View style={styles.cardHeader}>
-                                        <View style={[styles.miniIconBox, { backgroundColor: news.color }]}>
+                                    <View className="flex-row justify-between items-center">
+                                        <View style={{ backgroundColor: news.color }} className="w-7 h-7 rounded-[8px] justify-center items-center">
                                             <Ionicons name={news.icon as any} size={14} color="#FFF" />
                                         </View>
-                                        <View style={styles.levelBadge}>
-                                            <Text style={styles.levelText}>{news.category}</Text>
+                                        <View className="bg-white/20 px-2 py-1 rounded-[10px] border border-white/30">
+                                            <Text className="text-white text-[8px] font-bold uppercase tracking-[0.5px]">{news.category}</Text>
                                         </View>
                                     </View>
 
-                                    <View style={styles.cardBody}>
-                                        <Text style={styles.courseTitleWhite}>{news.title}</Text>
-                                        <View style={styles.lessonPill}>
+                                    <View className="mb-[5px]">
+                                        <Text className="text-[18px] font-bold text-white leading-[22px] mb-2 shadow-black shadow-offset-[0px,1px] shadow-radius-3">{news.title}</Text>
+                                        <View className="flex-row items-center bg-white/15 self-start px-2 py-1 rounded-[12px]">
                                             <Ionicons name="time-outline" size={12} color="rgba(255,255,255,0.8)" />
-                                            <Text style={styles.lessonText}>{news.readTime}</Text>
+                                            <Text className="text-white text-[10px] font-semibold ml-1">{news.readTime}</Text>
                                         </View>
                                     </View>
                                 </LinearGradient>
@@ -176,257 +179,8 @@ export default function LearnScreen() {
                     </View>
                 </View>
 
-                <View style={styles.bottomSpace} />
+                <View className="h-[100px]" />
             </ScrollView>
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F8F9FA',
-    },
-    heroHeader: {
-        padding: 24,
-        paddingBottom: 60,
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
-    },
-    heroTitle: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#FFF',
-        letterSpacing: 0.5,
-    },
-    heroSubtitle: {
-        fontSize: 16,
-        color: 'rgba(255,255,255,0.9)',
-        marginTop: 5,
-    },
-    carouselWrapper: {
-        marginTop: -40,
-        height: 240,
-    },
-    carouselItem: {
-        width: width - 40,
-        height: 200,
-        paddingHorizontal: 8,
-    },
-    cardContainer: {
-        flex: 1,
-        borderRadius: 24,
-        overflow: 'hidden',
-        backgroundColor: '#FFF',
-        elevation: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 0.2,
-        shadowRadius: 10,
-    },
-    carouselImage: {
-        width: '100%',
-        height: '100%',
-    },
-    carouselOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        justifyContent: 'flex-end',
-        padding: 15,
-    },
-    carouselTitle: {
-        color: '#FFF',
-        fontSize: 18,
-        fontWeight: '700',
-        lineHeight: 24,
-    },
-    pagination: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: 10,
-    },
-    dot: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-        backgroundColor: '#DDD',
-        marginHorizontal: 3,
-    },
-    activeDot: {
-        backgroundColor: '#FF8C00',
-        width: 16,
-    },
-    content: {
-        padding: 20,
-        marginTop: 10,
-    },
-    sectionTitle: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 20,
-    },
-    grid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-    },
-    progressCard: {
-        backgroundColor: '#FFF',
-        borderRadius: 25,
-        padding: 20,
-        marginBottom: 20,
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-    },
-    progressHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-    progressTitle: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: '#444',
-    },
-    progressPercent: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#FF4500',
-    },
-    progressBarBg: {
-        height: 8,
-        backgroundColor: '#F0F0F0',
-        borderRadius: 4,
-        overflow: 'hidden',
-        marginBottom: 10,
-    },
-    progressBarFill: {
-        height: '100%',
-        borderRadius: 4,
-    },
-    progressInfo: {
-        fontSize: 11,
-        color: '#888',
-        fontWeight: '500',
-    },
-    tipCard: {
-        marginBottom: 25,
-        borderRadius: 20,
-        overflow: 'hidden',
-        elevation: 3,
-    },
-    tipGradient: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-    },
-    tipIconBox: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: '#FFF',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 15,
-    },
-    tipContent: {
-        flex: 1,
-    },
-    tipTitle: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#0277BD',
-        marginBottom: 2,
-    },
-    tipText: {
-        fontSize: 12,
-        color: '#555',
-        lineHeight: 18,
-    },
-    courseCard: {
-        width: '48%',
-        height: 220,
-        backgroundColor: '#FFF',
-        borderRadius: 24,
-        marginBottom: 16,
-        elevation: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-        overflow: 'hidden',
-        position: 'relative',
-    },
-    courseBgImage: {
-        ...StyleSheet.absoluteFillObject,
-        width: '100%',
-        height: '100%',
-    },
-    courseOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        padding: 15,
-        justifyContent: 'space-between',
-    },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    miniIconBox: {
-        width: 28,
-        height: 28,
-        borderRadius: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    levelBadge: {
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
-    },
-    levelText: {
-        color: '#FFF',
-        fontSize: 8,
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-        letterSpacing: 0.5,
-    },
-    cardBody: {
-        marginBottom: 5,
-    },
-    courseTitleWhite: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#FFF',
-        lineHeight: 22,
-        marginBottom: 8,
-        textShadowColor: 'rgba(0,0,0,0.5)',
-        textShadowOffset: { width: 0, height: 1 },
-        textShadowRadius: 3,
-    },
-    lessonPill: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        alignSelf: 'flex-start',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 12,
-    },
-    lessonText: {
-        color: '#FFF',
-        fontSize: 10,
-        fontWeight: '600',
-        marginLeft: 4,
-    },
-    bottomSpace: {
-        height: 100,
-    },
-});
