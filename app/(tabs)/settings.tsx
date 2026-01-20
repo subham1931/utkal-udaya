@@ -2,27 +2,31 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function SettingsScreen() {
-    const SettingItem = ({ icon, title, subtitle, onPress, color = '#555' }: any) => (
+    const { t, language, setLanguage } = useLanguage();
+
+    const SettingItem = ({ icon, title, subtitle, onPress, color = '#555', rightElement }: any) => (
         <TouchableOpacity
             className="flex-row items-center justify-between p-4 border-b border-[#F5F5F5]"
             activeOpacity={0.7}
             onPress={onPress}
+            disabled={!onPress}
         >
-            <View className="flex-row items-center">
+            <View className="flex-row items-center flex-1">
                 <View
                     style={{ backgroundColor: color + '15' }}
                     className="w-10 h-10 rounded-xl justify-center items-center mr-[15px]"
                 >
                     <Ionicons name={icon} size={22} color={color} />
                 </View>
-                <View>
+                <View className="flex-1">
                     <Text className="text-[15px] font-bold text-[#333]">{title}</Text>
                     {subtitle && <Text className="text-[11px] text-[#999] mt-0.5">{subtitle}</Text>}
                 </View>
             </View>
-            <Ionicons name="chevron-forward" size={18} color="#CCC" />
+            {rightElement ? rightElement : <Ionicons name="chevron-forward" size={18} color="#CCC" />}
         </TouchableOpacity>
     );
 
@@ -34,26 +38,47 @@ export default function SettingsScreen() {
                     colors={['#FF8C00', '#FF4500']}
                     className="p-6 pb-10 rounded-b-[30px]"
                 >
-                    <Text className="text-[28px] font-bold text-white">ସେଟିଙ୍ଗସ୍ (Settings)</Text>
-                    <Text className="text-sm text-white/80 mt-1">Legal & Support Center</Text>
+                    <Text className="text-[28px] font-bold text-white">{t.settings.title}</Text>
+                    <Text className="text-sm text-white/80 mt-1">{t.settings.legalSupport}</Text>
                 </LinearGradient>
 
                 <View className="p-5">
+                    {/* Language Section */}
+                    <View className="mb-[25px]">
+                        <Text className="text-sm font-bold text-[#666] mb-2.5 ml-[5px] uppercase tracking-widest">{t.settings.language}</Text>
+                        <View className="bg-white rounded-[20px] shadow-sm shadow-black/10 elevation-4">
+                            <View className="rounded-[20px] overflow-hidden">
+                                <View className="flex-row p-4 items-center justify-around border-b border-[#F5F5F5]">
+                                    <TouchableOpacity
+                                        onPress={() => setLanguage('en')}
+                                        className={`px-6 py-2 rounded-full border ${language === 'en' ? 'bg-[#FF4500] border-[#FF4500]' : 'border-[#DDD]'}`}
+                                    >
+                                        <Text className={`font-bold ${language === 'en' ? 'text-white' : 'text-[#666]'}`}>English</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => setLanguage('or')}
+                                        className={`px-6 py-2 rounded-full border ${language === 'or' ? 'bg-[#FF4500] border-[#FF4500]' : 'border-[#DDD]'}`}
+                                    >
+                                        <Text className={`font-bold ${language === 'or' ? 'text-white' : 'text-[#666]'}`}>ଓଡ଼ିଆ</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+
                     {/* Legal Section */}
                     <View className="mb-[25px]">
-                        <Text className="text-sm font-bold text-[#666] mb-2.5 ml-[5px] uppercase tracking-widest">ଆଇନଗତ (Legal)</Text>
+                        <Text className="text-sm font-bold text-[#666] mb-2.5 ml-[5px] uppercase tracking-widest">{t.settings.legal}</Text>
                         <View className="bg-white rounded-[20px] shadow-sm shadow-black/10 elevation-4">
                             <View className="rounded-[20px] overflow-hidden">
                                 <SettingItem
                                     icon="document-text-outline"
-                                    title="ନିୟମ ଏବଂ ସର୍ତ୍ତାବଳୀ"
-                                    subtitle="Terms of Services"
+                                    title={t.settings.terms}
                                     color="#FF8C00"
                                 />
                                 <SettingItem
                                     icon="shield-checkmark-outline"
-                                    title="ଗୋପନୀୟତା ନୀତି"
-                                    subtitle="Privacy Policy"
+                                    title={t.settings.privacy}
                                     color="#4CAF50"
                                 />
                             </View>
@@ -62,19 +87,17 @@ export default function SettingsScreen() {
 
                     {/* Support Section */}
                     <View className="mb-[25px]">
-                        <Text className="text-sm font-bold text-[#666] mb-2.5 ml-[5px] uppercase tracking-widest">ସହାୟତା (Support)</Text>
+                        <Text className="text-sm font-bold text-[#666] mb-2.5 ml-[5px] uppercase tracking-widest">{t.settings.support}</Text>
                         <View className="bg-white rounded-[20px] shadow-sm shadow-black/10 elevation-4">
                             <View className="rounded-[20px] overflow-hidden">
                                 <SettingItem
                                     icon="call-outline"
-                                    title="ଆମ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ"
-                                    subtitle="Contact Us"
+                                    title={t.settings.contact}
                                     color="#0288D1"
                                 />
                                 <SettingItem
                                     icon="mail-outline"
-                                    title="ଇମେଲ୍ ସହାୟତା"
-                                    subtitle="Email Support"
+                                    title={t.settings.email}
                                     color="#E91E63"
                                 />
                             </View>
@@ -83,26 +106,24 @@ export default function SettingsScreen() {
 
                     {/* App Info Section */}
                     <View className="mb-[25px]">
-                        <Text className="text-sm font-bold text-[#666] mb-2.5 ml-[5px] uppercase tracking-widest">ଅନ୍ୟାନ୍ୟ (Others)</Text>
+                        <Text className="text-sm font-bold text-[#666] mb-2.5 ml-[5px] uppercase tracking-widest">{t.common.others}</Text>
                         <View className="bg-white rounded-[20px] shadow-sm shadow-black/10 elevation-4">
                             <View className="rounded-[20px] overflow-hidden">
                                 <SettingItem
                                     icon="star-outline"
-                                    title="ଆପ୍‌କୁ ରେଟିଂ ଦିଅନ୍ତୁ"
-                                    subtitle="Rate our App"
+                                    title={t.settings.rate}
                                     color="#FBC02D"
                                 />
                                 <SettingItem
                                     icon="share-social-outline"
-                                    title="ସାଙ୍ଗମାନଙ୍କ ସହିତ ସେୟାର କରନ୍ତୁ"
-                                    subtitle="Share with Friends"
+                                    title={t.settings.share}
                                     color="#673AB7"
                                 />
                             </View>
                         </View>
                     </View>
 
-                    <Text className="text-center text-[#AAA] text-[12px] mt-2.5 mb-[30px]">ଉତ୍କଳ ଉଦୟ v1.0.0</Text>
+                    <Text className="text-center text-[#AAA] text-[12px] mt-2.5 mb-[30px]">{t.settings.version}</Text>
                     <View className="h-[100px]" />
                 </View>
             </ScrollView>
