@@ -86,20 +86,11 @@ export default function ProfileScreen() {
                     </View>
 
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>ଆପ୍ ସେଟିଙ୍ଗସ୍</Text>
+                        <Text style={styles.sectionTitle}>ଆଭିମୁଖ୍ୟ ଓ ନୀତି (Preferences)</Text>
                         <View style={styles.card}>
                             <SettingItem icon="notifications-outline" title="ବାର୍ତ୍ତା (Notifications)" type="switch" value={notifications} color="#FF4500" />
                             <SettingItem icon="moon-outline" title="ଡାର୍କ ମୋଡ୍ (Dark Mode)" type="switch" value={darkMode} color="#5E35B1" />
                             <SettingItem icon="language-outline" title="ଭାଷା (Language)" color="#00897B" />
-                        </View>
-                    </View>
-
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>ସହାୟତା</Text>
-                        <View style={styles.card}>
-                            <SettingItem icon="help-circle-outline" title="ସହାୟତା କେନ୍ଦ୍ର" color="#0288D1" />
-                            <SettingItem icon="shield-checkmark-outline" title="ଗୋପନୀୟତା ନୀତି" color="#43A047" />
-                            <SettingItem icon="information-circle-outline" title="ଆପ୍ ବିଷୟରେ" color="#F4511E" />
                         </View>
                     </View>
 

@@ -20,49 +20,52 @@ const LEARN_CAROUSEL = [
     }
 ];
 
-const COURSES = [
+const NEWS_DATA = [
     {
-        title: 'କୃଷି ବିଶ୍ୱକୋଷ',
-        desc: 'Agriculture Encyclopedia',
-        icon: 'leaf-outline',
+        title: 'ଓଡ଼ିଶାରେ କୃଷି କ୍ଷେତ୍ରରେ ନୂତନ ବିପ୍ଳବ',
+        desc: 'New revolution in Odisha agriculture',
+        icon: 'newspaper-outline',
         color: '#2E7D32',
-        bg: '#E8F5E9'
+        image: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&q=80&w=400',
+        readTime: '୨ ମିନିଟ୍',
+        category: 'କୃଷି (Agri)'
     },
     {
-        title: 'ଉଦ୍ୟାନ କୃଷି',
-        desc: 'Horticulture',
-        icon: 'flower-outline',
+        title: 'ସରକାରଙ୍କ ନୂତନ ବିହନ ଯୋଜନା',
+        desc: 'New Govt seed scheme',
+        icon: 'megaphone-outline',
         color: '#FF8C00',
-        bg: '#FFF3E0'
+        image: 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=400',
+        readTime: '୫ ମିନିଟ୍',
+        category: 'ଯୋଜନା (Scheme)'
     },
     {
-        title: 'ମତ୍ସ୍ୟ ଏବଂ ପଶୁପାଳନ',
-        desc: 'Fisheries & Animal Husbandry',
-        icon: 'fish-outline',
+        title: 'ପାଣିପାଗ ସୂଚନା: ବର୍ଷା ଆଶଙ୍କା',
+        desc: 'Weather Alert: Rain expected',
+        icon: 'cloud-outline',
         color: '#0277BD',
-        bg: '#E1F5FE'
+        image: 'https://images.unsplash.com/photo-1514632595861-4d9e80ba6528?auto=format&fit=crop&q=80&w=400',
+        readTime: '୧ ମିନିଟ୍',
+        category: 'ପାଣିପାଗ (Weather)'
     },
     {
-        title: 'ସ୍ୱାସ୍ଥ୍ୟ ଏବଂ ଜୀବନଶୈଳୀ',
-        desc: 'Health & Lifestyle',
-        icon: 'heart-outline',
-        color: '#D81B60',
-        bg: '#FCE4EC'
-    },
-    {
-        title: 'ସଫଳ କାହାଣୀ',
-        desc: 'Success Stories',
+        title: 'ଉନ୍ନତ ଚୁଲି ବ୍ୟବହାରର ସଫଳ କାହାଣୀ',
+        desc: 'Success story of clean stove',
         icon: 'star-outline',
-        color: '#FFD700',
-        bg: '#FFFDE7'
+        color: '#D81B60',
+        image: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=400',
+        readTime: '୩ ମିନିଟ୍',
+        category: 'ସଫଳତା (Success)'
     },
     {
-        title: 'ସରକାରୀ ଯୋଜନା',
-        desc: 'Govt. Schemes',
-        icon: 'document-text-outline',
-        color: '#4CAF50',
-        bg: '#E8F5E9'
-    },
+        title: 'କୃଷି ଯନ୍ତ୍ରପାତି ଉପରେ ସବସିଡି',
+        desc: 'Subsidy on agri tools',
+        icon: 'construct-outline',
+        color: '#689F38',
+        image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&q=80&w=400',
+        readTime: '୪ ମିନିଟ୍',
+        category: 'ସୂଚନା (Info)'
+    }
 ];
 
 export default function LearnScreen() {
@@ -98,8 +101,8 @@ export default function LearnScreen() {
             <ScrollView showsVerticalScrollIndicator={false}>
                 {/* Modern Hero Header */}
                 <LinearGradient colors={['#FF8C00', '#FF4500']} style={styles.heroHeader}>
-                    <Text style={styles.heroTitle}>ଶିକ୍ଷା କେନ୍ଦ୍ର</Text>
-                    <Text style={styles.heroSubtitle}>ନୂତନ କୃଷି ଜ୍ଞାନକୌଶଳ ଶିଖନ୍ତୁ</Text>
+                    <Text style={styles.heroTitle}>ସମ୍ବାଦ କେନ୍ଦ୍ର</Text>
+                    <Text style={styles.heroSubtitle}>ନିତିଦିନିଆ କୃଷି ଓ ଯୋଜନା ଖବର</Text>
                 </LinearGradient>
 
                 {/* Informational Carousel */}
@@ -127,49 +130,47 @@ export default function LearnScreen() {
                     </View>
                 </View>
 
-                {/* Learning Progress & Daily Tip */}
+                {/* News List */}
                 <View style={styles.content}>
-                    <View style={styles.progressCard}>
-                        <View style={styles.progressHeader}>
-                            <Text style={styles.progressTitle}>ଆପଣଙ୍କ ଅଗ୍ରଗତି (Course Progress)</Text>
-                            <Text style={styles.progressPercent}>୪୫%</Text>
-                        </View>
-                        <View style={styles.progressBarBg}>
-                            <LinearGradient
-                                colors={['#FF8C00', '#FF4500']}
-                                style={[styles.progressBarFill, { width: '45%' }]}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 0 }}
-                            />
-                        </View>
-                        <Text style={styles.progressInfo}>୩/୬ ପାଠ୍ୟକ୍ରମ ସମାପ୍ତ</Text>
-                    </View>
-
                     <TouchableOpacity style={styles.tipCard} activeOpacity={0.9}>
-                        <LinearGradient colors={['#E1F5FE', '#B3E5FC']} style={styles.tipGradient}>
-                            <View style={styles.tipIconBox}>
-                                <Ionicons name="sunny" size={24} color="#0277BD" />
+                        <LinearGradient colors={['#FFEBEE', '#FFCDD2']} style={styles.tipGradient}>
+                            <View style={[styles.tipIconBox, { backgroundColor: '#FF5252' }]}>
+                                <Ionicons name="flash" size={24} color="#FFF" />
                             </View>
                             <View style={styles.tipContent}>
-                                <Text style={styles.tipTitle}>ଦିନର କୃଷି ପରାମର୍ଶ</Text>
-                                <Text style={styles.tipText}>ଖରାଦିନେ ଗଛ ମୂଳେ ହାଲୁକା ପାଣି ଦିଅନ୍ତୁ ଏବଂ ମଲଚିଂ ବ୍ୟବହାର କରନ୍ତୁ ।</Text>
+                                <Text style={[styles.tipTitle, { color: '#C62828' }]}>ବ୍ରେକିଂ ନ୍ୟୁଜ୍ (Breaking News)</Text>
+                                <Text style={styles.tipText}>ସମ୍ବଲପୁରରେ କୃଷକ ମେଳା ଆଜିଠାରୁ ଆରମ୍ଭ ହେବାକୁ ଯାଉଛି ।</Text>
                             </View>
-                            <Ionicons name="chevron-forward" size={20} color="#0277BD" />
+                            <Ionicons name="chevron-forward" size={20} color="#C62828" />
                         </LinearGradient>
                     </TouchableOpacity>
 
-                    <Text style={styles.sectionTitle}>ଆମର ପାଠ୍ୟକ୍ରମ</Text>
+                    <Text style={styles.sectionTitle}>ଆଜିର ମୁଖ୍ୟ ଖବର</Text>
                     <View style={styles.grid}>
-                        {COURSES.map((course, index) => (
-                            <TouchableOpacity key={index} style={styles.courseCard} activeOpacity={0.7}>
-                                <View style={[styles.iconBox, { backgroundColor: course.bg }]}>
-                                    <Ionicons name={course.icon as any} size={32} color={course.color} />
-                                </View>
-                                <Text style={styles.courseTitle}>{course.title}</Text>
-                                <Text style={styles.courseDesc}>{course.desc}</Text>
-                                <View style={[styles.arrowBox, { backgroundColor: course.color }]}>
-                                    <Ionicons name="arrow-forward" size={16} color="#FFF" />
-                                </View>
+                        {NEWS_DATA.map((news, index) => (
+                            <TouchableOpacity key={index} style={styles.courseCard} activeOpacity={0.9}>
+                                <Image source={news.image} style={styles.courseBgImage} contentFit="cover" />
+                                <LinearGradient
+                                    colors={['transparent', 'rgba(0,0,0,0.8)']}
+                                    style={styles.courseOverlay}
+                                >
+                                    <View style={styles.cardHeader}>
+                                        <View style={[styles.miniIconBox, { backgroundColor: news.color }]}>
+                                            <Ionicons name={news.icon as any} size={14} color="#FFF" />
+                                        </View>
+                                        <View style={styles.levelBadge}>
+                                            <Text style={styles.levelText}>{news.category}</Text>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.cardBody}>
+                                        <Text style={styles.courseTitleWhite}>{news.title}</Text>
+                                        <View style={styles.lessonPill}>
+                                            <Ionicons name="time-outline" size={12} color="rgba(255,255,255,0.8)" />
+                                            <Text style={styles.lessonText}>{news.readTime}</Text>
+                                        </View>
+                                    </View>
+                                </LinearGradient>
                             </TouchableOpacity>
                         ))}
                     </View>
@@ -269,43 +270,6 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'space-between',
     },
-    courseCard: {
-        width: '48%',
-        backgroundColor: '#FFF',
-        borderRadius: 25,
-        padding: 20,
-        marginBottom: 16,
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        alignItems: 'center',
-        position: 'relative',
-        overflow: 'hidden',
-    },
-    iconBox: {
-        width: 70,
-        height: 70,
-        borderRadius: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 15,
-    },
-    courseTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#1A1A1A',
-        textAlign: 'center',
-        marginBottom: 4,
-        height: 44, // Ensures text takes up 2 lines
-    },
-    courseDesc: {
-        fontSize: 11,
-        color: '#888',
-        textAlign: 'center',
-        marginBottom: 10,
-    },
     progressCard: {
         backgroundColor: '#FFF',
         borderRadius: 25,
@@ -383,13 +347,84 @@ const styles = StyleSheet.create({
         color: '#555',
         lineHeight: 18,
     },
-    arrowBox: {
+    courseCard: {
+        width: '48%',
+        height: 220,
+        backgroundColor: '#FFF',
+        borderRadius: 24,
+        marginBottom: 16,
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+        overflow: 'hidden',
+        position: 'relative',
+    },
+    courseBgImage: {
+        ...StyleSheet.absoluteFillObject,
+        width: '100%',
+        height: '100%',
+    },
+    courseOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        padding: 15,
+        justifyContent: 'space-between',
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    miniIconBox: {
         width: 28,
         height: 28,
-        borderRadius: 14,
+        borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 5,
+    },
+    levelBadge: {
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
+    },
+    levelText: {
+        color: '#FFF',
+        fontSize: 8,
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+    },
+    cardBody: {
+        marginBottom: 5,
+    },
+    courseTitleWhite: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#FFF',
+        lineHeight: 22,
+        marginBottom: 8,
+        textShadowColor: 'rgba(0,0,0,0.5)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 3,
+    },
+    lessonPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        alignSelf: 'flex-start',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+    },
+    lessonText: {
+        color: '#FFF',
+        fontSize: 10,
+        fontWeight: '600',
+        marginLeft: 4,
     },
     bottomSpace: {
         height: 40,

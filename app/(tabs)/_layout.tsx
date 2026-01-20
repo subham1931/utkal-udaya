@@ -38,8 +38,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="learn"
         options={{
-          title: 'Learn',
-          tabBarIcon: ({ color }) => <Ionicons size={24} name="book-outline" color={color} />,
+          title: 'News',
+          tabBarIcon: ({ color }) => <Ionicons size={24} name="newspaper-outline" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -54,6 +54,13 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <Ionicons size={24} name="person-outline" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color }) => <Ionicons size={24} name="settings-outline" color={color} />,
         }}
       />
     </Tabs>
