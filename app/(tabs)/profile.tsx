@@ -105,6 +105,7 @@ export default function ProfileScreen() {
                     </TouchableOpacity>
 
                     <Text style={styles.versionText}>ସଂସ୍କରଣ (Version) 1.0.0</Text>
+                    <View style={styles.bottomSpace} />
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -300,5 +301,8 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: 30,
         marginBottom: 40,
-    }
+    },
+    bottomSpace: {
+        height: 100,
+    },
 });

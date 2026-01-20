@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   bottomSpace: {
-    height: 30,
+    height: 100,
   },
   heroSection: {
     paddingTop: 20,

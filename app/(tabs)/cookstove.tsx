@@ -391,6 +391,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     bottomSpace: {
-        height: 40,
+        height: 100,
     },
 });

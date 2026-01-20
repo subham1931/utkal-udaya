@@ -87,6 +87,7 @@ export default function SettingsScreen() {
                     </View>
 
                     <Text style={styles.footerVersion}>ଉତ୍କଳ ଉଦୟ v1.0.0</Text>
+                    <View style={styles.bottomSpace} />
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -175,5 +176,8 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: 10,
         marginBottom: 30,
-    }
+    },
+    bottomSpace: {
+        height: 100,
+    },
 });

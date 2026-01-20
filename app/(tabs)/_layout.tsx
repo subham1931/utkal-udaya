@@ -15,17 +15,28 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#888',
         headerShown: false,
         tabBarButton: HapticTab,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '500',
+          marginBottom: 0,
+        },
         tabBarStyle: {
-          backgroundColor: colorScheme === 'dark' ? '#1A1A1A' : '#FFF',
+          backgroundColor: '#1A1A1A',
           borderTopWidth: 0,
-          elevation: 10,
+          elevation: 20,
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
+          shadowOffset: { width: 0, height: -5 },
+          shadowOpacity: 0.3,
           shadowRadius: 10,
-          height: 65,
-          paddingBottom: 10,
-          paddingTop: 5,
+          height: 80, // Slightly taller to cover safe area + labels comfortably
+          paddingBottom: 25, // Specifically clear the home indicator
+          paddingTop: 12,
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+          position: 'absolute', // This helps align with the bottom edge
+          bottom: 0,
+          left: 0,
+          right: 0,
         },
       }}>
       <Tabs.Screen
