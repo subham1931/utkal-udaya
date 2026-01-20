@@ -42,57 +42,63 @@ export default function SettingsScreen() {
                     {/* Legal Section */}
                     <View className="mb-[25px]">
                         <Text className="text-sm font-bold text-[#666] mb-2.5 ml-[5px] uppercase tracking-widest">ଆଇନଗତ (Legal)</Text>
-                        <View className="bg-white rounded-[20px] overflow-hidden elevation-4 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-5">
-                            <SettingItem
-                                icon="document-text-outline"
-                                title="ନିୟମ ଏବଂ ସର୍ତ୍ତାବଳୀ"
-                                subtitle="Terms of Services"
-                                color="#FF8C00"
-                            />
-                            <SettingItem
-                                icon="shield-checkmark-outline"
-                                title="ଗୋପନୀୟତା ନୀତି"
-                                subtitle="Privacy Policy"
-                                color="#4CAF50"
-                            />
+                        <View className="bg-white rounded-[20px] shadow-sm shadow-black/10 elevation-4">
+                            <View className="rounded-[20px] overflow-hidden">
+                                <SettingItem
+                                    icon="document-text-outline"
+                                    title="ନିୟମ ଏବଂ ସର୍ତ୍ତାବଳୀ"
+                                    subtitle="Terms of Services"
+                                    color="#FF8C00"
+                                />
+                                <SettingItem
+                                    icon="shield-checkmark-outline"
+                                    title="ଗୋପନୀୟତା ନୀତି"
+                                    subtitle="Privacy Policy"
+                                    color="#4CAF50"
+                                />
+                            </View>
                         </View>
                     </View>
 
                     {/* Support Section */}
                     <View className="mb-[25px]">
                         <Text className="text-sm font-bold text-[#666] mb-2.5 ml-[5px] uppercase tracking-widest">ସହାୟତା (Support)</Text>
-                        <View className="bg-white rounded-[20px] overflow-hidden elevation-4 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-5">
-                            <SettingItem
-                                icon="call-outline"
-                                title="ଆମ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ"
-                                subtitle="Contact Us"
-                                color="#0288D1"
-                            />
-                            <SettingItem
-                                icon="mail-outline"
-                                title="ଇମେଲ୍ ସହାୟତା"
-                                subtitle="Email Support"
-                                color="#E91E63"
-                            />
+                        <View className="bg-white rounded-[20px] shadow-sm shadow-black/10 elevation-4">
+                            <View className="rounded-[20px] overflow-hidden">
+                                <SettingItem
+                                    icon="call-outline"
+                                    title="ଆମ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ"
+                                    subtitle="Contact Us"
+                                    color="#0288D1"
+                                />
+                                <SettingItem
+                                    icon="mail-outline"
+                                    title="ଇମେଲ୍ ସହାୟତା"
+                                    subtitle="Email Support"
+                                    color="#E91E63"
+                                />
+                            </View>
                         </View>
                     </View>
 
                     {/* App Info Section */}
                     <View className="mb-[25px]">
                         <Text className="text-sm font-bold text-[#666] mb-2.5 ml-[5px] uppercase tracking-widest">ଅନ୍ୟାନ୍ୟ (Others)</Text>
-                        <View className="bg-white rounded-[20px] overflow-hidden elevation-4 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-5">
-                            <SettingItem
-                                icon="star-outline"
-                                title="ଆପ୍‌କୁ ରେଟିଂ ଦିଅନ୍ତୁ"
-                                subtitle="Rate our App"
-                                color="#FBC02D"
-                            />
-                            <SettingItem
-                                icon="share-social-outline"
-                                title="ସାଙ୍ଗମାନଙ୍କ ସହିତ ସେୟାର କରନ୍ତୁ"
-                                subtitle="Share with Friends"
-                                color="#673AB7"
-                            />
+                        <View className="bg-white rounded-[20px] shadow-sm shadow-black/10 elevation-4">
+                            <View className="rounded-[20px] overflow-hidden">
+                                <SettingItem
+                                    icon="star-outline"
+                                    title="ଆପ୍‌କୁ ରେଟିଂ ଦିଅନ୍ତୁ"
+                                    subtitle="Rate our App"
+                                    color="#FBC02D"
+                                />
+                                <SettingItem
+                                    icon="share-social-outline"
+                                    title="ସାଙ୍ଗମାନଙ୍କ ସହିତ ସେୟାର କରନ୍ତୁ"
+                                    subtitle="Share with Friends"
+                                    color="#673AB7"
+                                />
+                            </View>
                         </View>
                     </View>
 

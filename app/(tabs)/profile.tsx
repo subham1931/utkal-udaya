@@ -53,15 +53,17 @@ export default function ProfileScreen() {
 
                 <View className="px-5 pt-5">
                     {/* Impact Card */}
-                    <View className="flex-row bg-white rounded-[25px] p-5 mb-[25px] elevation-5 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-10 justify-around items-center">
-                        <View className="items-center">
-                            <Text className="text-xl font-bold text-[#1A1A1A]">୧୨.୫ କେଜି</Text>
-                            <Text className="text-[10px] color-[#666] mt-1 font-semibold">CO2 ବଞ୍ଚାଗଲା</Text>
-                        </View>
-                        <View className="w-[1px] h-[30px] bg-[#EEE]" />
-                        <View className="items-center">
-                            <Text className="text-xl font-bold text-[#1A1A1A]">୪</Text>
-                            <Text className="text-[10px] color-[#666] mt-1 font-semibold">ପଦକ ଜିତିଛନ୍ତି</Text>
+                    <View className="bg-white rounded-[25px] mb-[25px] shadow-lg shadow-black/10 elevation-5">
+                        <View className="flex-row p-5 justify-around items-center rounded-[25px] overflow-hidden">
+                            <View className="items-center">
+                                <Text className="text-xl font-bold text-[#1A1A1A]">୧୨.୫ କେଜି</Text>
+                                <Text className="text-[10px] color-[#666] mt-1 font-semibold">CO2 ବଞ୍ଚାଗଲା</Text>
+                            </View>
+                            <View className="w-[1px] h-[30px] bg-[#EEE]" />
+                            <View className="items-center">
+                                <Text className="text-xl font-bold text-[#1A1A1A]">୪</Text>
+                                <Text className="text-[10px] color-[#666] mt-1 font-semibold">ପଦକ ଜିତିଛନ୍ତି</Text>
+                            </View>
                         </View>
                     </View>
 
@@ -88,19 +90,23 @@ export default function ProfileScreen() {
                     {/* Preferences Section */}
                     <View className="mb-[25px]">
                         <Text className="text-base font-bold text-[#333] mb-3 ml-[5px]">ଆଭିମୁଖ୍ୟ ଓ ନୀତି (Preferences)</Text>
-                        <View className="bg-white rounded-[25px] overflow-hidden elevation-4 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-5">
-                            <SettingItem icon="notifications-outline" title="ବାର୍ତ୍ତା (Notifications)" type="switch" value={notifications} color="#FF4500" />
-                            <SettingItem icon="moon-outline" title="ଡାର୍କ ମୋଡ୍ (Dark Mode)" type="switch" value={darkMode} color="#5E35B1" />
-                            <SettingItem icon="language-outline" title="ଭାଷା (Language)" color="#00897B" />
+                        <View className="bg-white rounded-[25px] shadow-sm shadow-black/10 elevation-4">
+                            <View className="rounded-[25px] overflow-hidden">
+                                <SettingItem icon="notifications-outline" title="ବାର୍ତ୍ତା (Notifications)" type="switch" value={notifications} color="#FF4500" />
+                                <SettingItem icon="moon-outline" title="ଡାର୍କ ମୋଡ୍ (Dark Mode)" type="switch" value={darkMode} color="#5E35B1" />
+                                <SettingItem icon="language-outline" title="ଭାଷା (Language)" color="#00897B" />
+                            </View>
                         </View>
                     </View>
 
-                    <TouchableOpacity className="mt-2.5 rounded-[20px] overflow-hidden elevation-2 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-3" activeOpacity={0.8}>
-                        <View className="flex-row items-center justify-center py-4 bg-white">
-                            <Ionicons name="log-out-outline" size={22} color="#FF3B30" />
-                            <Text className="text-[#FF3B30] font-bold text-base ml-2.5">ଲଗ୍ ଆଉଟ୍</Text>
-                        </View>
-                    </TouchableOpacity>
+                    <View className="mt-2.5 rounded-[20px] shadow-sm shadow-black/10 elevation-2">
+                        <TouchableOpacity className="rounded-[20px] overflow-hidden" activeOpacity={0.8}>
+                            <View className="flex-row items-center justify-center py-4 bg-white">
+                                <Ionicons name="log-out-outline" size={22} color="#FF3B30" />
+                                <Text className="text-[#FF3B30] font-bold text-base ml-2.5">ଲଗ୍ ଆଉଟ୍</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
 
                     <Text className="text-center text-[#AAA] text-[12px] mt-[30px] mb-10">ସଂସ୍କରଣ (Version) 1.0.0</Text>
                     <View className="h-[100px]" />
