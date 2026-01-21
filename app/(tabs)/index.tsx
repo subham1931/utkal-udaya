@@ -7,6 +7,7 @@ import { useEffect, useState, useRef } from 'react';
 import * as Location from 'expo-location';
 
 import { useLanguage } from '../../context/LanguageContext';
+import BahniSahayikaModal from '../../components/BahniSahayikaModal';
 
 const { width } = Dimensions.get('window');
 
@@ -14,6 +15,7 @@ export default function HomeScreen() {
   const { t } = useLanguage();
   const [weather, setWeather] = useState({ temp: '--', city: t.common.loading, icon: '' });
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isSahayikaVisible, setIsSahayikaVisible] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
   const CAROUSEL_DATA = [
@@ -269,6 +271,26 @@ export default function HomeScreen() {
 
         <View className="h-[100px]" />
       </ScrollView>
+
+      {/* Floating Bahni Sahayika Button */}
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => setIsSahayikaVisible(true)}
+        className="absolute bottom-32 right-6 w-16 h-16 rounded-full shadow-2xl elevation-10 overflow-hidden"
+      >
+        <LinearGradient
+          colors={['#FF4500', '#FF8C00']}
+          className="flex-1 justify-center items-center"
+        >
+          <Ionicons name="sparkles" size={30} color="#FFF" />
+          <View className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white" />
+        </LinearGradient>
+      </TouchableOpacity>
+
+      <BahniSahayikaModal
+        isVisible={isSahayikaVisible}
+        onClose={() => setIsSahayikaVisible(false)}
+      />
     </SafeAreaView>
   );
 }
