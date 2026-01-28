@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Modal, Animated, Easing, Dimensions } from 'react-native';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import * as Speech from 'expo-speech';
-import * as Haptics from 'expo-haptics';
 import { Audio } from 'expo-av';
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Speech from 'expo-speech';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Dimensions, Modal, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { Easing as ReanimatedEasing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { useLanguage } from '../context/LanguageContext';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 interface Props {
     isVisible: boolean;
@@ -20,13 +21,11 @@ export default function BahniSahayikaModal({ isVisible, onClose }: Props) {
     const [isListening, setIsListening] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [statusText, setStatusText] = useState(t.sahayika.tapToSpeak);
-    const pulseAnim = useRef(new Animated.Value(1)).current;
 
-    useEffect(() => {
-        setupAudio();
-    }, []);
+    // Modern Reanimated pulse
+    const pulse = useSharedValue(1);
 
-    const setupAudio = async () => {
+    const setupAudio = useCallback(async () => {
         try {
             await Audio.setAudioModeAsync({
                 allowsRecordingIOS: false,
@@ -37,41 +36,9 @@ export default function BahniSahayikaModal({ isVisible, onClose }: Props) {
         } catch (e) {
             console.log('Audio mode error:', e);
         }
-    };
+    }, []);
 
-    useEffect(() => {
-        if (isVisible) {
-            // Small delay to let the modal open smoothly before speaking
-            setTimeout(() => {
-                speakMessage(t.sahayika.greeting);
-            }, 500);
-            startPulse();
-        } else {
-            Speech.stop();
-            setIsSpeaking(false);
-        }
-    }, [isVisible]);
-
-    const startPulse = () => {
-        Animated.loop(
-            Animated.sequence([
-                Animated.timing(pulseAnim, {
-                    toValue: 1.2,
-                    duration: 1500,
-                    easing: Easing.inOut(Easing.ease),
-                    useNativeDriver: true,
-                }),
-                Animated.timing(pulseAnim, {
-                    toValue: 1,
-                    duration: 1500,
-                    easing: Easing.inOut(Easing.ease),
-                    useNativeDriver: true,
-                }),
-            ])
-        ).start();
-    };
-
-    const speakMessage = async (text: string) => {
+    const speakMessage = useCallback(async (text: string) => {
         const isSpeechSupported = await Speech.isSpeakingAsync();
         if (isSpeechSupported) {
             await Speech.stop();
@@ -92,7 +59,57 @@ export default function BahniSahayikaModal({ isVisible, onClose }: Props) {
         };
 
         Speech.speak(text, speechOptions);
-    };
+    }, [language]);
+
+    useEffect(() => {
+        setupAudio();
+    }, [setupAudio]);
+
+    useEffect(() => {
+        if (isVisible) {
+            // Start pulse
+            pulse.value = withRepeat(
+                withTiming(1.2, {
+                    duration: 1500,
+                    easing: ReanimatedEasing.inOut(ReanimatedEasing.ease),
+                }),
+                -1,
+                true
+            );
+
+            // Small delay to let the modal open smoothly before speaking
+            setTimeout(() => {
+                speakMessage(t.sahayika.greeting);
+            }, 500);
+        } else {
+            Speech.stop();
+            setIsSpeaking(false);
+            pulse.value = 1; // Reset pulse
+        }
+    }, [isVisible, pulse, speakMessage, t.sahayika.greeting]);
+
+    const innerPulseStyle = useAnimatedStyle(() => ({
+        position: 'absolute',
+        width: 160,
+        height: 160,
+        borderRadius: 80,
+        borderWidth: 2,
+        borderColor: 'rgba(255, 69, 0, 0.5)',
+        transform: [{ scale: pulse.value }],
+        opacity: isSpeaking || isListening ? 1 : 0.3
+    }));
+
+    const outerPulseStyle = useAnimatedStyle(() => ({
+        position: 'absolute',
+        width: 192,
+        height: 192,
+        borderRadius: 96,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 69, 0, 0.3)',
+        transform: [{ scale: pulse.value + 0.2 }],
+        opacity: isSpeaking || isListening ? 0.5 : 0.1
+    }));
+
 
     const handleMicPress = () => {
         if (isSpeaking) {
@@ -146,20 +163,8 @@ export default function BahniSahayikaModal({ isVisible, onClose }: Props) {
 
                     {/* Visualization */}
                     <View className="relative justify-center items-center h-[200px] mb-8">
-                        <Animated.View
-                            style={{
-                                transform: [{ scale: pulseAnim }],
-                                opacity: isSpeaking || isListening ? 1 : 0.3
-                            }}
-                            className="absolute w-40 h-40 rounded-full border-2 border-[#FF4500]/50"
-                        />
-                        <Animated.View
-                            style={{
-                                transform: [{ scale: Animated.add(pulseAnim, 0.2) }],
-                                opacity: isSpeaking || isListening ? 0.5 : 0.1
-                            }}
-                            className="absolute w-48 h-48 rounded-full border border-[#FF4500]/30"
-                        />
+                        <Animated.View style={innerPulseStyle} />
+                        <Animated.View style={outerPulseStyle} />
 
                         <TouchableOpacity
                             onPress={handleMicPress}

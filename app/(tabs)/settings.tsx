@@ -1,7 +1,8 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as WebBrowser from 'expo-web-browser';
+import { Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function SettingsScreen() {
@@ -75,11 +76,13 @@ export default function SettingsScreen() {
                                     icon="document-text-outline"
                                     title={t.settings.terms}
                                     color="#FF8C00"
+                                    onPress={() => WebBrowser.openBrowserAsync('https://meensou.com/termsofservice/')}
                                 />
                                 <SettingItem
                                     icon="shield-checkmark-outline"
                                     title={t.settings.privacy}
                                     color="#4CAF50"
+                                    onPress={() => WebBrowser.openBrowserAsync('https://meensou.com/privacypolicy/')}
                                 />
                             </View>
                         </View>
@@ -94,11 +97,13 @@ export default function SettingsScreen() {
                                     icon="call-outline"
                                     title={t.settings.contact}
                                     color="#0288D1"
+                                    onPress={() => WebBrowser.openBrowserAsync('https://www.meensou.com/connect')}
                                 />
                                 <SettingItem
                                     icon="mail-outline"
                                     title={t.settings.email}
                                     color="#E91E63"
+                                    onPress={() => Linking.openURL('mailto:info@meensou.com')}
                                 />
                             </View>
                         </View>

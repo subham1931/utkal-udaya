@@ -1,9 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Dimensions, FlatList, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, FlatList, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { Easing as ReanimatedEasing, interpolate, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import BahniSahayikaModal from '../../components/BahniSahayikaModal';
@@ -11,33 +14,128 @@ import { useLanguage } from '../../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
+const CATEGORIES_DATA = [
+  { id: '1345', title: 'କୃଷି (Agri)' },
+  { id: '1062', title: 'ଉଦ୍ୟାନ (Horti)' },
+  { id: '1063', title: 'ପଶୁପାଳନ (Fish)' },
+  { id: '1061', title: 'ସ୍ୱାସ୍ଥ୍ୟ (Health)' },
+  { id: '1064', title: 'ସଫଳତା (Success)' },
+  { id: '48591', title: 'ଯୋଜନା (Scheme)' },
+];
+
+const CAROUSEL_CACHE_KEY = 'utkal_udaya_carousel_cache';
+
 export default function HomeScreen() {
   const { t } = useLanguage();
-  const [weather, setWeather] = useState({ temp: '--', city: t.common.loading, icon: '' });
+  const [weather, setWeather] = useState({ temp: '--', city: t.common.loading, icon: '', code: '01d', lat: 21.4937, lon: 83.9812 });
   const [activeIndex, setActiveIndex] = useState(0);
   const [isSahayikaVisible, setIsSahayikaVisible] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  const [carouselNews, setCarouselNews] = useState<any[]>([]);
+  const [carouselLoading, setCarouselLoading] = useState(true);
+  const router = useRouter();
 
-  const CAROUSEL_DATA = [
-    {
-      id: '1',
-      title: t.home.carousel[0].title,
-      subtitle: t.home.carousel[0].subtitle,
-      image: { uri: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1000' },
-    },
-    {
-      id: '2',
-      title: t.home.carousel[1].title,
-      subtitle: t.home.carousel[1].subtitle,
-      image: { uri: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1000' },
-    },
-    {
-      id: '3',
-      title: t.home.carousel[2].title,
-      subtitle: t.home.carousel[2].subtitle,
-      image: { uri: 'https://images.unsplash.com/photo-1542601906970-3c10f3c50974?auto=format&fit=crop&q=80&w=1000' },
-    },
-  ];
+  // Pulse animation using modern Reanimated
+  const pulse = useSharedValue(1);
+
+  useEffect(() => {
+    pulse.value = withRepeat(
+      withTiming(1.5, {
+        duration: 800,
+        easing: ReanimatedEasing.out(ReanimatedEasing.ease),
+      }),
+      -1, // infinite
+      true // reverse
+    );
+  }, [pulse]);
+
+  const pulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulse.value }],
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#7FFF00',
+    shadowColor: '#7FFF00',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    marginLeft: 8,
+  }));
+
+  const indicatorPulseStyle = useAnimatedStyle(() => ({
+    position: 'absolute',
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    borderWidth: 1,
+    borderColor: '#FF4500',
+    transform: [{ scale: pulse.value }],
+    opacity: interpolate(pulse.value, [1, 1.5], [0.6, 0]),
+  }));
+
+  const getWeatherGradients = () => {
+    const code = weather.code || '01d';
+    // Mapping: https://openweathermap.org/img/wn/01d@2x.png
+    if (code.includes('01') || code.includes('02')) {
+      // Sunny / Few Clouds
+      return code.endsWith('n') ? ['#1A237E', '#0D47A1'] : ['#FF8C00', '#FF4500'];
+    }
+    if (code.includes('03') || code.includes('04')) {
+      // Cloudy
+      return ['#455A64', '#263238'];
+    }
+    if (code.includes('09') || code.includes('10') || code.includes('11')) {
+      // Rain / Storm
+      return ['#01579B', '#0277BD'];
+    }
+    if (code.includes('13') || code.includes('50')) {
+      // Snow / Mist
+      return ['#78909C', '#546E7A'];
+    }
+    return ['#FF8C00', '#FF4500']; // Default Orange
+  };
+
+  const fetchCarouselNews = useCallback(async () => {
+    try {
+      const newsPromises = CATEGORIES_DATA.map(async (cat) => {
+        try {
+          const response = await fetch(`https://meensou.com/myclimate/app/beneficiary/learn/getcategory_json.php?cat=${cat.id}`);
+          const data = await response.json();
+          const list = data.news || data['new   ws'] || data.new_ws || [];
+          if (list.length > 0) {
+            return { ...list[0], categoryName: cat.title };
+          }
+          return null;
+        } catch {
+          return null;
+        }
+      });
+
+      const results = await Promise.all(newsPromises);
+      const filtered = results.filter(n => n !== null).slice(0, 6);
+
+      if (filtered.length > 0) {
+        setCarouselNews(filtered);
+        await AsyncStorage.setItem(CAROUSEL_CACHE_KEY, JSON.stringify(filtered));
+      }
+    } catch (error) {
+      console.error('Error fetching carousel news:', error);
+    } finally {
+      setCarouselLoading(false);
+    }
+  }, []);
+
+  const loadCachedCarousel = useCallback(async () => {
+    try {
+      const cachedData = await AsyncStorage.getItem(CAROUSEL_CACHE_KEY);
+      if (cachedData) {
+        setCarouselNews(JSON.parse(cachedData));
+        setCarouselLoading(false);
+      }
+    } catch (error) {
+      console.error('Error loading cached carousel:', error);
+    }
+  }, []);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -106,82 +204,98 @@ export default function HomeScreen() {
         const { latitude, longitude } = location.coords;
         console.log(`Weather trigger - ${isCached ? 'Cached' : 'Fresh'} Location:`, { latitude, longitude });
 
-        const formData = new FormData();
-        formData.append('latitude', latitude.toString());
-        formData.append('longitude', longitude.toString());
-
-        const response = await fetch('https://meensou.com/myclimate/app/beneficiary/home/get_weather.php', {
-          method: 'POST',
-          body: formData,
-        });
-
+        const apiKey = "b035fffc7179d3075edb423469937601";
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`);
         const data = await response.json();
+
         console.log('Weather API Response:', data);
 
-        if (Array.isArray(data) && data.length >= 3) {
-          const [iconId, locationName, temperature] = data;
+        if (data.weather && data.main) {
           setWeather({
-            temp: `${temperature}°C`,
-            city: locationName,
-            icon: `https://openweathermap.org/img/wn/${iconId}@2x.png`
+            temp: `${Math.round(data.main.temp)}°C`,
+            city: data.name,
+            icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+            code: data.weather[0].icon,
+            lat: latitude,
+            lon: longitude
           });
         }
       }
     } catch (error) {
       console.warn('Weather fetch error:', error);
-      setWeather({ temp: '--°C', city: 'Unavailable', icon: '' });
+      setWeather(prev => ({ ...prev, temp: '--°C', city: 'Unavailable', icon: '', code: '01d' }));
     }
   }, []);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchWeather();
+    await Promise.all([fetchWeather(), fetchCarouselNews()]);
     setRefreshing(false);
-  }, [fetchWeather]);
+  }, [fetchWeather, fetchCarouselNews]);
 
   useEffect(() => {
+    loadCachedCarousel();
     fetchWeather();
-  }, [fetchWeather]);
+    fetchCarouselNews();
+  }, [fetchWeather, fetchCarouselNews, loadCachedCarousel]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const nextIndex = (activeIndex + 1) % CAROUSEL_DATA.length;
-      if (flatListRef.current) {
+      const nextIndex = (activeIndex + 1) % (carouselNews.length || 1);
+      if (flatListRef.current && carouselNews.length > 0) {
         flatListRef.current.scrollToIndex({ index: nextIndex, animated: true });
       }
     }, 4000);
     return () => clearInterval(interval);
-  }, [activeIndex, CAROUSEL_DATA.length]);
+  }, [activeIndex, carouselNews.length]);
 
-  const renderCarouselItem = ({ item }: { item: typeof CAROUSEL_DATA[0] }) => (
-    <View className="px-2" style={{ width: width - 40, height: 240 }}>
-      {/* Shadow Container */}
-      <View className="flex-1 rounded-[30px] bg-black shadow-lg shadow-black/30 elevation-8">
-        {/* Content Container (Clipped) */}
-        <View className="flex-1 rounded-[30px] overflow-hidden">
+  const renderCarouselItem = ({ item }: { item: any }) => (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      className="px-2"
+      style={{ width: width - 40, height: 260 }}
+      onPress={() => {
+        router.push({
+          pathname: '/learn/story/[storyId]',
+          params: {
+            storyId: item.id,
+            title: item.title,
+            image: item.coverImage,
+            url: item.url
+          }
+        });
+      }}
+    >
+      <View className="flex-1 rounded-[40px] bg-black shadow-xl shadow-black/40 elevation-10">
+        <View className="flex-1 rounded-[40px] overflow-hidden">
           <Image
-            source={item.image}
-            style={{ width: '100%', height: '100%', opacity: 0.85 }}
+            source={{ uri: item.coverImage }}
+            style={{ width: '100%', height: '100%' }}
             contentFit="cover"
-            placeholder={{ blurhash: 'L6PZfSi_.AyE_3t7t7R**0o#DgR4' }}
-            transition={200}
+            transition={300}
           />
           <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.8)']}
-            className="absolute inset-0 justify-end p-5"
+            colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0.9)']}
+            className="absolute inset-0 justify-end p-7"
           >
-            <View className="items-start">
-              <View className="flex-row items-center bg-black/50 px-2.5 py-1 rounded-full mb-2.5 border border-white/20">
-                <Ionicons name="leaf" size={12} color="#7FFF00" />
-                <Text className="text-[#7FFF00] text-[10px] font-bold ml-1.5 tracking-widest">{t.home.cleanEnergy}</Text>
+            <View>
+              <View className="flex-row items-center bg-black/40 px-3 py-1.5 rounded-full mb-3 border border-white/20">
+                <Ionicons name="leaf" size={14} color="#7FFF00" />
+                <Text className="text-[#7FFF00] text-[10px] font-black ml-2 uppercase tracking-widest">
+                  {item.categoryName}
+                </Text>
               </View>
-              <Text className="text-2xl text-white font-bold leading-[30px]">{item.title}</Text>
-              <Text className="text-[11px] text-white/70 mt-1.5 font-medium tracking-[0.5px]">{item.subtitle}</Text>
+              <Text className="text-white text-[26px] font-black leading-8 mb-1" numberOfLines={2}>
+                {item.title}
+              </Text>
+              <Text className="text-white/60 text-[12px] font-medium tracking-wide">
+                Utkal Udaya Initiative
+              </Text>
             </View>
           </LinearGradient>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -192,9 +306,9 @@ export default function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* Hero Section */}
+        {/* Dynamic Weather Header */}
         <LinearGradient
-          colors={['#FF8C00', '#FF4500']}
+          colors={getWeatherGradients() as [string, string, ...string[]]}
           className="pt-5 px-5 pb-[60px] rounded-b-[40px]"
         >
           <View className="flex-row justify-between items-center mb-5">
@@ -211,9 +325,17 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
           </View>
-          <View className="flex-row items-center bg-black/15 self-start px-3 py-1 rounded-full">
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => router.push({
+              pathname: '/weather-detail',
+              params: { lat: weather.lat, lon: weather.lon }
+            })}
+            className="flex-row items-center bg-black/15 self-start px-3 py-1 rounded-full"
+          >
             <Ionicons name="location-sharp" size={14} color="#FFF" />
             <Text className="text-white text-[12px] font-semibold ml-1.5">{weather.city} • {weather.temp}</Text>
+            <Animated.View style={pulseStyle} />
             {weather.icon && (
               <Image
                 source={{ uri: weather.icon }}
@@ -221,42 +343,71 @@ export default function HomeScreen() {
                 contentFit="contain"
               />
             )}
-          </View>
+            <Ionicons name="chevron-forward" size={12} color="#FFF" style={{ marginLeft: 4, opacity: 0.8 }} />
+          </TouchableOpacity>
         </LinearGradient>
 
-        {/* Carousel */}
-        <View className="relative h-[280px] -mt-10">
-          <FlatList
-            ref={flatListRef}
-            data={CAROUSEL_DATA}
-            renderItem={renderCarouselItem}
-            horizontal
-            pagingEnabled
-            snapToInterval={width - 40}
-            decelerationRate="fast"
-            showsHorizontalScrollIndicator={false}
-            onScroll={(e) => {
-              const x = e.nativeEvent.contentOffset.x;
-              setActiveIndex(Math.round(x / (width - 40)));
-            }}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingHorizontal: 20 }}
-          />
-          <View className="flex-row justify-center items-center mt-3 mb-2">
-            {CAROUSEL_DATA.map((_, i) => (
-              <View
-                key={i}
-                className={`h-2 rounded-full mx-1 ${activeIndex === i ? 'w-6 bg-[#FF4500]' : 'w-2 bg-gray-400'}`}
+        <View className="relative h-[300px] -mt-10">
+          {carouselLoading ? (
+            <View className="flex-1 justify-center items-center">
+              <ActivityIndicator size="large" color="#FF4500" />
+            </View>
+          ) : (
+            <>
+              <FlatList
+                ref={flatListRef}
+                data={carouselNews}
+                renderItem={renderCarouselItem}
+                horizontal
+                pagingEnabled
+                snapToInterval={width - 40}
+                decelerationRate="fast"
+                showsHorizontalScrollIndicator={false}
+                onScroll={(e) => {
+                  const x = e.nativeEvent.contentOffset.x;
+                  setActiveIndex(Math.round(x / (width - 40)));
+                }}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{ paddingHorizontal: 20 }}
               />
-            ))}
-          </View>
+              <View className="flex-row justify-center items-center mt-4">
+                {carouselNews.map((_, i) => {
+                  const isActive = activeIndex === i;
+                  return (
+                    <View key={i} className="items-center justify-center mx-1.5">
+                      {isActive && (
+                        <Animated.View style={indicatorPulseStyle} />
+                      )}
+                      <View
+                        className={`rounded-full transition-all duration-300 ${isActive ? 'w-5 h-2 bg-[#FF4500]' : 'w-2 h-2 bg-gray-300'}`}
+                        style={{
+                          shadowColor: isActive ? '#FF4500' : 'transparent',
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: isActive ? 0.4 : 0,
+                          shadowRadius: 3,
+                        }}
+                      />
+                    </View>
+                  );
+                })}
+              </View>
+            </>
+          )}
         </View>
 
-        {/* Ticker */}
-        <View className="bg-[#FF4500] py-2 px-[15px]">
-          <Text className="text-white text-sm font-bold text-center">
-            {t.home.title} {t.home.carousel[0].title.replace('\n', ' ')} ସମ୍ବଲପୁର, ଓଡ଼ିଶା । {t.home.subtitle} ।
-          </Text>
+        {/* Modern Ticker / Latest Updates */}
+        <View className="mx-4 mt-2 bg-white rounded-2xl border border-gray-100 shadow-sm elevation-2 flex-row items-center py-2 px-3">
+          <View className="bg-[#FF4500] px-3 py-1 rounded-full flex-row items-center">
+            <Ionicons name="flash" size={12} color="#FFF" />
+            <Text className="text-white text-[10px] font-black ml-1 uppercase tracking-tighter">Latest</Text>
+          </View>
+          <View className="w-[1px] h-4 bg-gray-200 mx-3" />
+          <View className="flex-1">
+            <Text className="text-gray-800 text-[12px] font-bold" numberOfLines={1}>
+              {t.home.carousel[0].title.replace('\n', ' ')} • ସମ୍ବଲପୁର, ଓଡ଼ିଶା
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward-circle" size={16} color="#FF4500" className="ml-2" />
         </View>
 
         {/* Bahni Spotlight */}
@@ -325,48 +476,6 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Community Impact */}
-        <View className="p-5 mt-2.5">
-          <Text className="text-[18px] font-bold text-[#333] mb-[15px]">{t.common.communityImpact} (Community Impact)</Text>
-          <View className="bg-white rounded-[25px] shadow-lg shadow-black/10 elevation-5">
-            <View className="p-5 rounded-[25px] overflow-hidden">
-              <View className="flex-row justify-between items-center mb-5">
-                <View>
-                  <Text className="text-base font-bold text-[#333]">{t.common.odishaSuccess}</Text>
-                  <Text className="text-[12px] text-[#777] mt-0.5">{t.home.impactDesc}</Text>
-                </View>
-                <Ionicons name="globe-outline" size={32} color="#008000" />
-              </View>
-
-              <View className="flex-row justify-around items-center bg-[#F8F9FA] rounded-[15px] py-[15px] mb-5">
-                <View className="items-center">
-                  <Text className="text-xl font-bold text-[#1A1A1A]">1,250</Text>
-                  <Text className="text-[10px] text-[#666] mt-[5px] font-semibold">{t.common.tonnes} {t.cookstove.co2Saved}</Text>
-                </View>
-                <View className="w-[1px] h-[30px] bg-[#DDD]" />
-                <View className="items-center">
-                  <Text className="text-xl font-bold text-[#1A1A1A]">15,200</Text>
-                  <Text className="text-[10px] text-[#666] mt-[5px] font-semibold">{t.common.activeFamilies}</Text>
-                </View>
-              </View>
-
-              <View className="mt-1">
-                <View className="flex-row justify-between mb-2">
-                  <Text className="text-[12px] font-semibold text-[#444]">{t.home.monthlyGoal}</Text>
-                  <Text className="text-[12px] font-bold text-[#2E7D32]">2,000 {t.common.tonnes}</Text>
-                </View>
-                <View className="h-2.5 bg-[#E8F5E9] rounded-full overflow-hidden">
-                  <LinearGradient
-                    colors={['#4CAF50', '#81C784']}
-                    className="h-full rounded-full w-[80%]"
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
 
         <View className="h-[100px]" />
       </ScrollView>
