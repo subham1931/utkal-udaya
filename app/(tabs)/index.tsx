@@ -1,13 +1,13 @@
-import { Image } from 'expo-image';
-import { View, Text, ScrollView, TouchableOpacity, Dimensions, FlatList } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useEffect, useState, useRef } from 'react';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Alert, Dimensions, FlatList, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useLanguage } from '../../context/LanguageContext';
 import BahniSahayikaModal from '../../components/BahniSahayikaModal';
+import { useLanguage } from '../../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -39,24 +39,111 @@ export default function HomeScreen() {
     },
   ];
 
-  useEffect(() => {
-    (async () => {
-      try {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setWeather(prev => ({ ...prev, city: 'Access Denied' }));
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchWeather = useCallback(async () => {
+    try {
+      // First check existing permissions
+      let { status } = await Location.getForegroundPermissionsAsync();
+
+      // If not granted, request them
+      if (status !== 'granted') {
+        console.log('Location permission not granted. Requesting...');
+        const { status: newStatus } = await Location.requestForegroundPermissionsAsync();
+        status = newStatus;
+      }
+
+      if (status !== 'granted') {
+        console.log('Location permission denied after request.');
+        setWeather(prev => ({ ...prev, city: 'Permission Denied' }));
+        Alert.alert(
+          "Permission Required",
+          "This app needs location access to show accurate local weather. Please enable it in your device settings.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+
+      // Check if location services are enabled
+      const enabled = await Location.hasServicesEnabledAsync();
+      if (!enabled) {
+        console.log('Location services disabled. Attempting to prompt user...');
+        if (Platform.OS === 'android') {
+          try {
+            await Location.enableNetworkProviderAsync();
+            const reCheckEnabled = await Location.hasServicesEnabledAsync();
+            if (!reCheckEnabled) {
+              setWeather(prev => ({ ...prev, city: 'Location Disabled' }));
+              return;
+            }
+          } catch {
+            setWeather(prev => ({ ...prev, city: 'Location Disabled' }));
+            return;
+          }
+        } else {
+          setWeather(prev => ({ ...prev, city: 'Location Disabled' }));
+          Alert.alert(
+            "Location Services Disabled",
+            "Please enable location services to see the weather for your area.",
+            [{ text: "OK" }]
+          );
           return;
         }
-        setWeather({
-          temp: '25°C',
-          city: 'Sambalpur, Odisha',
-          icon: 'https://openweathermap.org/img/wn/01d@2x.png'
-        });
-      } catch {
-        setWeather({ temp: '25°C', city: 'Sambalpur (Static)', icon: '' });
       }
-    })();
 
+      // Fetch location and weather
+      let location = await Location.getLastKnownPositionAsync();
+      let isCached = true;
+
+      if (!location) {
+        isCached = false;
+        location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+      }
+
+      if (location) {
+        const { latitude, longitude } = location.coords;
+        console.log(`Weather trigger - ${isCached ? 'Cached' : 'Fresh'} Location:`, { latitude, longitude });
+
+        const formData = new FormData();
+        formData.append('latitude', latitude.toString());
+        formData.append('longitude', longitude.toString());
+
+        const response = await fetch('https://meensou.com/myclimate/app/beneficiary/home/get_weather.php', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+        console.log('Weather API Response:', data);
+
+        if (Array.isArray(data) && data.length >= 3) {
+          const [iconId, locationName, temperature] = data;
+          setWeather({
+            temp: `${temperature}°C`,
+            city: locationName,
+            icon: `https://openweathermap.org/img/wn/${iconId}@2x.png`
+          });
+        }
+      }
+    } catch (error) {
+      console.warn('Weather fetch error:', error);
+      setWeather({ temp: '--°C', city: 'Unavailable', icon: '' });
+    }
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchWeather();
+    setRefreshing(false);
+  }, [fetchWeather]);
+
+  useEffect(() => {
+    fetchWeather();
+  }, [fetchWeather]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       const nextIndex = (activeIndex + 1) % CAROUSEL_DATA.length;
       if (flatListRef.current) {
@@ -99,7 +186,12 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-[#F0F7FF]">
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {/* Hero Section */}
         <LinearGradient
           colors={['#FF8C00', '#FF4500']}
@@ -119,9 +211,16 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
           </View>
-          <View className="flex-row items-center bg-black/15 self-start px-3 py-1.5 rounded-full">
+          <View className="flex-row items-center bg-black/15 self-start px-3 py-1 rounded-full">
             <Ionicons name="location-sharp" size={14} color="#FFF" />
             <Text className="text-white text-[12px] font-semibold ml-1.5">{weather.city} • {weather.temp}</Text>
+            {weather.icon && (
+              <Image
+                source={{ uri: weather.icon }}
+                style={{ width: 24, height: 24, marginLeft: 4 }}
+                contentFit="contain"
+              />
+            )}
           </View>
         </LinearGradient>
 

@@ -1,9 +1,10 @@
-import { View, Text, ScrollView, TouchableOpacity, Dimensions, FlatList } from 'react-native';
-import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Dimensions, FlatList, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLanguage } from '../../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
@@ -11,7 +12,16 @@ const { width } = Dimensions.get('window');
 export default function LearnScreen() {
     const { t } = useLanguage();
     const [activeIndex, setActiveIndex] = useState(0);
+    const [refreshing, setRefreshing] = useState(false);
     const flatListRef = useRef<FlatList>(null);
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        // Simulate a reload delay
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
+    }, []);
 
     const LEARN_CAROUSEL = [
         {
@@ -26,52 +36,15 @@ export default function LearnScreen() {
         }
     ];
 
-    const NEWS_DATA = [
-        {
-            title: 'ଓଡ଼ିଶାରେ କୃଷି କ୍ଷେତ୍ରରେ ନୂତନ ବିପ୍ଳବ',
-            desc: 'New revolution in Odisha agriculture',
-            icon: 'newspaper-outline',
-            color: '#2E7D32',
-            image: { uri: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&q=80&w=400' },
-            readTime: `୨ ${t.learn.readTime}`,
-            category: 'କୃଷି (Agri)'
-        },
-        {
-            title: 'ସରକାରଙ୍କ ନୂତନ ବିହନ ଯୋଜନା',
-            desc: 'New Govt seed scheme',
-            icon: 'megaphone-outline',
-            color: '#FF8C00',
-            image: { uri: 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=400' },
-            readTime: `୫ ${t.learn.readTime}`,
-            category: 'ଯୋଜନା (Scheme)'
-        },
-        {
-            title: 'ପାଣିପାଗ ସୂଚନା: ବର୍ଷା ଆଶଙ୍କା',
-            desc: 'Weather Alert: Rain expected',
-            icon: 'cloud-outline',
-            color: '#0277BD',
-            image: { uri: 'https://images.unsplash.com/photo-1514632595861-4d9e80ba6528?auto=format&fit=crop&q=80&w=400' },
-            readTime: `୧ ${t.learn.readTime}`,
-            category: 'ପାଣିପାଗ (Weather)'
-        },
-        {
-            title: 'ଉନ୍ନତ ଚୁଲି ବ୍ୟବହାରର ସଫଳ କାହାଣୀ',
-            desc: 'Success story of clean stove',
-            icon: 'star-outline',
-            color: '#D81B60',
-            image: { uri: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=400' },
-            readTime: `୩ ${t.learn.readTime}`,
-            category: 'ସଫଳତା (Success)'
-        },
-        {
-            title: 'କୃଷି ଯନ୍ତ୍ରପାତି ଉପରେ ସବସିଡି',
-            desc: 'Subsidy on agri tools',
-            icon: 'construct-outline',
-            color: '#689F38',
-            image: { uri: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&q=80&w=400' },
-            readTime: `୪ ${t.learn.readTime}`,
-            category: 'ସୂଚନା (Info)'
-        }
+    const router = useRouter();
+
+    const CATEGORIES_DATA = [
+        { id: '1', apiId: '1345', title: 'କୃଷି ବିଶ୍ୱକୋଷ', icon: 'book-outline', image: 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=400', color: '#4CAF50' },
+        { id: '2', apiId: '1062', title: 'ଉଦ୍ୟାନ କୃଷି', icon: 'leaf-outline', image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=400', color: '#FF9800' },
+        { id: '3', apiId: '1063', title: 'ମତ୍ସ୍ୟ ଏବଂ ପଶୁପାଳନ', icon: 'paw-outline', image: 'https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&q=80&w=400', color: '#03A9F4' },
+        { id: '4', apiId: '1061', title: 'ସ୍ୱାସ୍ଥ୍ୟ ଏବଂ ଜୀବନଶୈଳୀ', icon: 'heart-outline', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=400', color: '#E91E63' },
+        { id: '5', apiId: '1064', title: 'ସଫଳ କାହାଣୀ', icon: 'ribbon-outline', image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=400', color: '#9C27B0' },
+        { id: '6', apiId: '48591', title: 'ସରକାରୀ ଯୋଜନା', icon: 'document-text-outline', image: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&q=80&w=400', color: '#FF5722' },
     ];
 
     useEffect(() => {
@@ -106,7 +79,12 @@ export default function LearnScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-[#F8F9FA]">
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+            >
                 {/* Hero Header */}
                 <LinearGradient colors={['#FF8C00', '#FF4500']} className="p-6 pb-[60px] rounded-b-[30px]">
                     <Text className="text-[32px] font-bold text-white tracking-[0.5px]">{t.learn.title}</Text>
@@ -141,59 +119,49 @@ export default function LearnScreen() {
                     </View>
                 </View>
 
-                {/* News List */}
-                <View className="p-5 mt-2.5">
-                    <TouchableOpacity className="mb-[25px] rounded-[20px] overflow-hidden elevation-3" activeOpacity={0.9}>
-                        <LinearGradient colors={['#FFEBEE', '#FFCDD2']} className="flex-row items-center p-4">
-                            <View className="w-11 h-11 rounded-full bg-[#FF5252] justify-center items-center mr-[15px]">
-                                <Ionicons name="flash" size={24} color="#FFF" />
-                            </View>
-                            <View className="flex-1">
-                                <Text className="text-sm font-bold text-[#C62828] mb-0.5">{t.learn.breakingNews} (Breaking News)</Text>
-                                <Text className="text-[12px] text-[#555] leading-[18px]">{t.learn.demoNews}</Text>
-                            </View>
-                            <Ionicons name="chevron-forward" size={20} color="#C62828" />
-                        </LinearGradient>
-                    </TouchableOpacity>
+                {/* Explore Topics Grid */}
+                <View className="px-5 mt-4">
+                    <View className="mb-4">
+                        <Text className="text-[22px] font-bold text-[#333]">ବିଷୟବସ୍ତୁ (Topics)</Text>
+                        <Text className="text-[12px] text-gray-500 font-medium">Explore by category</Text>
+                    </View>
 
-                    <Text className="text-[22px] font-bold text-[#333] mb-5">{t.learn.mainNews}</Text>
-                    <View className="flex-row flex-wrap justify-between">
-                        {NEWS_DATA.map((news, index) => (
-                            <TouchableOpacity key={index} className="w-[48%] h-[220px] bg-white rounded-[24px] mb-4 elevation-10 shadow-black shadow-offset-[0px,6px] shadow-opacity-15 shadow-radius-10 overflow-hidden relative" activeOpacity={0.9}>
+                    <View>
+                        {CATEGORIES_DATA.map((category) => (
+                            <TouchableOpacity
+                                key={category.id}
+                                className="w-full h-[140px] mb-4 rounded-3xl overflow-hidden elevation-8 shadow-black shadow-offset-[0px,4px] shadow-opacity-25 shadow-radius-8 bg-white"
+                                activeOpacity={0.9}
+                                onPress={() => {
+                                    console.log('Category Clicked:', { title: category.title, id: category.apiId });
+                                    router.push({
+                                        pathname: '/learn/[id]',
+                                        params: { id: category.apiId, title: category.title }
+                                    });
+                                }}
+                            >
                                 <Image
-                                    source={news.image}
-                                    style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }}
+                                    source={{ uri: category.image }}
+                                    style={{ position: 'absolute', width: '100%', height: '100%' }}
                                     contentFit="cover"
-                                    placeholder={{ blurhash: 'L6PZfSi_.AyE_3t7t7R**0o#DgR4' }}
-                                    transition={200}
                                 />
                                 <LinearGradient
-                                    colors={['transparent', 'rgba(0,0,0,0.8)']}
-                                    className="absolute inset-0 p-[15px] justify-between"
+                                    colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
+                                    className="flex-1 p-4 justify-between"
                                 >
-                                    <View className="flex-row justify-between items-center">
-                                        <View style={{ backgroundColor: news.color }} className="w-7 h-7 rounded-[8px] justify-center items-center">
-                                            <Ionicons name={news.icon as any} size={14} color="#FFF" />
-                                        </View>
-                                        <View className="bg-white/20 px-2 py-1 rounded-[10px] border border-white/30">
-                                            <Text className="text-white text-[8px] font-bold uppercase tracking-[0.5px]">{news.category}</Text>
-                                        </View>
+                                    <View className="w-8 h-8 rounded-xl bg-white/20 items-center justify-center border border-white/30 backdrop-blur-md">
+                                        <Ionicons name={category.icon as any} size={18} color="#FFF" />
                                     </View>
-
-                                    <View className="mb-[5px]">
-                                        <Text className="text-[18px] font-bold text-white leading-[22px] mb-2 shadow-black shadow-offset-[0px,1px] shadow-radius-3">{news.title}</Text>
-                                        <View className="flex-row items-center bg-white/15 self-start px-2 py-1 rounded-[12px]">
-                                            <Ionicons name="time-outline" size={12} color="rgba(255,255,255,0.8)" />
-                                            <Text className="text-white text-[10px] font-semibold ml-1">{news.readTime}</Text>
-                                        </View>
-                                    </View>
+                                    <Text className="text-white text-[13px] font-bold leading-5">
+                                        {category.title}
+                                    </Text>
                                 </LinearGradient>
                             </TouchableOpacity>
                         ))}
                     </View>
                 </View>
 
-                <View className="h-[100px]" />
+                <View className="h-[120px]" />
             </ScrollView>
         </SafeAreaView>
     );
