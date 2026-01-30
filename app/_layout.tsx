@@ -12,7 +12,7 @@ import "../global.css";
 LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  initialRouteName: 'index',
 };
 
 export default function RootLayout() {
@@ -22,7 +22,11 @@ export default function RootLayout() {
     <LanguageProvider>
       <ProfileProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
+          <Stack initialRouteName="index">
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)/welcome" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)/sign-in" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)/sign-up" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="learn/[id]" options={{ presentation: 'card' }} />
             <Stack.Screen name="learn/story/[storyId]" options={{ presentation: 'card', title: 'News' }} />

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export interface UserProfile {
     id: string;
@@ -17,6 +17,7 @@ export interface UserProfile {
 type ProfileContextType = {
     profile: UserProfile;
     updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
+    logout: () => Promise<void>;
     isLoading: boolean;
 };
 
@@ -55,7 +56,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     const updateProfile = async (updates: Partial<UserProfile>) => {
         try {
             const updatedProfile = { ...profile, ...updates };
-            
+
             // Update initials if name changed
             if (updates.name) {
                 const nameParts = updates.name.trim().split(' ');
@@ -76,9 +77,19 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const logout = async () => {
+        try {
+            await AsyncStorage.removeItem('user-profile');
+            setProfile(defaultProfile);
+        } catch (error) {
+            console.error('Failed to logout', error);
+        }
+    };
+
     const value = {
         profile,
         updateProfile,
+        logout,
         isLoading,
     };
 

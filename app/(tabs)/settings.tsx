@@ -1,12 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLanguage } from '../../context/LanguageContext';
 
+import { useProfile } from '../../context/ProfileContext';
+
 export default function SettingsScreen() {
+    const router = useRouter();
     const { t, language, setLanguage } = useLanguage();
+    const { profile, logout } = useProfile();
 
     const SettingItem = ({ icon, title, subtitle, onPress, color = '#555', rightElement }: any) => (
         <TouchableOpacity
@@ -51,8 +56,8 @@ export default function SettingsScreen() {
                                 <Ionicons name="person" size={30} color="#FF6B00" />
                             </View>
                             <View className="flex-1">
-                                <Text className="text-xl font-bold text-[#333]">Guest User</Text>
-                                <Text className="text-[#888] text-sm">Village #8</Text>
+                                <Text className="text-xl font-bold text-[#333]">{profile.name}</Text>
+                                <Text className="text-[#888] text-sm">{profile.email || profile.phone || 'Village #8'}</Text>
                             </View>
                             <TouchableOpacity className="w-10 h-10 bg-[#F8F9FA] rounded-full justify-center items-center border border-[#EEE]">
                                 <Ionicons name="pencil" size={18} color="#666" />
@@ -148,7 +153,10 @@ export default function SettingsScreen() {
                         <TouchableOpacity
                             className="bg-[#FFEBEE] flex-row items-center justify-center p-4 rounded-[20px] elevation-2"
                             activeOpacity={0.7}
-                            onPress={() => console.log('Logout pressed')}
+                            onPress={async () => {
+                                await logout();
+                                router.replace('/(auth)/sign-in');
+                            }}
                         >
                             <Ionicons name="log-out-outline" size={22} color="#D32F2F" />
                             <Text className="text-[#D32F2F] font-bold text-[16px] ml-2">Log Out</Text>
