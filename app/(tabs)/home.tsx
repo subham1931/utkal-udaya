@@ -9,7 +9,6 @@ import { ActivityIndicator, Alert, Dimensions, FlatList, Platform, RefreshContro
 import Animated, { Easing as ReanimatedEasing, interpolate, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import BahniSahayikaModal from '../../components/BahniSahayikaModal';
 import { useLanguage } from '../../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
@@ -315,7 +314,7 @@ export default function HomeScreen() {
               <Text className="text-[28px] font-bold text-white tracking-[0.5px]">{t.home.title}</Text>
               <Text className="text-sm text-white/80 font-medium">{t.common.namaskar}</Text>
             </View>
-            <View className="flex-row">
+            {/* <View className="flex-row">
               <TouchableOpacity
                 className="w-10 h-10 rounded-full bg-white/20 justify-center items-center ml-2.5"
                 onPress={() => router.push('/notifications')}
@@ -325,7 +324,7 @@ export default function HomeScreen() {
               <TouchableOpacity className="w-10 h-10 rounded-full bg-white/20 justify-center items-center ml-2.5">
                 <Ionicons name="person-outline" size={20} color="#FFF" />
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
           <TouchableOpacity
             activeOpacity={0.7}
@@ -399,7 +398,8 @@ export default function HomeScreen() {
 
         {/* Modern Ticker / Latest Updates */}
         {/* Modern Ticker / Latest Updates */}
-        <TouchableOpacity
+        {/* Modern Ticker / Latest Updates */}
+        {/* <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => router.push('/notifications')}
           className="mx-4 mt-2 bg-white rounded-full shadow-lg shadow-orange-500/20 elevation-4 flex-row items-center py-2.5 px-3 border border-orange-50"
@@ -425,7 +425,7 @@ export default function HomeScreen() {
           < View className="bg-orange-50 w-7 h-7 rounded-full items-center justify-center ml-2">
             <Ionicons name="chevron-forward" size={16} color="#FF4500" />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Bahni Spotlight */}
         {/* Bahni Spotlight */}
@@ -502,7 +502,7 @@ export default function HomeScreen() {
       </ScrollView>
 
       {/* Floating Bahni Sahayika Button */}
-      <TouchableOpacity
+      {/* <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => setIsSahayikaVisible(true)}
         className="absolute bottom-32 right-6 w-16 h-16 rounded-full shadow-2xl elevation-10 overflow-hidden"
@@ -519,7 +519,7 @@ export default function HomeScreen() {
       <BahniSahayikaModal
         isVisible={isSahayikaVisible}
         onClose={() => setIsSahayikaVisible(false)}
-      />
+      /> */}
     </SafeAreaView>
   );
 }
