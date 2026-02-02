@@ -478,7 +478,11 @@ export default function HomeScreen() {
                 ))}
               </View>
 
-              <TouchableOpacity activeOpacity={0.8} className="w-full h-[55px] rounded-[15px] overflow-hidden">
+              <TouchableOpacity
+                activeOpacity={0.8}
+                className="w-full h-[55px] rounded-[15px] overflow-hidden"
+                onPress={() => router.push('/cookstove')}
+              >
                 <LinearGradient
                   colors={['#008000', '#006400']}
                   className="flex-1 flex-row items-center justify-center"

@@ -14,11 +14,16 @@ export default function StoryDetailScreen() {
     const storyUrl = `https://odia.krishijagran.com/api/story/${storyId}?key=3caa03b3-c20e-46ba-8064-abbf4ebfd9b6&related=0`;
 
     const handleShare = async () => {
+        const shareUrl = Array.isArray(url) ? url[0] : url;
+        const shareTitle = Array.isArray(title) ? title[0] : title;
+
+        if (!shareUrl) return;
+
         try {
             await Share.share({
-                message: `${title}\n\nRead more at: ${url}`,
-                url: url as string,
-                title: title as string,
+                message: `${shareTitle}\n\nRead more at: ${shareUrl}`,
+                url: shareUrl, // iOS
+                title: shareTitle, // Android dialog title
             });
         } catch (error) {
             console.error('Error sharing news:', error);
