@@ -247,11 +247,18 @@ export default function HomeScreen() {
     return () => clearInterval(interval);
   }, [activeIndex, carouselNews.length]);
 
+  const CAROUSEL_CARD_STYLE = {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 12,
+  };
+
   const renderCarouselItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       activeOpacity={0.9}
-      className="px-2"
-      style={{ width: width - 40, height: 260 }}
+      style={{ width: width - 40, height: 260, paddingHorizontal: 8 }}
       onPress={() => {
         router.push({
           pathname: '/learn/story/[storyId]',
@@ -264,8 +271,11 @@ export default function HomeScreen() {
         });
       }}
     >
-      <View className="flex-1 rounded-[40px] bg-black shadow-xl shadow-black/40 elevation-10">
-        <View className="flex-1 rounded-[40px] overflow-hidden">
+      <View
+        className="flex-1 rounded-[32px] bg-black overflow-hidden"
+        style={CAROUSEL_CARD_STYLE}
+      >
+        <View className="flex-1 rounded-[32px] overflow-hidden">
           <Image
             source={{ uri: item.coverImage }}
             style={{ width: '100%', height: '100%' }}
@@ -273,20 +283,45 @@ export default function HomeScreen() {
             transition={300}
           />
           <LinearGradient
-            colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0.9)']}
-            className="absolute inset-0 justify-end p-7"
+            colors={['rgba(0,0,0,0.05)', 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.92)']}
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'flex-end', padding: 20 }}
           >
             <View>
-              <View className="flex-row items-center bg-black/40 px-3 py-1.5 rounded-full mb-3 border border-white/20">
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(0,0,0,0.45)',
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 20,
+                  marginBottom: 12,
+                  alignSelf: 'flex-start',
+                  borderWidth: 1,
+                  borderColor: 'rgba(255,255,255,0.15)',
+                }}
+              >
                 <Ionicons name="leaf" size={14} color="#7FFF00" />
-                <Text className="text-[#7FFF00] text-[10px] font-black ml-2 uppercase tracking-widest">
+                <Text
+                  className="text-[#7FFF00] font-black uppercase tracking-widest"
+                  style={{ fontSize: 10, marginLeft: 6 }}
+                >
                   {item.categoryName}
                 </Text>
               </View>
-              <Text className="text-white text-[26px] font-black leading-8 mb-1" numberOfLines={2}>
+              <Text
+                className="text-white font-black"
+                style={{ fontSize: 22, lineHeight: 28, marginBottom: 4 }}
+                numberOfLines={2}
+                maxFontSizeMultiplier={1.2}
+              >
                 {item.title}
               </Text>
-              <Text className="text-white/60 text-[12px] font-medium tracking-wide">
+              <Text
+                className="text-white/70 font-medium"
+                style={{ fontSize: 12 }}
+                maxFontSizeMultiplier={1.2}
+              >
                 Utkal Udaya Initiative
               </Text>
             </View>
@@ -304,53 +339,84 @@ export default function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* Dynamic Weather Header */}
+        {/* Dynamic Weather Header - Compact */}
         <LinearGradient
           colors={getWeatherGradients() as [string, string, ...string[]]}
-          className="pt-5 px-5 pb-[60px] rounded-b-[40px]"
+          style={{
+            paddingTop: 14,
+            paddingHorizontal: 18,
+            paddingBottom: 42,
+            borderBottomLeftRadius: 28,
+            borderBottomRightRadius: 28,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.12,
+            shadowRadius: 10,
+            elevation: 10,
+          }}
         >
-          <View className="flex-row justify-between items-center mb-5">
-            <View>
-              <Text className="text-[28px] font-bold text-white tracking-[0.5px]">{t.home.title}</Text>
-              <Text className="text-sm text-white/80 font-medium">{t.common.namaskar}</Text>
-            </View>
-            {/* <View className="flex-row">
-              <TouchableOpacity
-                className="w-10 h-10 rounded-full bg-white/20 justify-center items-center ml-2.5"
-                onPress={() => router.push('/notifications')}
-              >
-                <Ionicons name="notifications-outline" size={20} color="#FFF" />
-              </TouchableOpacity>
-              <TouchableOpacity className="w-10 h-10 rounded-full bg-white/20 justify-center items-center ml-2.5">
-                <Ionicons name="person-outline" size={20} color="#FFF" />
-              </TouchableOpacity>
-            </View> */}
+          {/* Title & Greeting */}
+          <View style={{ marginBottom: 12 }}>
+            <Text
+              className="text-white font-bold tracking-tight"
+              style={{ fontSize: 24, letterSpacing: -0.3 }}
+              maxFontSizeMultiplier={1.2}
+            >
+              {t.home.title}
+            </Text>
+            <Text
+              className="text-white/90 font-medium"
+              style={{ fontSize: 13, marginTop: 2 }}
+              maxFontSizeMultiplier={1.2}
+            >
+              {t.common.namaskar}
+            </Text>
           </View>
+
+          {/* Weather Card - Compact */}
           <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={0.8}
             onPress={() => router.push({
               pathname: '/weather-detail',
               params: { lat: weather.lat, lon: weather.lon }
             })}
-            className="flex-row items-center bg-black/15 self-start px-3 py-1 rounded-full"
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              alignSelf: 'flex-start',
+              backgroundColor: 'rgba(0,0,0,0.2)',
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: 20,
+              borderWidth: 1,
+              borderColor: 'rgba(255,255,255,0.2)',
+              minHeight: 38,
+            }}
           >
             <Ionicons name="location-sharp" size={14} color="#FFF" />
-            <Text className="text-white text-[12px] font-semibold ml-1.5">{weather.city} • {weather.temp}</Text>
+            <Text
+              className="text-white font-semibold ml-2"
+              style={{ fontSize: 12 }}
+              maxFontSizeMultiplier={1.2}
+            >
+              {weather.city} • {weather.temp}
+            </Text>
             <Animated.View style={pulseStyle} />
             {weather.icon && (
               <Image
                 source={{ uri: weather.icon }}
-                style={{ width: 24, height: 24, marginLeft: 4 }}
+                style={{ width: 22, height: 22, marginLeft: 5 }}
                 contentFit="contain"
               />
             )}
-            <Ionicons name="chevron-forward" size={12} color="#FFF" style={{ marginLeft: 4, opacity: 0.8 }} />
+            <Ionicons name="chevron-forward" size={12} color="#FFF" style={{ marginLeft: 5, opacity: 0.9 }} />
           </TouchableOpacity>
         </LinearGradient>
 
-        <View className="relative h-[300px] -mt-10">
+        {/* Carousel - Overlaps header for hero effect */}
+        <View style={{ marginTop: -32, height: 300 }}>
           {carouselLoading ? (
-            <View className="flex-1 justify-center items-center">
+            <View className="flex-1 justify-center items-center bg-white rounded-[32px]">
               <ActivityIndicator size="large" color="#FF4500" />
             </View>
           ) : (
@@ -371,21 +437,26 @@ export default function HomeScreen() {
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={{ paddingHorizontal: 20 }}
               />
-              <View className="flex-row justify-center items-center mt-4">
+              {/* Pagination - Improved */}
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 16 }}>
                 {carouselNews.map((_, i) => {
                   const isActive = activeIndex === i;
                   return (
-                    <View key={i} className="items-center justify-center mx-1.5">
+                    <View key={i} style={{ alignItems: 'center', justifyContent: 'center', marginHorizontal: 3 }}>
                       {isActive && (
                         <Animated.View style={indicatorPulseStyle} />
                       )}
                       <View
-                        className={`rounded-full transition-all duration-300 ${isActive ? 'w-5 h-2 bg-[#FF4500]' : 'w-2 h-2 bg-gray-300'}`}
                         style={{
+                          width: isActive ? 20 : 8,
+                          height: 8,
+                          borderRadius: 4,
+                          backgroundColor: isActive ? '#FF4500' : 'rgba(0,0,0,0.15)',
                           shadowColor: isActive ? '#FF4500' : 'transparent',
                           shadowOffset: { width: 0, height: 2 },
                           shadowOpacity: isActive ? 0.4 : 0,
-                          shadowRadius: 3,
+                          shadowRadius: 4,
+                          elevation: isActive ? 4 : 0,
                         }}
                       />
                     </View>
@@ -427,70 +498,90 @@ export default function HomeScreen() {
           </View>
         </TouchableOpacity> */}
 
-        {/* Bahni Spotlight */}
-        {/* Bahni Spotlight */}
-        <View className="mx-4 mt-4">
-          <View className="bg-white rounded-[25px] shadow-lg shadow-black/10 elevation-8">
-            <View className="p-5 rounded-[25px] overflow-hidden">
+        {/* Bahni Spotlight - iOS/Android consistent */}
+        <View style={{ marginHorizontal: 16, marginTop: 16 }}>
+          <View
+            style={{
+              backgroundColor: '#FFF',
+              borderRadius: 24,
+              overflow: 'hidden',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.08,
+              shadowRadius: 12,
+              elevation: 8,
+            }}
+          >
+            <View style={{ padding: 20 }}>
               <View className="flex-row justify-between items-center">
                 <Text className="text-2xl font-bold text-[#333]">“{t.common.bahni}” {t.cookstove.title}</Text>
-                <View className="flex-row items-center bg-[#E8F5E9] px-2.5 py-1 rounded-full">
-                  <View className="w-1.5 h-1.5 rounded-full bg-[#4CAF50] mr-1.5" />
-                  <Text className="text-[#2E7D32] text-[12px] font-bold">{t.common.active}</Text>
-                </View>
               </View>
               <Text className="text-sm text-[#777] mb-5">{t.cookstove.subtitle}</Text>
 
-              {/* Stats Grid */}
-              <View className="flex-row justify-between mb-[25px]">
-                <View className="w-[31%] p-[15px] rounded-[20px] items-center bg-[#E8F5E9]">
+              {/* Stats Grid - flex for iOS consistency */}
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 }}>
+                <View style={{ flex: 1, marginHorizontal: 4, padding: 14, borderRadius: 18, alignItems: 'center', backgroundColor: '#E8F5E9' }}>
                   <Ionicons name="leaf-outline" size={24} color="#2E7D32" />
-                  <Text className="text-base font-bold text-[#333] mt-2">12.5 {t.common.kg}</Text>
-                  <Text className="text-[10px] text-[#666] font-semibold uppercase">{t.cookstove.co2Saved}</Text>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#333', marginTop: 8 }} maxFontSizeMultiplier={1.2}>12.5 {t.common.kg}</Text>
+                  <Text style={{ fontSize: 10, fontWeight: '600', color: '#666', textTransform: 'uppercase', marginTop: 2 }} maxFontSizeMultiplier={1.2}>{t.cookstove.co2Saved}</Text>
                 </View>
-                <View className="w-[31%] p-[15px] rounded-[20px] items-center bg-[#FFF3E0]">
+                <View style={{ flex: 1, marginHorizontal: 4, padding: 14, borderRadius: 18, alignItems: 'center', backgroundColor: '#FFF3E0' }}>
                   <Ionicons name="flame-outline" size={24} color="#E65100" />
-                  <Text className="text-base font-bold text-[#333] mt-2">32%</Text>
-                  <Text className="text-[10px] text-[#666] font-semibold uppercase">{t.common.efficiency}</Text>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#333', marginTop: 8 }} maxFontSizeMultiplier={1.2}>32%</Text>
+                  <Text style={{ fontSize: 10, fontWeight: '600', color: '#666', textTransform: 'uppercase', marginTop: 2 }} maxFontSizeMultiplier={1.2}>{t.common.efficiency}</Text>
                 </View>
-                <View className="w-[31%] p-[15px] rounded-[20px] items-center bg-[#E1F5FE]">
+                <View style={{ flex: 1, marginHorizontal: 4, padding: 14, borderRadius: 18, alignItems: 'center', backgroundColor: '#E1F5FE' }}>
                   <Ionicons name="timer-outline" size={24} color="#0277BD" />
-                  <Text className="text-base font-bold text-[#333] mt-2">48 {t.cookstove.hours}</Text>
-                  <Text className="text-[10px] text-[#666] font-semibold uppercase">{t.cookstove.usageTime}</Text>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#333', marginTop: 8 }} maxFontSizeMultiplier={1.2}>48 {t.cookstove.hours}</Text>
+                  <Text style={{ fontSize: 10, fontWeight: '600', color: '#666', textTransform: 'uppercase', marginTop: 2 }} maxFontSizeMultiplier={1.2}>{t.cookstove.usageTime}</Text>
                 </View>
               </View>
 
-              {/* Action Grid */}
-              <Text className="text-[18px] font-bold text-[#333] mb-[15px]">{t.common.quickActions}</Text>
-              <View className="flex-row flex-wrap justify-between mb-[25px]">
+              {/* Action Grid - explicit styles for iOS */}
+              <Text style={{ fontSize: 18, fontWeight: '700', color: '#333', marginBottom: 16 }} maxFontSizeMultiplier={1.2}>{t.common.quickActions}</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 24 }}>
                 {[
-                  { title: t.common.odishaSuccess, icon: 'alert-circle-outline', color: '#FF5252' },
-                  { title: t.cookstove.requestCallback, icon: 'construct-outline', color: '#FFA000' },
-                  { title: t.cookstove.maintenance, icon: 'book-outline', color: '#448AFF' },
-                  { title: t.home.impactDesc, icon: 'shield-checkmark-outline', color: '#4CAF50' },
+                  { title: t.common.odishaSuccess, icon: 'alert-circle-outline' as const, color: '#FF5252' },
+                  { title: t.cookstove.requestCallback, icon: 'construct-outline' as const, color: '#FFA000' },
+                  { title: t.cookstove.maintenance, icon: 'book-outline' as const, color: '#448AFF' },
+                  { title: t.home.impactDesc, icon: 'shield-checkmark-outline' as const, color: '#4CAF50' },
                 ].map((action, idx) => (
-                  <TouchableOpacity key={idx} className="w-[48%] bg-[#F8F9FA] p-[15px] rounded-[20px] flex-row items-center mb-3 border border-[#F0F0F0]">
-                    <View className="w-9 h-9 rounded-full border justify-center items-center mr-3" style={{ borderColor: action.color }}>
-                      <Ionicons name={action.icon as any} size={22} color={action.color} />
+                  <TouchableOpacity
+                    key={idx}
+                    activeOpacity={0.7}
+                    style={{
+                      width: '48%',
+                      padding: 14,
+                      borderRadius: 18,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      backgroundColor: '#F8F9FA',
+                      borderWidth: 1,
+                      borderColor: '#F0F0F0',
+                      marginBottom: 12,
+                    }}
+                  >
+                    <View style={{ width: 36, height: 36, borderRadius: 18, borderWidth: 2, borderColor: action.color, justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
+                      <Ionicons name={action.icon} size={20} color={action.color} />
                     </View>
-                    <Text className="text-[13px] font-semibold text-[#444] flex-1">{action.title}</Text>
+                    <Text style={{ fontSize: 13, fontWeight: '600', color: '#444', flex: 1 }} numberOfLines={2} maxFontSizeMultiplier={1.2}>{action.title}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
               <TouchableOpacity
                 activeOpacity={0.8}
-                className="w-full h-[55px] rounded-[15px] overflow-hidden"
                 onPress={() => router.push('/cookstove')}
+                style={{ width: '100%', height: 52, borderRadius: 20, overflow: 'hidden' }}
               >
                 <LinearGradient
                   colors={['#008000', '#006400']}
-                  className="flex-1 flex-row items-center justify-center"
+                  style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                 >
-                  <Text className="text-white text-base font-bold">{t.common.getHelp}</Text>
-                  <Ionicons name="chatbubble-ellipses-outline" size={20} color="#FFF" className="ml-2.5" />
+                  <Text style={{ fontSize: 16, fontWeight: '700', color: '#FFF' }} maxFontSizeMultiplier={1.2}>{t.common.getHelp}</Text>
+                  <Ionicons name="chatbubble-ellipses-outline" size={20} color="#FFF" style={{ marginLeft: 8 }} />
                 </LinearGradient>
               </TouchableOpacity>
             </View>
