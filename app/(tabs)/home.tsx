@@ -146,13 +146,13 @@ export default function HomeScreen() {
 
       // If not granted, request them
       if (status !== 'granted') {
-        console.log('Location permission not granted. Requesting...');
+        // console.log('Location permission not granted. Requesting...');
         const { status: newStatus } = await Location.requestForegroundPermissionsAsync();
         status = newStatus;
       }
 
       if (status !== 'granted') {
-        console.log('Location permission denied after request.');
+        // console.log('Location permission denied after request.');
         setWeather(prev => ({ ...prev, city: 'Permission Denied' }));
         Alert.alert(
           "Permission Required",
@@ -165,7 +165,7 @@ export default function HomeScreen() {
       // Check if location services are enabled
       const enabled = await Location.hasServicesEnabledAsync();
       if (!enabled) {
-        console.log('Location services disabled. Attempting to prompt user...');
+        // console.log('Location services disabled. Attempting to prompt user...');
         if (Platform.OS === 'android') {
           try {
             await Location.enableNetworkProviderAsync();
@@ -191,10 +191,8 @@ export default function HomeScreen() {
 
       // Fetch location and weather
       let location = await Location.getLastKnownPositionAsync();
-      let isCached = true;
 
       if (!location) {
-        isCached = false;
         location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Balanced,
         });
@@ -202,13 +200,14 @@ export default function HomeScreen() {
 
       if (location) {
         const { latitude, longitude } = location.coords;
-        console.log(`Weather trigger - ${isCached ? 'Cached' : 'Fresh'} Location:`, { latitude, longitude });
+        // console.log(`Weather trigger - Fresh Location:`, { latitude, longitude });
+
 
         const apiKey = "b035fffc7179d3075edb423469937601";
         const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`);
         const data = await response.json();
 
-        console.log('Weather API Response:', data);
+        // console.log('Weather API Response:', data);
 
         if (data.weather && data.main) {
           setWeather({
@@ -317,7 +316,10 @@ export default function HomeScreen() {
               <Text className="text-sm text-white/80 font-medium">{t.common.namaskar}</Text>
             </View>
             <View className="flex-row">
-              <TouchableOpacity className="w-10 h-10 rounded-full bg-white/20 justify-center items-center ml-2.5">
+              <TouchableOpacity
+                className="w-10 h-10 rounded-full bg-white/20 justify-center items-center ml-2.5"
+                onPress={() => router.push('/notifications')}
+              >
                 <Ionicons name="notifications-outline" size={20} color="#FFF" />
               </TouchableOpacity>
               <TouchableOpacity className="w-10 h-10 rounded-full bg-white/20 justify-center items-center ml-2.5">
@@ -396,19 +398,34 @@ export default function HomeScreen() {
         </View>
 
         {/* Modern Ticker / Latest Updates */}
-        <View className="mx-4 mt-2 bg-white rounded-2xl border border-gray-100 shadow-sm elevation-2 flex-row items-center py-2 px-3">
-          <View className="bg-[#FF4500] px-3 py-1 rounded-full flex-row items-center">
+        {/* Modern Ticker / Latest Updates */}
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => router.push('/notifications')}
+          className="mx-4 mt-2 bg-white rounded-full shadow-lg shadow-orange-500/20 elevation-4 flex-row items-center py-2.5 px-3 border border-orange-50"
+        >
+          <LinearGradient
+            colors={['#FF4500', '#FF8C00']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            className="px-3 py-1.5 rounded-full flex-row items-center shadow-md shadow-orange-500/40"
+          >
             <Ionicons name="flash" size={12} color="#FFF" />
-            <Text className="text-white text-[10px] font-black ml-1 uppercase tracking-tighter">Latest</Text>
-          </View>
-          <View className="w-[1px] h-4 bg-gray-200 mx-3" />
+            <Text className="text-white text-[10px] font-black ml-1 uppercase tracking-tight">Latest</Text>
+          </LinearGradient>
+
+          <View className="w-[1px] h-5 bg-gray-200 mx-3" />
+
           <View className="flex-1">
-            <Text className="text-gray-800 text-[12px] font-bold" numberOfLines={1}>
-              {t.home.carousel[0].title.replace('\n', ' ')} • ସମ୍ବଲପୁର, ଓଡ଼ିଶା
+            <Text className="text-gray-800 text-[13px] font-bold tracking-tight" numberOfLines={1}>
+              {carouselNews.length > 0 ? carouselNews[0].title.replace('\n', ' ') : t.common.loading}
             </Text>
           </View>
-          <Ionicons name="chevron-forward-circle" size={16} color="#FF4500" className="ml-2" />
-        </View>
+
+          < View className="bg-orange-50 w-7 h-7 rounded-full items-center justify-center ml-2">
+            <Ionicons name="chevron-forward" size={16} color="#FF4500" />
+          </View>
+        </TouchableOpacity>
 
         {/* Bahni Spotlight */}
         {/* Bahni Spotlight */}
