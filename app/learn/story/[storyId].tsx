@@ -11,7 +11,10 @@ export default function StoryDetailScreen() {
     const { storyId, title, image, url } = useLocalSearchParams();
     const router = useRouter();
 
-    const storyUrl = `https://odia.krishijagran.com/api/story/${storyId}?key=3caa03b3-c20e-46ba-8064-abbf4ebfd9b6&related=0`;
+    const parsedUrl = Array.isArray(url) ? url[0] : url;
+    const storyUrl = (parsedUrl && parsedUrl.startsWith('http'))
+        ? parsedUrl
+        : `https://odia.krishijagran.com/api/story/${storyId}?key=3caa03b3-c20e-46ba-8064-abbf4ebfd9b6&related=0`;
 
     const handleShare = async () => {
         const shareUrl = Array.isArray(url) ? url[0] : url;

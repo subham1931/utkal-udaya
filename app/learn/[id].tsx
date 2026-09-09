@@ -96,6 +96,8 @@ export default function CategoryNewsScreen() {
 
     const fetchCategoryNews = useCallback(async () => {
         try {
+            /*
+            // --- OLD API (Commented out) ---
             const response = await fetch(`https://meensou.com/myclimate/app/beneficiary/learn/getcategory_json.php?cat=${id}`);
             const data = await response.json();
 
@@ -106,8 +108,28 @@ export default function CategoryNewsScreen() {
             } else {
                 setNews((FALLBACK_CATEGORY_STORIES[id as string] || FALLBACK_DEFAULT) as any);
             }
+            */
+
+            // --- NEW API: NewsData.io ---
+            const response = await fetch('https://newsdata.io/api/1/latest?apikey=pub_133361d89e574a76b448e577121addb2&q=Odisha%20agriculture');
+            const data = await response.json();
+
+            if (data?.results && Array.isArray(data.results) && data.results.length > 0) {
+                const mappedNews = data.results.map((article: any, index: number) => ({
+                    id: article.article_id || `cat-news-${index}`,
+                    title: article.title || 'Odisha Agriculture News',
+                    short_desc: article.description || '',
+                    coverImage: article.image_url || 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=600',
+                    url: article.link || '',
+                    date: article.pubDate || '',
+                    source: article.source_name || 'News',
+                }));
+                setNews(mappedNews);
+            } else {
+                setNews((FALLBACK_CATEGORY_STORIES[id as string] || FALLBACK_DEFAULT) as any);
+            }
         } catch (error) {
-            console.error('Error fetching category news:', error);
+            console.error('Error fetching category news from NewsData.io:', error);
             setNews((FALLBACK_CATEGORY_STORIES[id as string] || FALLBACK_DEFAULT) as any);
         } finally {
             setLoading(false);

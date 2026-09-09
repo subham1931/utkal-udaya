@@ -157,6 +157,8 @@ export default function LearnScreen() {
 
     const fetchCarouselNews = useCallback(async () => {
         try {
+            /*
+            // --- OLD API (Commented out) ---
             const newsPromises = CATEGORIES_DATA.map(async (cat) => {
                 try {
                     const response = await fetch(`https://meensou.com/myclimate/app/beneficiary/learn/getcategory_json.php?cat=${cat.apiId}`);
@@ -186,8 +188,34 @@ export default function LearnScreen() {
             } else {
                 setCarouselNews(DEFAULT_FEATURED_NEWS);
             }
+            */
+
+            // --- NEW API: NewsData.io ---
+            const response = await fetch('https://newsdata.io/api/1/latest?apikey=pub_133361d89e574a76b448e577121addb2&q=Odisha%20agriculture');
+            const data = await response.json();
+
+            if (data?.results && Array.isArray(data.results) && data.results.length > 0) {
+                const mappedNews = data.results.map((article: any, index: number) => ({
+                    id: article.article_id || `learn-news-${index}`,
+                    title: article.title || 'Odisha Agriculture Update',
+                    titleEn: article.title || 'Odisha Agriculture Update',
+                    coverImage: article.image_url || 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=800',
+                    url: article.link || '',
+                    categoryName: (article.category && article.category[0]) ? article.category[0].toUpperCase() : 'ODISHA AGRI',
+                    categoryNameEn: (article.category && article.category[0]) ? article.category[0].toUpperCase() : 'Agriculture',
+                    short_desc: article.description || '',
+                    readTime: '3 min read',
+                    badge: (article.source_name || 'LATEST').toUpperCase(),
+                    date: article.pubDate || '',
+                }));
+
+                setCarouselNews(mappedNews);
+                await AsyncStorage.setItem(LEARN_CAROUSEL_CACHE_KEY, JSON.stringify(mappedNews));
+            } else {
+                setCarouselNews(DEFAULT_FEATURED_NEWS);
+            }
         } catch (error) {
-            console.error('Error fetching learn carousel:', error);
+            console.error('Error fetching learn carousel from NewsData.io:', error);
             setCarouselNews(DEFAULT_FEATURED_NEWS);
         } finally {
             setCarouselLoading(false);

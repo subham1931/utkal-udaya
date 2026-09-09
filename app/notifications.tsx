@@ -27,7 +27,8 @@ export default function NotificationsScreen() {
 
     const fetchNotifications = async () => {
         try {
-            // Fetch top news from each category
+            /*
+            // --- OLD API (Commented out) ---
             const newsPromises = CATEGORIES_DATA.map(async (cat) => {
                 try {
                     const response = await fetch(`https://meensou.com/myclimate/app/beneficiary/learn/getcategory_json.php?cat=${cat.id}`);
@@ -35,16 +36,15 @@ export default function NotificationsScreen() {
                     const list = data.news || data['new   ws'] || data.new_ws || [];
 
                     if (list.length > 0) {
-                        // Get the first item (top news)
                         const item = list[0];
                         return {
-                            id: item.id || Math.random().toString(), // fallback ID
+                            id: item.id || Math.random().toString(),
                             type: 'news',
                             title: item.title,
                             subtitle: item.short_desc || 'New update available',
                             image: item.coverImage,
                             category: cat.title,
-                            date: item.date || new Date().toISOString(), // You might need to parse/format this
+                            date: item.date || new Date().toISOString(),
                             url: item.url,
                             read: false
                         };
@@ -59,8 +59,28 @@ export default function NotificationsScreen() {
             const results = await Promise.all(newsPromises);
             const filtered = results.filter(n => n !== null);
             setNotifications(filtered);
+            */
+
+            // --- NEW API: NewsData.io ---
+            const response = await fetch('https://newsdata.io/api/1/latest?apikey=pub_133361d89e574a76b448e577121addb2&q=Odisha%20agriculture');
+            const data = await response.json();
+
+            if (data?.results && Array.isArray(data.results) && data.results.length > 0) {
+                const mappedNotifications = data.results.map((article: any, index: number) => ({
+                    id: article.article_id || `notif-${index}`,
+                    type: 'news',
+                    title: article.title || 'Odisha Agriculture Update',
+                    subtitle: article.description || 'New agriculture news update',
+                    image: article.image_url || 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=400',
+                    category: (article.category && article.category[0]) ? article.category[0].toUpperCase() : 'ODISHA AGRI',
+                    date: article.pubDate || new Date().toISOString(),
+                    url: article.link || '',
+                    read: index > 1, // mark first two as new/unread
+                }));
+                setNotifications(mappedNotifications);
+            }
         } catch (error) {
-            console.error('Error fetching notifications:', error);
+            console.error('Error fetching notifications from NewsData.io:', error);
         } finally {
             setLoading(false);
             setRefreshing(false);
