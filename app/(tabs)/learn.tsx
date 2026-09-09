@@ -556,7 +556,7 @@ export default function LearnScreen() {
                                     onPress={() => {
                                         router.push({
                                             pathname: '/learn/[id]',
-                                            params: { id: category.apiId, title: catTitle }
+                                            params: { id: category.apiId, title: catTitle, tag: category.tag }
                                         });
                                     }}
                                 >
