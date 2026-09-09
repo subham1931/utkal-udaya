@@ -347,10 +347,31 @@ export default function CategoryNewsScreen() {
             <Stack.Screen
                 options={{
                     title: (titleStr || categoryConfig.tag || 'Category News'),
-                    headerTitleStyle: { fontWeight: '900', fontSize: 22, color: colors.text },
+                    headerTitleStyle: { fontWeight: '900', fontSize: 20, color: colors.text },
                     headerTintColor: '#FF4500',
                     headerShadowVisible: false,
                     headerStyle: { backgroundColor: colors.background },
+                    headerBackTitle: 'Back',
+                    headerBackButtonDisplayMode: 'minimal',
+                    headerLeft: () => (
+                        <TouchableOpacity
+                            onPress={() => router.back()}
+                            activeOpacity={0.7}
+                            style={{
+                                width: 38,
+                                height: 38,
+                                borderRadius: 19,
+                                backgroundColor: isDark ? colors.card : '#F1F5F9',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginRight: 12,
+                                borderWidth: 1,
+                                borderColor: isDark ? colors.cardBorder : '#E2E8F0',
+                            }}
+                        >
+                            <Ionicons name="chevron-back" size={20} color={colors.text} />
+                        </TouchableOpacity>
+                    ),
                     headerRight: () => <HeaderProfileAvatar size={34} style={{ marginRight: 16 }} />,
                 }}
             />

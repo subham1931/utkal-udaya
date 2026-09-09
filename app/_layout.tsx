@@ -19,14 +19,20 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
-      <Stack initialRouteName="index">
+      <Stack
+        initialRouteName="index"
+        screenOptions={{
+          headerBackTitle: 'Back',
+          headerBackButtonDisplayMode: 'minimal',
+        }}
+      >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)/welcome" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)/sign-in" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)/sign-up" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="learn/[id]" options={{ presentation: 'card' }} />
-        <Stack.Screen name="learn/story/[storyId]" options={{ presentation: 'card', title: 'News' }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Back' }} />
+        <Stack.Screen name="learn/[id]" options={{ presentation: 'card', headerBackTitle: 'Back' }} />
+        <Stack.Screen name="learn/story/[storyId]" options={{ presentation: 'card', title: 'News', headerBackTitle: 'Back' }} />
         <Stack.Screen name="weather-detail" options={{ presentation: 'card', headerShown: false }} />
         <Stack.Screen name="notifications" options={{ presentation: 'card', headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
