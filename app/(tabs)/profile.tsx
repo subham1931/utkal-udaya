@@ -146,39 +146,27 @@ export default function ProfileScreen() {
                         shadowRadius: 8,
                     }}
                 >
-                    {/* Header Top Tag */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                                paddingHorizontal: 10,
-                                paddingVertical: 4,
-                                borderRadius: 20,
-                                borderWidth: 1,
-                                borderColor: 'rgba(255, 255, 255, 0.3)',
-                            }}
-                        >
-                            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#4ADE80', marginRight: 6 }} />
-                            <Text style={{ color: '#FFF', fontSize: 10, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' }}>
-                                {isOdia ? 'ଉପଭୋକ୍ତା ପ୍ରୋଫାଇଲ୍' : 'BENEFICIARY PROFILE'}
-                            </Text>
-                        </View>
+                    {/* Header Top Bar: Title & Edit Action */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                        <Text style={{ fontSize: 26, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}>
+                            {isOdia ? 'ପ୍ରୋଫାଇଲ୍' : 'Profile'}
+                        </Text>
 
                         <TouchableOpacity
                             onPress={() => setIsEditModalVisible(true)}
                             activeOpacity={0.8}
                             style={{
-                                width: 36,
-                                height: 36,
-                                borderRadius: 18,
-                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                width: 38,
+                                height: 38,
+                                borderRadius: 19,
+                                backgroundColor: 'rgba(255, 255, 255, 0.22)',
                                 alignItems: 'center',
                                 justifyContent: 'center',
+                                borderWidth: 1,
+                                borderColor: 'rgba(255, 255, 255, 0.35)',
                             }}
                         >
-                            <Ionicons name="pencil" size={17} color="#FFF" />
+                            <Ionicons name="pencil" size={18} color="#FFF" />
                         </TouchableOpacity>
                     </View>
 

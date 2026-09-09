@@ -416,34 +416,19 @@ export default function LearnScreen() {
                         shadowRadius: 8,
                     }}
                 >
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                                paddingHorizontal: 10,
-                                paddingVertical: 4,
-                                borderRadius: 20,
-                                borderWidth: 1,
-                                borderColor: 'rgba(255, 255, 255, 0.3)',
-                            }}
-                        >
-                            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#4ADE80', marginRight: 6 }} />
-                            <Text style={{ color: '#FFF', fontSize: 10, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' }}>
-                                {isOdia ? 'ନୂତନ ସମ୍ବାଦ' : 'DAILY NEWS'}
+                    {/* Header: Title, Subtitle & Profile Avatar */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={{ flex: 1, marginRight: 12 }}>
+                            <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}>
+                                {t.learn.title}
+                            </Text>
+                            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }}>
+                                {t.learn.subtitle}
                             </Text>
                         </View>
 
-                        <HeaderProfileAvatar size={38} />
+                        <HeaderProfileAvatar size={42} />
                     </View>
-
-                    <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}>
-                        {t.learn.title}
-                    </Text>
-                    <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }}>
-                        {t.learn.subtitle}
-                    </Text>
                 </LinearGradient>
 
                 {/* Featured Carousel Section */}
