@@ -83,7 +83,7 @@ export default function WeatherDetailScreen() {
     const hourlyForecast = forecastData?.list.slice(0, 8) || [];
 
     return (
-        <SafeAreaView className="flex-1 bg-[#E0F7FA]">
+        <SafeAreaView className="flex-1 bg-[#E0F7FA]" edges={['top', 'bottom']}>
             <View className="px-5 pt-2 flex-row items-center">
                 <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 rounded-full bg-white/50 justify-center items-center">
                     <Ionicons name="chevron-back" size={24} color="#333" />

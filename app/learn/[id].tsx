@@ -4,10 +4,84 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router'; // Added u
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 
+const FALLBACK_CATEGORY_STORIES: Record<string, any[]> = {
+    '1345': [
+        {
+            id: 'agri-1',
+            title: 'ମାଟିର ସ୍ୱାସ୍ଥ୍ୟ ପରୀକ୍ଷା ଓ ଉନ୍ନତ ସାର ପ୍ରୟୋଗ ପଦ୍ଧତି',
+            summary: 'ଚାଷୀ ଭାଇମାନେ ମାଟି ପରୀକ୍ଷା କାର୍ଡ଼ ବ୍ୟବହାର କରି କମ୍ ଖର୍ଚ୍ଚରେ ଅଧିକ ଫସଲ ଅମଳ କରିପାରିବେ।',
+            datePublished: '2026-09-08',
+            coverImage: 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=600',
+        },
+        {
+            id: 'agri-2',
+            title: 'ଜଳସେଚନ ପାଇଁ ସୌର ପମ୍ପ ଯୋଜନା (ସୌର ଜଳନିଧି)',
+            summary: 'ରାଜ୍ୟ ସରକାରଙ୍କ ରିହାତି ମାଧ୍ୟମରେ ସୌର ଚାଳିତ ପମ୍ପ ସେଟ୍ ସ୍ଥାପନ କରିବାର ସମ୍ପୂର୍ଣ୍ଣ ପ୍ରଣାଳୀ।',
+            datePublished: '2026-09-06',
+            coverImage: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80&w=600',
+        },
+    ],
+    '1062': [
+        {
+            id: 'horti-1',
+            title: 'ପଲିହାଉସ୍ ମାଧ୍ୟମରେ ବେମୌସୁମୀ ପନିପରିବା ଚାଷ',
+            summary: 'ଉନ୍ନତ ଜ୍ଞାନକୌଶଳରେ ଟମାଟୋ, କ୍ୟାପସିକମ୍ ଚାଷ କରି କୃଷକମାନେ ତିନିଗୁଣ ଲାଭବାନ ହେଉଛନ୍ତି।',
+            datePublished: '2026-09-07',
+            coverImage: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=600',
+        },
+    ],
+    '1063': [
+        {
+            id: 'dairy-1',
+            title: 'ଉନ୍ନତ ଜାତିର ଗାଈ ପାଳନ ଓ ଦୁଗ୍ଧ ଶିଳ୍ପରେ ଆତ୍ମନିର୍ଭରତା',
+            summary: 'ଦୁଗ୍ଧ ଉତ୍ପାଦନ ବୃଦ୍ଧି ପାଇଁ ସନ୍ତୁଳିତ ଖାଦ୍ୟ ଓ ରୋଗ ନିୟନ୍ତ୍ରଣ ପାଇଁ ଡାକ୍ତରୀ ପରାମର୍ଶ।',
+            datePublished: '2026-09-05',
+            coverImage: 'https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&q=80&w=600',
+        },
+    ],
+    '1061': [
+        {
+            id: 'health-1',
+            title: 'ପରିଷ୍କାର ରନ୍ଧନ ଇନ୍ଧନ ଓ ମହିଳାଙ୍କ ଫୁସଫୁସ ସୁରକ୍ଷା',
+            summary: 'ଧୂଆଁମୁକ୍ତ ଚୁଲି ଦ୍ୱାରା ଘରର ବାୟୁ ଶୁଦ୍ଧ ରହେ ଏବଂ ଆଖି ଓ ଶ୍ୱାସଜନିତ ରୋଗରୁ ମୁକ୍ତି ମିଳେ।',
+            datePublished: '2026-09-04',
+            coverImage: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&q=80&w=600',
+        },
+    ],
+    '1064': [
+        {
+            id: 'success-1',
+            title: 'ଜୈବିକ କୃଷିରେ ଯୁବ ଚାଷୀ ରମେଶଙ୍କ ଅଦ୍ଭୁତପୂର୍ବ ସଫଳତା',
+            summary: 'ସହରର ଚାକିରି ଛାଡ଼ି ଗାଁରେ କୃଷି କର୍ମ କରି ଆଜି ଅନ୍ୟମାନଙ୍କ ପାଇଁ ପ୍ରେରଣା ସାଜିଛନ୍ତି।',
+            datePublished: '2026-09-03',
+            coverImage: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=600',
+        },
+    ],
+    '48591': [
+        {
+            id: 'scheme-1',
+            title: 'ମୁଖ୍ୟମନ୍ତ୍ରୀ କୃଷି ଉଦ୍ୟୋଗ ଯୋଜନା (MKUY)',
+            summary: 'କୃଷି ଭିତ୍ତିକ ଶିଳ୍ପ ସ୍ଥାପନ ପାଇଁ ୫୦ ଲକ୍ଷ ଟଙ୍କା ପର୍ଯ୍ୟନ୍ତ ସବସିଡି ସୁବିଧା ଉପଲବ୍ଧ।',
+            datePublished: '2026-09-02',
+            coverImage: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&q=80&w=600',
+        },
+    ],
+};
+
+const FALLBACK_DEFAULT = [
+    {
+        id: 'def-1',
+        title: 'ନୂତନ କୃଷି ପ୍ରଯୁକ୍ତି ବିଦ୍ୟା ଓ ସରକାରୀ ସହାୟତା',
+        summary: 'ଚାଷୀମାନଙ୍କ ପାଇଁ ଉଦ୍ଦିଷ୍ଟ ବିଭିନ୍ନ ଉନ୍ନୟନମୂଳକ କାର୍ଯ୍ୟକ୍ରମ ଏବଂ ସୁବିଧା ସୁଯୋଗ।',
+        datePublished: '2026-09-08',
+        coverImage: 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=600',
+    }
+];
+
 export default function CategoryNewsScreen() {
     const { id, title } = useLocalSearchParams();
     const router = useRouter(); // Initialized useRouter
-    const [news, setNews] = useState([]);
+    const [news, setNews] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
@@ -26,10 +100,15 @@ export default function CategoryNewsScreen() {
             const data = await response.json();
 
             // Handle variations in key name (news vs new   ws)
-            const newsList = data.news || data['new   ws'] || data.new_ws || [];
-            setNews(newsList);
+            const newsList = data?.news || data?.['new   ws'] || data?.new_ws || [];
+            if (Array.isArray(newsList) && newsList.length > 0) {
+                setNews(newsList);
+            } else {
+                setNews((FALLBACK_CATEGORY_STORIES[id as string] || FALLBACK_DEFAULT) as any);
+            }
         } catch (error) {
             console.error('Error fetching category news:', error);
+            setNews((FALLBACK_CATEGORY_STORIES[id as string] || FALLBACK_DEFAULT) as any);
         } finally {
             setLoading(false);
             setRefreshing(false);

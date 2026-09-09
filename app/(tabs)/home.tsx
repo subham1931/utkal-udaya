@@ -332,7 +332,7 @@ export default function HomeScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F0F7FF]">
+    <SafeAreaView className="flex-1 bg-[#F0F7FF]" edges={['top']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={

@@ -47,8 +47,7 @@ export default function AuthInput({
             <View
                 className={`flex-row items-center rounded-2xl px-4 border ${borderColor} ${bgColor}`}
                 style={{
-                    minHeight: 52,
-                    paddingVertical: 14,
+                    height: 56,
                 }}
             >
                 <Ionicons
@@ -58,7 +57,13 @@ export default function AuthInput({
                     style={{ marginRight: 12 }}
                 />
                 <TextInput
-                    className="flex-1 text-[#333] text-base font-medium"
+                    className="flex-1 text-[#333] font-medium"
+                    style={{
+                        fontSize: 16,
+                        height: '100%',
+                        paddingVertical: 0,
+                        textAlignVertical: 'center',
+                    }}
                     placeholder={placeholder}
                     placeholderTextColor="#9CA3AF"
                     value={value}
@@ -76,7 +81,7 @@ export default function AuthInput({
                         onPress={onTogglePasswordVisibility}
                         hitSlop={HIT_SLOP}
                         activeOpacity={0.7}
-                        style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
+                        style={{ width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }}
                     >
                         <Ionicons
                             name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}

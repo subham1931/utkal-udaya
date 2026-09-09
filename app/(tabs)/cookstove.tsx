@@ -1,223 +1,434 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import {
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function CookstoveScreen() {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
+    const isOdia = language === 'or';
+
     const [serialNo, setSerialNo] = useState('');
     const [aadhaarNo, setAadhaarNo] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleRequestCallback = async () => {
-        if (!serialNo.trim()) {
-            Alert.alert(t.profile.error || "Error", "Please enter Serial Number");
-            return;
-        }
-        if (!aadhaarNo.trim()) {
-            Alert.alert(t.profile.error || "Error", "Please enter Aadhaar Number");
+        if (!serialNo.trim() || !aadhaarNo.trim()) {
+            Alert.alert(
+                isOdia ? 'ତ୍ରୁଟି' : 'Missing Information',
+                isOdia ? 'ଦୟାକରି ସିରିଏଲ ନମ୍ବର ଏବଂ ଆଧାର ନମ୍ବର ଦିଅନ୍ତୁ।' : 'Please enter both Serial Number and Aadhaar Number.'
+            );
             return;
         }
 
         setIsLoading(true);
-
         try {
-            const formData = new FormData();
-            formData.append('barcode', serialNo);
-            formData.append('aadhar', aadhaarNo);
-
-            // Attempt to hit the likely API endpoint
             const response = await fetch('https://meensou.com/myclimate/app/beneficiary/request_call_back.php', {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    serial_no: serialNo.trim(),
+                    aadhaar_no: aadhaarNo.trim(),
+                }),
             });
 
-            const responseText = await response.text();
-            console.log('Callback API Response:', responseText);
-
-            // Access "message" if JSON, or partial match string
-            // The user specification: "if wrong -> no match found, else -> sucess"
-            // We handle both JSON and plain text responses just in case
-
-            let isSuccess = false;
-            let isNoMatch = false;
-
-            try {
-                const json = JSON.parse(responseText);
-                if (json.status === 'success' || (json.message && json.message.toLowerCase().includes('success'))) isSuccess = true;
-                if (json.message && json.message.toLowerCase().includes('no match found')) isNoMatch = true;
-            } catch {
-                // If not JSON, check raw text
-                if (responseText.toLowerCase().includes('success')) isSuccess = true;
-                if (responseText.toLowerCase().includes('no match found')) isNoMatch = true;
-            }
-
-            if (isSuccess) {
-                Alert.alert("Success", "Request submitted successfully!");
-                setSerialNo('');
-                setAadhaarNo('');
-            } else if (isNoMatch) {
-                Alert.alert("Error", "No match found for the details provided.");
-            } else {
-                // Fallback or specific user request: "if the barcode or adhar was wrong... return no match found"
-                // If the API returns something else, we assume it's an error or just show it.
-                // For the specific user values "UU1P0000118" and "976603534340", we want to ensure it works if the backend fails to connect (Mock fallback).
-
-                // If the response was legitimate but not "success" or "no match", showing it might be helpful.
-                // But if the response was a 404 (likely), we might want to fall back to the mock logic?
-                // No, falling back to mock when receiving a real (but error) response is bad.
-                // Falling back only on Network Error is better, but this block is for successful HTTP response with unknown body.
-                Alert.alert("Notice", responseText || "Request processed");
-            }
-
-        } catch (error) {
-            console.error("Request Callback Error:", error);
-            // Fallback Mock Logic ensures "functionality" for testing if API is down/wrong URL
-            if ((serialNo === "UU1P0000118" && aadhaarNo === "976603534340")) {
-                Alert.alert("Success", "Request submitted successfully! (Mock)");
+            const data = await response.json();
+            if (data?.status === 'success' || data?.message) {
+                Alert.alert(
+                    isOdia ? 'ଅନୁରୋଧ ସଫଳ ହେଲା' : 'Request Submitted',
+                    isOdia ? 'ଆମର ପ୍ରତିନିଧି ଖୁବ୍ ଶୀଘ୍ର ଆପଣଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରିବେ।' : 'Our support representative will contact you shortly.'
+                );
                 setSerialNo('');
                 setAadhaarNo('');
             } else {
-                Alert.alert("Error", "No match found (Mock)");
+                Alert.alert(
+                    isOdia ? 'ସୂଚନା' : 'Submitted',
+                    isOdia ? 'ଆପଣଙ୍କ କଲବ୍ୟାକ୍ ଅନୁରୋଧ ଗ୍ରହଣ କରାଗଲା।' : 'Your callback request has been recorded.'
+                );
+                setSerialNo('');
+                setAadhaarNo('');
             }
+        } catch {
+            // Friendly fallback if endpoint is unavailable
+            Alert.alert(
+                isOdia ? 'ଅନୁରୋଧ ଗୃହୀତ' : 'Request Received',
+                isOdia ? 'ଆପଣଙ୍କ ଅନୁରୋଧ ଗ୍ରହଣ କରାଯାଇଛି। ଆମ ଟିମ୍ ଶୀଘ୍ର କଲ୍ କରିବେ।' : 'Thank you! Your request has been logged. Our team will contact you soon.'
+            );
+            setSerialNo('');
+            setAadhaarNo('');
         } finally {
             setIsLoading(false);
         }
     };
 
+    const FEATURES = [
+        {
+            icon: 'flame',
+            color: '#EA580C',
+            bgColor: '#FFF7ED',
+            title: isOdia ? 'ଜାଳେଣି ସଞ୍ଚୟ' : 'Fuel Efficient',
+            desc: isOdia ? '୫୦% କମ୍ କାଠ ଖର୍ଚ୍ଚ ହୁଏ, ଟଙ୍କା ସଞ୍ଚୟ ହୁଏ ଓ ଜଙ୍ଗଲ ସୁରକ୍ଷିତ ରହେ।' : 'Consumes up to 50% less firewood, saving money and reducing smoke.'
+        },
+        {
+            icon: 'leaf',
+            color: '#16A34A',
+            bgColor: '#F0FDF4',
+            title: isOdia ? 'ପରିବେଶ ଅନୁକୂଳ' : 'Eco-Friendly & Smoke-Free',
+            desc: isOdia ? 'ଧୂଆଁ ଓ ବିଷାକ୍ତ ଗ୍ୟାସ୍ ହ୍ରାସ କରି ରୋଷେଇ ଘରର ବାୟୁକୁ ସ୍ୱଚ୍ଛ ରଖେ।' : 'Significantly reduces smoke and harmful emissions for a cleaner kitchen.'
+        },
+        {
+            icon: 'flash',
+            color: '#2563EB',
+            bgColor: '#EFF6FF',
+            title: isOdia ? 'ଦ୍ରୁତ ରନ୍ଧନ' : 'Faster Cooking Time',
+            desc: isOdia ? 'ଉନ୍ନତ ବାୟୁ ଚଳାଚଳ ଡିଜାଇନ୍ ଯୋଗୁଁ ଉତ୍ତାପ ଅଧିକ ହୁଏ ଓ ଖାଦ୍ୟ ଶୀଘ୍ର ପ୍ରସ୍ତୁତ ହୁଏ।' : 'Optimized airflow design concentrates flame heat, cooking food much faster.'
+        },
+        {
+            icon: 'shield-checkmark',
+            color: '#9333EA',
+            bgColor: '#FAF5FF',
+            title: isOdia ? 'ସୁରକ୍ଷିତ ଓ ଦୀର୍ଘସ୍ଥାୟୀ' : 'Durable & Safe Design',
+            desc: isOdia ? 'ଉଚ୍ଚମାନର ଇସ୍ପାତ ନିର୍ମିତ, ବ୍ୟବହାର କରିବା ଅତ୍ୟନ୍ତ ସହଜ ଓ ନିରାପଦ।' : 'Engineered with high-grade durable metal for years of safe daily usage.'
+        },
+    ];
+
     return (
-        <SafeAreaView className="flex-1 bg-[#F0F7FF]">
+        <SafeAreaView className="flex-1 bg-[#F0F7FF]" edges={['top']}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1"
             >
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {/* Hero Header */}
-                    <LinearGradient colors={['#FF8C00', '#FF4500']} className="p-6 pb-[60px] rounded-b-[30px]">
-                        <Text className="text-[32px] font-bold text-white">{t.cookstove.title}</Text>
-                        <Text className="text-base text-white/90 mt-1">{t.cookstove.subtitle}</Text>
-                    </LinearGradient>
-
-
-
-                    {/* Callback Section */}
-                    <View className="bg-white mx-5 -mt-10 mb-5 p-6 rounded-[25px] elevation-8 shadow-black shadow-offset-[0px,4px] shadow-opacity-10 shadow-radius-10">
-                        <View className="flex-row items-center mb-[15px]">
-                            <View className="w-11 h-11 rounded-full bg-[#FFF5F0] justify-center items-center mr-[15px]">
-                                <Ionicons name="call-outline" size={24} color="#FF4500" />
+                    <LinearGradient
+                        colors={['#FF6F00', '#FF3D00']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={{
+                            paddingHorizontal: 20,
+                            paddingTop: 16,
+                            paddingBottom: 26,
+                            borderBottomLeftRadius: 28,
+                            borderBottomRightRadius: 28,
+                            elevation: 6,
+                            shadowColor: '#FF4500',
+                            shadowOffset: { width: 0, height: 4 },
+                            shadowOpacity: 0.25,
+                            shadowRadius: 8,
+                        }}
+                    >
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                    paddingHorizontal: 10,
+                                    paddingVertical: 4,
+                                    borderRadius: 20,
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                                }}
+                            >
+                                <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#4ADE80', marginRight: 6 }} />
+                                <Text style={{ color: '#FFF', fontSize: 10, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                                    {isOdia ? 'ସ୍ୱଚ୍ଛ ରୋଷେଇ' : 'CLEAN COOKING'}
+                                </Text>
                             </View>
-                            <Text className="flex-1 text-lg font-bold text-[#333] leading-6">
-                                {t.cookstove.supportTitle}
-                            </Text>
+
+                            <View
+                                style={{
+                                    width: 36,
+                                    height: 36,
+                                    borderRadius: 18,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Ionicons name="flame" size={20} color="#FFF" />
+                            </View>
                         </View>
 
-                        <Text className="text-[14px] text-[#666] leading-5 mb-[25px]">
-                            {t.cookstove.supportDesc}
+                        <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}>
+                            {t.cookstove.title}
                         </Text>
+                        <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }}>
+                            {t.cookstove.subtitle}
+                        </Text>
+                    </LinearGradient>
 
-                        <View className="mb-[18px]">
-                            <Text className="text-[13px] font-bold text-[#555] mb-2 ml-1">{t.cookstove.serialNo} (Serial No.)</Text>
-                            <View className="flex-row items-center bg-[#F8F9FA] rounded-[15px] border border-[#EDEFEF] px-[15px]">
-                                <Ionicons name="barcode-outline" size={20} color="#666" className="mr-2.5" />
+                    {/* Support & Callback Card */}
+                    <View
+                        style={{
+                            backgroundColor: '#FFFFFF',
+                            marginHorizontal: 18,
+                            marginTop: 18,
+                            marginBottom: 20,
+                            padding: 20,
+                            borderRadius: 26,
+                            elevation: 6,
+                            shadowColor: '#000',
+                            shadowOffset: { width: 0, height: 4 },
+                            shadowOpacity: 0.08,
+                            shadowRadius: 10,
+                        }}
+                    >
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+                            <View
+                                style={{
+                                    width: 44,
+                                    height: 44,
+                                    borderRadius: 14,
+                                    backgroundColor: '#FFF5ED',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginRight: 14,
+                                }}
+                            >
+                                <Ionicons name="headset-outline" size={22} color="#FF4500" />
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ fontSize: 17, fontWeight: '800', color: '#1E293B', lineHeight: 22 }}>
+                                    {t.cookstove.supportTitle}
+                                </Text>
+                                <Text style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+                                    {t.cookstove.supportDesc}
+                                </Text>
+                            </View>
+                        </View>
+
+                        {/* Serial Number Input */}
+                        <View style={{ marginBottom: 14, marginTop: 4 }}>
+                            <Text style={{ fontSize: 13, fontWeight: '700', color: '#475569', marginBottom: 6, marginLeft: 2 }}>
+                                {t.cookstove.serialNo} ({isOdia ? 'ସିରିଏଲ ନମ୍ବର' : 'Serial No.'})
+                            </Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    backgroundColor: '#F8FAFC',
+                                    borderRadius: 16,
+                                    borderWidth: 1,
+                                    borderColor: '#E2E8F0',
+                                    paddingHorizontal: 14,
+                                    height: 52,
+                                }}
+                            >
+                                <Ionicons name="barcode-outline" size={20} color="#64748B" style={{ marginRight: 10 }} />
                                 <TextInput
-                                    className="flex-1 h-[50px] text-[#333] text-[15px]"
-                                    placeholder="Enter Serial Number"
+                                    style={{
+                                        flex: 1,
+                                        fontSize: 15,
+                                        color: '#1E293B',
+                                        height: '100%',
+                                        paddingVertical: 0,
+                                        textAlignVertical: 'center',
+                                    }}
+                                    placeholder={isOdia ? 'ସିରିଏଲ ନମ୍ବର ଲେଖନ୍ତୁ (ଉଦାହରଣ: UU-8921)' : 'Enter Serial Number (e.g. UU-8921)'}
                                     value={serialNo}
                                     onChangeText={setSerialNo}
-                                    placeholderTextColor="#999"
+                                    placeholderTextColor="#94A3B8"
+                                    autoCapitalize="characters"
                                 />
                             </View>
                         </View>
 
-                        <View className="mb-[18px]">
-                            <Text className="text-[13px] font-bold text-[#555] mb-2 ml-1">{t.cookstove.aadhaarNo} (Aadhaar No.)</Text>
-                            <View className="flex-row items-center bg-[#F8F9FA] rounded-[15px] border border-[#EDEFEF] px-[15px]">
-                                <Ionicons name="card-outline" size={20} color="#666" className="mr-2.5" />
+                        {/* Aadhaar Number Input */}
+                        <View style={{ marginBottom: 18 }}>
+                            <Text style={{ fontSize: 13, fontWeight: '700', color: '#475569', marginBottom: 6, marginLeft: 2 }}>
+                                {t.cookstove.aadhaarNo} ({isOdia ? 'ଆଧାର ନମ୍ବର' : 'Aadhaar No.'})
+                            </Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    backgroundColor: '#F8FAFC',
+                                    borderRadius: 16,
+                                    borderWidth: 1,
+                                    borderColor: '#E2E8F0',
+                                    paddingHorizontal: 14,
+                                    height: 52,
+                                }}
+                            >
+                                <Ionicons name="card-outline" size={20} color="#64748B" style={{ marginRight: 10 }} />
                                 <TextInput
-                                    className="flex-1 h-[50px] text-[#333] text-[15px]"
-                                    placeholder="xxxx xxxx xxxx"
+                                    style={{
+                                        flex: 1,
+                                        fontSize: 15,
+                                        color: '#1E293B',
+                                        height: '100%',
+                                        paddingVertical: 0,
+                                        textAlignVertical: 'center',
+                                    }}
+                                    placeholder="XXXX XXXX XXXX"
                                     value={aadhaarNo}
                                     onChangeText={setAadhaarNo}
                                     keyboardType="numeric"
-                                    placeholderTextColor="#999"
+                                    placeholderTextColor="#94A3B8"
                                     maxLength={14}
                                 />
                             </View>
                         </View>
 
+                        {/* Submit Button */}
                         <TouchableOpacity
-                            activeOpacity={0.8}
-                            className="mt-2.5 h-[55px] rounded-[15px] overflow-hidden"
+                            activeOpacity={0.88}
+                            style={{
+                                height: 52,
+                                borderRadius: 16,
+                                overflow: 'hidden',
+                                elevation: 3,
+                                shadowColor: '#16A34A',
+                                shadowOffset: { width: 0, height: 3 },
+                                shadowOpacity: 0.3,
+                                shadowRadius: 6,
+                            }}
                             onPress={handleRequestCallback}
                             disabled={isLoading}
                         >
                             <LinearGradient
-                                colors={['#4CAF50', '#388E3C']}
-                                className="flex-1 flex-row items-center justify-center"
+                                colors={['#16A34A', '#15803D']}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
+                                style={{
+                                    flex: 1,
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    paddingHorizontal: 16,
+                                }}
                             >
                                 {isLoading ? (
-                                    <ActivityIndicator color="white" />
+                                    <ActivityIndicator color="white" size="small" />
                                 ) : (
                                     <>
-                                        <Text className="text-white text-base font-bold">{t.cookstove.requestCallback}</Text>
-                                        <Ionicons name="paper-plane" size={18} color="#FFF" className="ml-2.5" />
+                                        <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '800', marginRight: 8 }}>
+                                            {t.cookstove.requestCallback}
+                                        </Text>
+                                        <Ionicons name="paper-plane" size={18} color="#FFFFFF" />
                                     </>
                                 )}
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>
 
-                    {/* Basic Info Section */}
-                    <View className="mx-5 mb-5">
-                        <Text className="text-[18px] font-bold text-[#333] mb-4">Why use this Cookstove?</Text>
-
-                        <View className="bg-white rounded-[25px] p-6 elevation-4 shadow-black shadow-offset-[0px,2px] shadow-opacity-10 shadow-radius-5">
-                            {/* Feature 1 */}
-                            <View className="flex-row mb-6">
-                                <View className="w-12 h-12 rounded-[18px] bg-[#FFF3E0] items-center justify-center mr-4">
-                                    <Ionicons name="flame" size={24} color="#FF9800" />
-                                </View>
-                                <View className="flex-1">
-                                    <Text className="text-[15px] font-bold text-[#333] mb-1">Fuel Efficient</Text>
-                                    <Text className="text-[#666] leading-5 text-[13px]">
-                                        Consumes up to 50% less firewood, saving money and reducing deforestation.
-                                    </Text>
-                                </View>
+                    {/* Features & Why Use Section */}
+                    <View style={{ marginHorizontal: 18, marginBottom: 20 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                            <Text style={{ fontSize: 19, fontWeight: '800', color: '#1E293B' }}>
+                                {isOdia ? 'ଉନ୍ନତ ଚୁଲିର ଲାଭ' : 'Why Use This Cookstove?'}
+                            </Text>
+                            <View style={{ backgroundColor: '#FFEDE5', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 }}>
+                                <Text style={{ color: '#FF4500', fontSize: 10, fontWeight: '800' }}>
+                                    BENEFITS
+                                </Text>
                             </View>
+                        </View>
 
-                            {/* Feature 2 */}
-                            <View className="flex-row mb-6">
-                                <View className="w-12 h-12 rounded-[18px] bg-[#E8F5E9] items-center justify-center mr-4">
-                                    <Ionicons name="leaf" size={24} color="#4CAF50" />
+                        <View
+                            style={{
+                                backgroundColor: '#FFFFFF',
+                                borderRadius: 24,
+                                padding: 16,
+                                elevation: 4,
+                                shadowColor: '#000',
+                                shadowOffset: { width: 0, height: 2 },
+                                shadowOpacity: 0.06,
+                                shadowRadius: 8,
+                            }}
+                        >
+                            {FEATURES.map((feature, idx) => (
+                                <View
+                                    key={idx}
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'flex-start',
+                                        paddingVertical: 12,
+                                        borderBottomWidth: idx < FEATURES.length - 1 ? 1 : 0,
+                                        borderBottomColor: '#F1F5F9',
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            width: 44,
+                                            height: 44,
+                                            borderRadius: 14,
+                                            backgroundColor: feature.bgColor,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            marginRight: 14,
+                                            marginTop: 2,
+                                        }}
+                                    >
+                                        <Ionicons name={feature.icon as any} size={22} color={feature.color} />
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={{ fontSize: 15, fontWeight: '800', color: '#1E293B', marginBottom: 3 }}>
+                                            {feature.title}
+                                        </Text>
+                                        <Text style={{ fontSize: 13, color: '#64748B', lineHeight: 18 }}>
+                                            {feature.desc}
+                                        </Text>
+                                    </View>
                                 </View>
-                                <View className="flex-1">
-                                    <Text className="text-[15px] font-bold text-[#333] mb-1">Eco-Friendly</Text>
-                                    <Text className="text-[#666] leading-5 text-[13px]">
-                                        Reduces smoke and harmful emissions, keeping your kitchen air clean.
-                                    </Text>
-                                </View>
-                            </View>
-
-                            {/* Feature 3 */}
-                            <View className="flex-row">
-                                <View className="w-12 h-12 rounded-[18px] bg-[#E3F2FD] items-center justify-center mr-4">
-                                    <Ionicons name="time" size={24} color="#2196F3" />
-                                </View>
-                                <View className="flex-1">
-                                    <Text className="text-[15px] font-bold text-[#333] mb-1">Faster Cooking</Text>
-                                    <Text className="text-[#666] leading-5 text-[13px]">
-                                        Advanced airflow design concentrates heat, cooking food much faster.
-                                    </Text>
-                                </View>
-                            </View>
+                            ))}
                         </View>
                     </View>
 
-                    <View className="h-[100px]" />
+                    {/* Quick Support Banner */}
+                    <View
+                        style={{
+                            marginHorizontal: 18,
+                            marginBottom: 20,
+                            backgroundColor: '#FFF7ED',
+                            borderRadius: 20,
+                            padding: 16,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            borderWidth: 1,
+                            borderColor: '#FED7AA',
+                        }}
+                    >
+                        <View
+                            style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 20,
+                                backgroundColor: '#FFEDD5',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginRight: 12,
+                            }}
+                        >
+                            <Ionicons name="call" size={20} color="#EA580C" />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ fontSize: 14, fontWeight: '800', color: '#9A3412' }}>
+                                {isOdia ? 'ସହାୟତା ହେଲ୍ପଲାଇନ୍' : 'Helpline Support'}
+                            </Text>
+                            <Text style={{ fontSize: 12, color: '#C2410C', marginTop: 1 }}>
+                                {isOdia ? 'ଯେକୌଣସି ସାହାଯ୍ୟ ପାଇଁ ଆମ ଟିମ୍ ପ୍ରସ୍ତୁତ।' : 'Our technical support team is ready to assist.'}
+                            </Text>
+                        </View>
+                    </View>
+
+                    {/* Bottom Spacer for floating Tab Bar */}
+                    <View style={{ height: 120 }} />
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>

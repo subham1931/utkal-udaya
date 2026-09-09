@@ -128,7 +128,7 @@ export default function NotificationsScreen() {
     );
 
     return (
-        <SafeAreaView className="flex-1 bg-[#F0F7FF] edges={['top']}">
+        <SafeAreaView className="flex-1 bg-[#F0F7FF]" edges={['top', 'bottom']}>
             <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm mb-2">
                 <TouchableOpacity
                     onPress={() => router.back()}

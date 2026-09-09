@@ -6,13 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useProfile } from '../context/ProfileContext';
 import { useLanguage } from '../context/LanguageContext';
-// Image picker is optional - will be imported dynamically if available
-let ImagePicker: any = null;
-try {
-    ImagePicker = require('expo-image-picker');
-} catch (e) {
-    console.log('expo-image-picker not available');
-}
+import * as ImagePicker from 'expo-image-picker';
 
 interface Props {
     isVisible: boolean;
@@ -199,7 +193,7 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                             </View>
                         </LinearGradient>
 
-                        <ScrollView className="flex-1 px-6 pt-6" showsVerticalScrollIndicator={false}>
+                        <ScrollView className="flex-1 px-6 pt-6" contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
                             {/* Profile Picture Section */}
                             <View className="items-center mb-6">
                                 <TouchableOpacity onPress={showImageOptions} activeOpacity={0.8}>
@@ -234,12 +228,18 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                                 <Text className="text-sm font-semibold text-[#333] mb-2">
                                     {t.profile.name || 'Name'} *
                                 </Text>
-                                <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 border border-[#E0E0E0]">
+                                <View className="bg-[#F5F5F5] rounded-xl px-4 border border-[#E0E0E0] justify-center h-[50px]">
                                     <TextInput
                                         value={name}
                                         onChangeText={setName}
                                         placeholder={t.profile.namePlaceholder || 'Enter your name'}
-                                        className="text-[15px] text-[#333]"
+                                        className="text-[#333]"
+                                        style={{
+                                            fontSize: 15,
+                                            height: '100%',
+                                            paddingVertical: 0,
+                                            textAlignVertical: 'center',
+                                        }}
                                         autoCapitalize="words"
                                     />
                                 </View>
@@ -249,12 +249,18 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                                 <Text className="text-sm font-semibold text-[#333] mb-2">
                                     {t.profile.email || 'Email'}
                                 </Text>
-                                <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 border border-[#E0E0E0]">
+                                <View className="bg-[#F5F5F5] rounded-xl px-4 border border-[#E0E0E0] justify-center h-[50px]">
                                     <TextInput
                                         value={email}
                                         onChangeText={setEmail}
                                         placeholder={t.profile.emailPlaceholder || 'Enter your email'}
-                                        className="text-[15px] text-[#333]"
+                                        className="text-[#333]"
+                                        style={{
+                                            fontSize: 15,
+                                            height: '100%',
+                                            paddingVertical: 0,
+                                            textAlignVertical: 'center',
+                                        }}
                                         keyboardType="email-address"
                                         autoCapitalize="none"
                                     />
@@ -265,12 +271,18 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                                 <Text className="text-sm font-semibold text-[#333] mb-2">
                                     {t.profile.phone || 'Phone'}
                                 </Text>
-                                <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 border border-[#E0E0E0]">
+                                <View className="bg-[#F5F5F5] rounded-xl px-4 border border-[#E0E0E0] justify-center h-[50px]">
                                     <TextInput
                                         value={phone}
                                         onChangeText={setPhone}
                                         placeholder={t.profile.phonePlaceholder || 'Enter your phone number'}
-                                        className="text-[15px] text-[#333]"
+                                        className="text-[#333]"
+                                        style={{
+                                            fontSize: 15,
+                                            height: '100%',
+                                            paddingVertical: 0,
+                                            textAlignVertical: 'center',
+                                        }}
                                         keyboardType="phone-pad"
                                     />
                                 </View>
@@ -280,12 +292,18 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                                 <Text className="text-sm font-semibold text-[#333] mb-2">
                                     {t.profile.village || 'Village'}
                                 </Text>
-                                <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 border border-[#E0E0E0]">
+                                <View className="bg-[#F5F5F5] rounded-xl px-4 border border-[#E0E0E0] justify-center h-[50px]">
                                     <TextInput
                                         value={village}
                                         onChangeText={setVillage}
                                         placeholder={t.profile.villagePlaceholder || 'Enter your village'}
-                                        className="text-[15px] text-[#333]"
+                                        className="text-[#333]"
+                                        style={{
+                                            fontSize: 15,
+                                            height: '100%',
+                                            paddingVertical: 0,
+                                            textAlignVertical: 'center',
+                                        }}
                                         autoCapitalize="words"
                                     />
                                 </View>
@@ -295,12 +313,18 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                                 <Text className="text-sm font-semibold text-[#333] mb-2">
                                     {t.profile.district || 'District'}
                                 </Text>
-                                <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 border border-[#E0E0E0]">
+                                <View className="bg-[#F5F5F5] rounded-xl px-4 border border-[#E0E0E0] justify-center h-[50px]">
                                     <TextInput
                                         value={district}
                                         onChangeText={setDistrict}
                                         placeholder={t.profile.districtPlaceholder || 'Enter your district'}
-                                        className="text-[15px] text-[#333]"
+                                        className="text-[#333]"
+                                        style={{
+                                            fontSize: 15,
+                                            height: '100%',
+                                            paddingVertical: 0,
+                                            textAlignVertical: 'center',
+                                        }}
                                         autoCapitalize="words"
                                     />
                                 </View>
