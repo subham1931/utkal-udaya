@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ActivityIndicator, Dimensions, ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
+import HeaderProfileAvatar from '../../../components/HeaderProfileAvatar';
 
 const { width } = Dimensions.get('window');
 
@@ -97,12 +98,23 @@ export default function StoryDetailScreen() {
                         </TouchableOpacity>
                     ),
                     headerRight: () => (
-                        <TouchableOpacity
-                            onPress={handleShare}
-                            className="mr-4 w-10 h-10 rounded-full bg-black/30 items-center justify-center backdrop-blur-md"
-                        >
-                            <Ionicons name="share-outline" size={20} color="#FFF" />
-                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16 }}>
+                            <TouchableOpacity
+                                onPress={handleShare}
+                                style={{
+                                    width: 36,
+                                    height: 36,
+                                    borderRadius: 18,
+                                    backgroundColor: 'rgba(0,0,0,0.35)',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginRight: 10,
+                                }}
+                            >
+                                <Ionicons name="share-outline" size={19} color="#FFF" />
+                            </TouchableOpacity>
+                            <HeaderProfileAvatar size={36} />
+                        </View>
                     ),
                 }}
             />

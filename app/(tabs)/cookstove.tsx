@@ -16,6 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAppTheme } from '../../context/ThemeContext';
+import HeaderProfileAvatar from '../../components/HeaderProfileAvatar';
 
 export default function CookstoveScreen() {
     const { t, language } = useLanguage();
@@ -153,18 +154,7 @@ export default function CookstoveScreen() {
                                 </Text>
                             </View>
 
-                            <View
-                                style={{
-                                    width: 36,
-                                    height: 36,
-                                    borderRadius: 18,
-                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <Ionicons name="flame" size={20} color="#FFF" />
-                            </View>
+                            <HeaderProfileAvatar size={38} />
                         </View>
 
                         <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}>

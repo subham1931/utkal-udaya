@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router'; // Added useRouter
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
+import HeaderProfileAvatar from '../../components/HeaderProfileAvatar';
 
 const FALLBACK_CATEGORY_STORIES: Record<string, any[]> = {
     '1345': [
@@ -196,6 +197,7 @@ export default function CategoryNewsScreen() {
                     headerTintColor: '#FF4500',
                     headerShadowVisible: false,
                     headerStyle: { backgroundColor: '#F8F9FA' },
+                    headerRight: () => <HeaderProfileAvatar size={34} style={{ marginRight: 16 }} />,
                 }}
             />
 

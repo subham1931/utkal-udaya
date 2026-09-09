@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useLanguage } from '../../context/LanguageContext';
 import { useAppTheme } from '../../context/ThemeContext';
+import HeaderProfileAvatar from '../../components/HeaderProfileAvatar';
 
 const { width } = Dimensions.get('window');
 
@@ -381,22 +382,26 @@ export default function HomeScreen() {
             elevation: 10,
           }}
         >
-          {/* Title & Greeting */}
-          <View style={{ marginBottom: 12 }}>
-            <Text
-              className="text-white font-bold tracking-tight"
-              style={{ fontSize: 24, letterSpacing: -0.3 }}
-              maxFontSizeMultiplier={1.2}
-            >
-              {t.home.title}
-            </Text>
-            <Text
-              className="text-white/90 font-medium"
-              style={{ fontSize: 13, marginTop: 2 }}
-              maxFontSizeMultiplier={1.2}
-            >
-              {t.common.namaskar}
-            </Text>
+          {/* Title, Greeting & Profile Avatar */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <View>
+              <Text
+                className="text-white font-bold tracking-tight"
+                style={{ fontSize: 24, letterSpacing: -0.3 }}
+                maxFontSizeMultiplier={1.2}
+              >
+                {t.home.title}
+              </Text>
+              <Text
+                className="text-white/90 font-medium"
+                style={{ fontSize: 13, marginTop: 2 }}
+                maxFontSizeMultiplier={1.2}
+              >
+                {t.common.namaskar}
+              </Text>
+            </View>
+
+            <HeaderProfileAvatar size={42} />
           </View>
 
           {/* Weather Card - Compact */}
