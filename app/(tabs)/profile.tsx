@@ -10,7 +10,6 @@ import {
     Linking,
     ScrollView,
     Share,
-    StyleSheet,
     Switch,
     Text,
     TouchableOpacity,
@@ -21,8 +20,6 @@ import EditProfileModal from '../../components/EditProfileModal';
 import { useLanguage } from '../../context/LanguageContext';
 import { useProfile } from '../../context/ProfileContext';
 import { useAppTheme } from '../../context/ThemeContext';
-
-const { width } = Dimensions.get('window');
 
 export default function ProfileScreen() {
     const router = useRouter();
@@ -67,7 +64,6 @@ export default function ProfileScreen() {
         icon,
         title,
         subtitle,
-        color = '#FF4500',
         onPress,
         rightElement,
         showDivider = true,
@@ -75,7 +71,6 @@ export default function ProfileScreen() {
         icon: keyof typeof Ionicons.glyphMap;
         title: string;
         subtitle?: string;
-        color?: string;
         onPress?: () => void;
         rightElement?: React.ReactNode;
         showDivider?: boolean;
@@ -97,38 +92,33 @@ export default function ProfileScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                 <View
                     style={{
-                        width: 38,
-                        height: 38,
-                        borderRadius: 12,
-                        backgroundColor: color + '18',
+                        width: 36,
+                        height: 36,
+                        borderRadius: 10,
+                        backgroundColor: isDark ? '#1E293B' : '#F1F5F9',
                         justifyContent: 'center',
                         alignItems: 'center',
                         marginRight: 14,
                     }}
                 >
-                    <Ionicons name={icon} size={20} color={color} />
+                    <Ionicons name={icon} size={19} color={isDark ? '#CBD5E1' : '#475569'} />
                 </View>
                 <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>{title}</Text>
-                    {subtitle && <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 1 }}>{subtitle}</Text>}
+                    <Text style={{ fontSize: 15, fontWeight: '600', color: colors.text }}>{title}</Text>
+                    {subtitle ? (
+                        <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 1 }}>{subtitle}</Text>
+                    ) : null}
                 </View>
             </View>
             {rightElement ? rightElement : <Ionicons name="chevron-forward" size={18} color={isDark ? '#64748B' : '#94A3B8'} />}
         </TouchableOpacity>
     );
 
-    const BADGES = [
-        { name: isOdia ? 'ପ୍ରକୃତି ବନ୍ଧୁ' : 'Eco Hero', icon: 'leaf', color: '#16A34A', bg: isDark ? 'rgba(22, 163, 74, 0.2)' : '#DCFCE7' },
-        { name: isOdia ? 'ସ୍ୱଚ୍ଛ ରନ୍ଧନ' : 'Clean Cook', icon: 'flame', color: '#EA580C', bg: isDark ? 'rgba(234, 88, 12, 0.2)' : '#FFEDD5' },
-        { name: isOdia ? 'ସଚେତନ କୃଷକ' : 'Smart Farmer', icon: 'school', color: '#0284C7', bg: isDark ? 'rgba(2, 132, 199, 0.2)' : '#E0F2FE' },
-        { name: isOdia ? 'ପରିବେଶ ରକ୍ଷକ' : 'Green Guard', icon: 'shield-checkmark', color: '#9333EA', bg: isDark ? 'rgba(147, 51, 234, 0.2)' : '#F3E8FF' },
-    ];
-
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
             <ScrollView showsVerticalScrollIndicator={false}>
 
-                {/* Hero Profile Header */}
+                {/* Profile Header */}
                 <LinearGradient
                     colors={['#FF6F00', '#FF3D00']}
                     start={{ x: 0, y: 0 }}
@@ -146,28 +136,11 @@ export default function ProfileScreen() {
                         shadowRadius: 8,
                     }}
                 >
-                    {/* Header Top Bar: Title & Edit Action */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                    {/* Header Top Bar */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                         <Text style={{ fontSize: 26, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}>
                             {isOdia ? 'ପ୍ରୋଫାଇଲ୍' : 'Profile'}
                         </Text>
-
-                        <TouchableOpacity
-                            onPress={() => setIsEditModalVisible(true)}
-                            activeOpacity={0.8}
-                            style={{
-                                width: 38,
-                                height: 38,
-                                borderRadius: 19,
-                                backgroundColor: 'rgba(255, 255, 255, 0.22)',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                borderWidth: 1,
-                                borderColor: 'rgba(255, 255, 255, 0.35)',
-                            }}
-                        >
-                            <Ionicons name="pencil" size={18} color="#FFF" />
-                        </TouchableOpacity>
                     </View>
 
                     {/* Avatar & User Details */}
@@ -180,9 +153,9 @@ export default function ProfileScreen() {
                             {profile.profileImageUri ? (
                                 <View
                                     style={{
-                                        width: 94,
-                                        height: 94,
-                                        borderRadius: 47,
+                                        width: 92,
+                                        height: 92,
+                                        borderRadius: 46,
                                         borderWidth: 3,
                                         borderColor: '#FFFFFF',
                                         overflow: 'hidden',
@@ -202,9 +175,9 @@ export default function ProfileScreen() {
                             ) : (
                                 <View
                                     style={{
-                                        width: 94,
-                                        height: 94,
-                                        borderRadius: 47,
+                                        width: 92,
+                                        height: 92,
+                                        borderRadius: 46,
                                         backgroundColor: 'rgba(255, 255, 255, 0.25)',
                                         borderWidth: 3,
                                         borderColor: '#FFFFFF',
@@ -212,7 +185,7 @@ export default function ProfileScreen() {
                                         alignItems: 'center',
                                     }}
                                 >
-                                    <Text style={{ color: '#FFFFFF', fontSize: 32, fontWeight: '900' }}>
+                                    <Text style={{ color: '#FFFFFF', fontSize: 30, fontWeight: '900' }}>
                                         {profile.initials || 'UU'}
                                     </Text>
                                 </View>
@@ -223,9 +196,9 @@ export default function ProfileScreen() {
                                     bottom: 0,
                                     right: 0,
                                     backgroundColor: '#FF4500',
-                                    width: 32,
-                                    height: 32,
-                                    borderRadius: 16,
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 15,
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     borderWidth: 2,
@@ -233,18 +206,18 @@ export default function ProfileScreen() {
                                     elevation: 4,
                                 }}
                             >
-                                <Ionicons name="camera" size={16} color="#FFF" />
+                                <Ionicons name="camera" size={15} color="#FFF" />
                             </View>
                         </TouchableOpacity>
 
-                        <Text style={{ fontSize: 24, fontWeight: '900', color: '#FFFFFF', letterSpacing: 0.3 }}>
+                        <Text style={{ fontSize: 22, fontWeight: '800', color: '#FFFFFF', letterSpacing: 0.2 }}>
                             {profile.name || 'User'}
                         </Text>
                         <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.9)', marginTop: 3, fontWeight: '500' }}>
-                            {profile.email || profile.phone || (isOdia ? 'ଗ୍ରାମ: କେନ୍ଦ୍ରାପଡ଼ା' : 'Odisha Beneficiary')}
+                            {profile.email || profile.phone || (isOdia ? 'କେନ୍ଦ୍ରାପଡ଼ା, ଓଡ଼ିଶା' : 'Kendrapara, Odisha')}
                         </Text>
 
-                        {/* Edit Button Pill */}
+                        {/* Edit Profile Button */}
                         <TouchableOpacity
                             onPress={() => setIsEditModalVisible(true)}
                             activeOpacity={0.8}
@@ -252,7 +225,7 @@ export default function ProfileScreen() {
                                 marginTop: 12,
                                 backgroundColor: 'rgba(255, 255, 255, 0.22)',
                                 paddingHorizontal: 16,
-                                paddingVertical: 6,
+                                paddingVertical: 7,
                                 borderRadius: 20,
                                 borderWidth: 1,
                                 borderColor: 'rgba(255, 255, 255, 0.4)',
@@ -260,8 +233,8 @@ export default function ProfileScreen() {
                                 alignItems: 'center',
                             }}
                         >
-                            <Ionicons name="create-outline" size={14} color="#FFF" style={{ marginRight: 6 }} />
-                            <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: '800' }}>
+                            <Ionicons name="create-outline" size={15} color="#FFF" style={{ marginRight: 6 }} />
+                            <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '700' }}>
                                 {isOdia ? 'ପ୍ରୋଫାଇଲ୍ ସଂପାଦନ' : 'Edit Profile'}
                             </Text>
                         </TouchableOpacity>
@@ -269,120 +242,102 @@ export default function ProfileScreen() {
                 </LinearGradient>
 
                 <View style={{ paddingHorizontal: 18, paddingTop: 18 }}>
-                    {/* Impact Statistics Card */}
+
+                    {/* Beneficiary Details Card */}
                     <View
                         style={{
                             backgroundColor: colors.card,
-                            borderRadius: 24,
-                            paddingVertical: 18,
-                            paddingHorizontal: 14,
+                            borderRadius: 20,
+                            padding: 16,
                             marginBottom: 20,
-                            elevation: 5,
+                            elevation: 3,
                             shadowColor: '#000',
-                            shadowOffset: { width: 0, height: 3 },
-                            shadowOpacity: isDark ? 0.3 : 0.08,
-                            shadowRadius: 8,
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: isDark ? 0.25 : 0.06,
+                            shadowRadius: 6,
                             borderWidth: isDark ? 1 : 0,
                             borderColor: colors.cardBorder,
-                            flexDirection: 'row',
-                            justifyContent: 'space-around',
-                            alignItems: 'center',
                         }}
                     >
-                        <View style={{ alignItems: 'center' }}>
-                            <Text style={{ fontSize: 22, fontWeight: '900', color: '#16A34A' }}>
-                                {profile.co2Saved || '120'} kg
-                            </Text>
-                            <Text style={{ fontSize: 11, color: colors.textSecondary, marginTop: 2, fontWeight: '600' }}>
-                                {isOdia ? 'CO2 ସଞ୍ଚୟ' : 'CO2 Saved'}
-                            </Text>
-                        </View>
-
-                        <View style={{ width: 1, height: 32, backgroundColor: colors.divider }} />
-
-                        <View style={{ alignItems: 'center' }}>
-                            <Text style={{ fontSize: 22, fontWeight: '900', color: '#EA580C' }}>
-                                4
-                            </Text>
-                            <Text style={{ fontSize: 11, color: colors.textSecondary, marginTop: 2, fontWeight: '600' }}>
-                                {isOdia ? 'ପଦକ ଅର୍ଜିତ' : 'Badges Won'}
-                            </Text>
-                        </View>
-
-                        <View style={{ width: 1, height: 32, backgroundColor: colors.divider }} />
-
-                        <View style={{ alignItems: 'center' }}>
-                            <Text style={{ fontSize: 22, fontWeight: '900', color: '#0284C7' }}>
-                                48 hrs
-                            </Text>
-                            <Text style={{ fontSize: 11, color: colors.textSecondary, marginTop: 2, fontWeight: '600' }}>
-                                {isOdia ? 'ରନ୍ଧନ ସମୟ' : 'Cook Time'}
-                            </Text>
-                        </View>
-                    </View>
-
-                    {/* Badges Section */}
-                    <View style={{ marginBottom: 20 }}>
-                        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 12, marginLeft: 2 }}>
-                            {isOdia ? 'ମୋର ପଦକ ଓ ସଫଳତା' : 'My Achievements & Badges'}
-                        </Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -4 }}>
-                            {BADGES.map((badge, idx) => (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <View
-                                    key={idx}
                                     style={{
+                                        width: 32,
+                                        height: 32,
+                                        borderRadius: 8,
+                                        backgroundColor: isDark ? '#334155' : '#F1F5F9',
                                         alignItems: 'center',
-                                        backgroundColor: colors.card,
-                                        paddingHorizontal: 14,
-                                        paddingVertical: 12,
-                                        borderRadius: 20,
-                                        marginHorizontal: 4,
-                                        minWidth: 92,
-                                        elevation: 2,
-                                        shadowColor: '#000',
-                                        shadowOffset: { width: 0, height: 2 },
-                                        shadowOpacity: isDark ? 0.25 : 0.05,
-                                        shadowRadius: 4,
-                                        borderWidth: isDark ? 1 : 0,
-                                        borderColor: colors.cardBorder,
+                                        justifyContent: 'center',
+                                        marginRight: 10,
                                     }}
                                 >
-                                    <View
-                                        style={{
-                                            width: 48,
-                                            height: 48,
-                                            borderRadius: 24,
-                                            backgroundColor: badge.bg,
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            marginBottom: 6,
-                                        }}
-                                    >
-                                        <Ionicons name={badge.icon as any} size={24} color={badge.color} />
-                                    </View>
-                                    <Text style={{ fontSize: 11, fontWeight: '700', color: colors.text }}>
-                                        {badge.name}
-                                    </Text>
+                                    <Ionicons name="person-outline" size={17} color={isDark ? '#CBD5E1' : '#475569'} />
                                 </View>
-                            ))}
-                        </ScrollView>
+                                <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>
+                                    {isOdia ? 'ଉପଭୋକ୍ତା ବିବରଣୀ' : 'Beneficiary Details'}
+                                </Text>
+                            </View>
+
+                            <View
+                                style={{
+                                    backgroundColor: isDark ? 'rgba(34, 197, 94, 0.15)' : '#DCFCE7',
+                                    paddingHorizontal: 8,
+                                    paddingVertical: 3,
+                                    borderRadius: 12,
+                                }}
+                            >
+                                <Text style={{ color: '#16A34A', fontSize: 11, fontWeight: '700' }}>
+                                    {isOdia ? 'ସକ୍ରିୟ' : 'Active'}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={{ height: 1, backgroundColor: colors.divider, marginBottom: 12 }} />
+
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+                            <Text style={{ fontSize: 13, color: colors.textSecondary, fontWeight: '500' }}>
+                                {isOdia ? 'ଉପଭୋକ୍ତା ଆଇଡି' : 'Beneficiary ID'}
+                            </Text>
+                            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.text }}>
+                                {profile.id || 'UU-2026-001'}
+                            </Text>
+                        </View>
+
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+                            <Text style={{ fontSize: 13, color: colors.textSecondary, fontWeight: '500' }}>
+                                {isOdia ? 'ଚୁଲି ମଡେଲ୍' : 'Cookstove Model'}
+                            </Text>
+                            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.text }}>
+                                Prathamesh Cookstove
+                            </Text>
+                        </View>
+
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ fontSize: 13, color: colors.textSecondary, fontWeight: '500' }}>
+                                {isOdia ? 'ସ୍ଥାନ' : 'Location'}
+                            </Text>
+                            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.text }}>
+                                {[profile.village, profile.district].filter(Boolean).join(', ') || (isOdia ? 'କେନ୍ଦ୍ରାପଡ଼ା, ଓଡ଼ିଶା' : 'Kendrapara, Odisha')}
+                            </Text>
+                        </View>
                     </View>
 
                     {/* Language Selector */}
                     <View style={{ marginBottom: 20 }}>
-                        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textSecondary, marginBottom: 8, marginLeft: 2, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                            {t.settings.language} ({isOdia ? 'ଭାଷା ଚୟନ' : 'SELECT LANGUAGE'})
+                        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, marginLeft: 2 }}>
+                            {isOdia ? 'ଭାଷା' : 'Language'}
                         </Text>
                         <View
                             style={{
                                 backgroundColor: colors.card,
-                                borderRadius: 20,
-                                padding: 8,
-                                elevation: 3,
+                                borderRadius: 16,
+                                padding: 4,
+                                elevation: 2,
                                 shadowColor: '#000',
-                                shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: isDark ? 0.3 : 0.06,
-                                shadowRadius: 6,
+                                shadowOffset: { width: 0, height: 1 },
+                                shadowOpacity: isDark ? 0.25 : 0.05,
+                                shadowRadius: 4,
                                 borderWidth: isDark ? 1 : 0,
                                 borderColor: colors.cardBorder,
                                 flexDirection: 'row',
@@ -393,13 +348,13 @@ export default function ProfileScreen() {
                                 onPress={() => setLanguage('en')}
                                 style={{
                                     flex: 1,
-                                    paddingVertical: 11,
-                                    borderRadius: 14,
+                                    paddingVertical: 10,
+                                    borderRadius: 12,
                                     alignItems: 'center',
                                     backgroundColor: language === 'en' ? '#FF4500' : 'transparent',
                                 }}
                             >
-                                <Text style={{ fontSize: 14, fontWeight: '800', color: language === 'en' ? '#FFFFFF' : colors.textSecondary }}>
+                                <Text style={{ fontSize: 14, fontWeight: '700', color: language === 'en' ? '#FFFFFF' : colors.textSecondary }}>
                                     English
                                 </Text>
                             </TouchableOpacity>
@@ -409,13 +364,13 @@ export default function ProfileScreen() {
                                 onPress={() => setLanguage('or')}
                                 style={{
                                     flex: 1,
-                                    paddingVertical: 11,
-                                    borderRadius: 14,
+                                    paddingVertical: 10,
+                                    borderRadius: 12,
                                     alignItems: 'center',
                                     backgroundColor: language === 'or' ? '#FF4500' : 'transparent',
                                 }}
                             >
-                                <Text style={{ fontSize: 14, fontWeight: '800', color: language === 'or' ? '#FFFFFF' : colors.textSecondary }}>
+                                <Text style={{ fontSize: 14, fontWeight: '700', color: language === 'or' ? '#FFFFFF' : colors.textSecondary }}>
                                     ଓଡ଼ିଆ (Odia)
                                 </Text>
                             </TouchableOpacity>
@@ -424,13 +379,13 @@ export default function ProfileScreen() {
 
                     {/* App Preferences */}
                     <View style={{ marginBottom: 20 }}>
-                        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textSecondary, marginBottom: 8, marginLeft: 2, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                            {isOdia ? 'ପସନ୍ଦ ଓ ସେଟିଂସ୍' : 'PREFERENCES'}
+                        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, marginLeft: 2 }}>
+                            {isOdia ? 'ପସନ୍ଦ ଓ ସେଟିଂସ୍' : 'Preferences'}
                         </Text>
                         <View
                             style={{
                                 backgroundColor: colors.card,
-                                borderRadius: 22,
+                                borderRadius: 20,
                                 overflow: 'hidden',
                                 elevation: 3,
                                 shadowColor: '#000',
@@ -444,8 +399,7 @@ export default function ProfileScreen() {
                             <SettingRow
                                 icon="notifications-outline"
                                 title={t.profile.notifications}
-                                subtitle={isOdia ? 'ନୂଆ ଖବର ଓ ଚୁଲି ଅପଡେଟ୍' : 'News & cookstove reminders'}
-                                color="#FF6F00"
+                                subtitle={isOdia ? 'ବାର୍ତ୍ତା ଏବଂ ଚୁଲି ଅପଡେଟ୍' : 'News and stove reminders'}
                                 rightElement={
                                     <Switch
                                         value={notifications}
@@ -458,15 +412,14 @@ export default function ProfileScreen() {
                             <SettingRow
                                 icon="moon-outline"
                                 title={t.profile.darkMode}
-                                subtitle={isOdia ? 'ରାତ୍ରି ସମୟ ପାଇଁ ଡାର୍କ ଥିମ୍' : 'Low-light theme'}
-                                color="#8B5CF6"
+                                subtitle={isOdia ? 'ରାତ୍ରି ସମୟ ପାଇଁ ଡାର୍କ ଥିମ୍' : 'Low-light dark mode'}
                                 showDivider={false}
                                 rightElement={
                                     <Switch
                                         value={isDark}
                                         onValueChange={() => toggleTheme()}
-                                        trackColor={{ false: isDark ? '#334155' : '#E2E8F0', true: '#DDD6FE' }}
-                                        thumbColor={isDark ? '#8B5CF6' : '#F1F5F9'}
+                                        trackColor={{ false: isDark ? '#334155' : '#E2E8F0', true: '#FED7AA' }}
+                                        thumbColor={isDark ? '#FF4500' : '#F1F5F9'}
                                     />
                                 }
                             />
@@ -475,13 +428,13 @@ export default function ProfileScreen() {
 
                     {/* Support & Legal */}
                     <View style={{ marginBottom: 20 }}>
-                        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textSecondary, marginBottom: 8, marginLeft: 2, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                            {isOdia ? 'ସହାୟତା ଓ ଆଇନଗତ' : 'SUPPORT & LEGAL'}
+                        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, marginLeft: 2 }}>
+                            {isOdia ? 'ସହାୟତା' : 'Support & Legal'}
                         </Text>
                         <View
                             style={{
                                 backgroundColor: colors.card,
-                                borderRadius: 22,
+                                borderRadius: 20,
                                 overflow: 'hidden',
                                 elevation: 3,
                                 shadowColor: '#000',
@@ -496,33 +449,27 @@ export default function ProfileScreen() {
                                 icon="call-outline"
                                 title={t.settings.contact}
                                 subtitle="www.meensou.com/connect"
-                                color="#0284C7"
                                 onPress={() => WebBrowser.openBrowserAsync('https://www.meensou.com/connect')}
                             />
                             <SettingRow
                                 icon="mail-outline"
                                 title={t.settings.email}
                                 subtitle="info@meensou.com"
-                                color="#EC4899"
                                 onPress={() => Linking.openURL('mailto:info@meensou.com')}
                             />
                             <SettingRow
                                 icon="document-text-outline"
                                 title={t.settings.terms}
-                                color="#F59E0B"
                                 onPress={() => WebBrowser.openBrowserAsync('https://meensou.com/termsofservice/')}
                             />
                             <SettingRow
                                 icon="shield-checkmark-outline"
                                 title={t.settings.privacy}
-                                color="#10B981"
                                 onPress={() => WebBrowser.openBrowserAsync('https://meensou.com/privacypolicy/')}
                             />
                             <SettingRow
                                 icon="share-social-outline"
                                 title={t.settings.share}
-                                subtitle={isOdia ? 'ସାଙ୍ଗମାନଙ୍କ ସହିତ ସେୟାର କରନ୍ତୁ' : 'Share Utkal Udaya with friends'}
-                                color="#6366F1"
                                 showDivider={false}
                                 onPress={handleShare}
                             />
@@ -535,26 +482,26 @@ export default function ProfileScreen() {
                             activeOpacity={0.8}
                             onPress={handleLogout}
                             style={{
-                                backgroundColor: isDark ? 'rgba(220, 38, 38, 0.16)' : '#FEE2E2',
+                                backgroundColor: isDark ? 'rgba(239, 68, 68, 0.12)' : '#FEF2F2',
                                 flexDirection: 'row',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 paddingVertical: 14,
-                                borderRadius: 18,
+                                borderRadius: 16,
                                 borderWidth: 1,
-                                borderColor: isDark ? 'rgba(220, 38, 38, 0.35)' : '#FECACA',
+                                borderColor: isDark ? 'rgba(239, 68, 68, 0.3)' : '#FEE2E2',
                             }}
                         >
-                            <Ionicons name="log-out-outline" size={20} color="#EF4444" style={{ marginRight: 8 }} />
-                            <Text style={{ fontSize: 16, fontWeight: '800', color: '#EF4444' }}>
-                                {isOdia ? 'ଲଗ୍ ଆଉଟ୍ (Log Out)' : 'Log Out'}
+                            <Ionicons name="log-out-outline" size={19} color="#EF4444" style={{ marginRight: 8 }} />
+                            <Text style={{ fontSize: 15, fontWeight: '700', color: '#EF4444' }}>
+                                {isOdia ? 'ଲଗ୍ ଆଉଟ୍' : 'Log Out'}
                             </Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* Version */}
-                    <Text style={{ textAlign: 'center', fontSize: 12, color: colors.textSecondary, fontWeight: '600', marginBottom: 20 }}>
-                        Utkal Udaya v1.0.0 • Clean Energy Initiative
+                    <Text style={{ textAlign: 'center', fontSize: 12, color: colors.textSecondary, fontWeight: '500', marginBottom: 20 }}>
+                        Utkal Udaya v1.0.0
                     </Text>
 
                     {/* Bottom Spacer for floating Tab Bar */}
