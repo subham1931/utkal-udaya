@@ -3,16 +3,16 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
-// import { useColorScheme } from '@/hooks/use-color-scheme'; // Unused
+import { useAppTheme } from '@/context/ThemeContext';
 
 export default function TabLayout() {
-  // const colorScheme = useColorScheme();
+  const { isDark } = useAppTheme();
 
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#FF4500',
-        tabBarInactiveTintColor: '#888',
+        tabBarInactiveTintColor: isDark ? '#64748B' : '#888',
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarLabelStyle: {
@@ -21,12 +21,13 @@ export default function TabLayout() {
           marginBottom: 0,
         },
         tabBarStyle: {
-          backgroundColor: '#1A1A1A',
-          borderTopWidth: 0,
+          backgroundColor: isDark ? '#0F172A' : '#1A1A1A',
+          borderTopWidth: isDark ? 1 : 0,
+          borderTopColor: isDark ? '#1E293B' : 'transparent',
           elevation: 20,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: -5 },
-          shadowOpacity: 0.3,
+          shadowOpacity: isDark ? 0.5 : 0.3,
           shadowRadius: 10,
           height: 80, // Slightly taller to cover safe area + labels comfortably
           paddingBottom: 25, // Specifically clear the home indicator

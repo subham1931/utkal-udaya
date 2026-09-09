@@ -15,10 +15,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAppTheme } from '../../context/ThemeContext';
 
 export default function CookstoveScreen() {
     const { t, language } = useLanguage();
+    const { isDark, colors } = useAppTheme();
     const isOdia = language === 'or';
+
 
     const [serialNo, setSerialNo] = useState('');
     const [aadhaarNo, setAadhaarNo] = useState('');
@@ -107,7 +110,7 @@ export default function CookstoveScreen() {
     ];
 
     return (
-        <SafeAreaView className="flex-1 bg-[#F0F7FF]" edges={['top']}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1"
@@ -175,7 +178,7 @@ export default function CookstoveScreen() {
                     {/* Support & Callback Card */}
                     <View
                         style={{
-                            backgroundColor: '#FFFFFF',
+                            backgroundColor: colors.card,
                             marginHorizontal: 18,
                             marginTop: 18,
                             marginBottom: 20,
@@ -184,8 +187,10 @@ export default function CookstoveScreen() {
                             elevation: 6,
                             shadowColor: '#000',
                             shadowOffset: { width: 0, height: 4 },
-                            shadowOpacity: 0.08,
+                            shadowOpacity: isDark ? 0.3 : 0.08,
                             shadowRadius: 10,
+                            borderWidth: isDark ? 1 : 0,
+                            borderColor: colors.cardBorder,
                         }}
                     >
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
@@ -194,7 +199,7 @@ export default function CookstoveScreen() {
                                     width: 44,
                                     height: 44,
                                     borderRadius: 14,
-                                    backgroundColor: '#FFF5ED',
+                                    backgroundColor: isDark ? 'rgba(255, 69, 0, 0.18)' : '#FFF5ED',
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     marginRight: 14,
@@ -203,10 +208,10 @@ export default function CookstoveScreen() {
                                 <Ionicons name="headset-outline" size={22} color="#FF4500" />
                             </View>
                             <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 17, fontWeight: '800', color: '#1E293B', lineHeight: 22 }}>
+                                <Text style={{ fontSize: 17, fontWeight: '800', color: colors.text, lineHeight: 22 }}>
                                     {t.cookstove.supportTitle}
                                 </Text>
-                                <Text style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+                                <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 2 }}>
                                     {t.cookstove.supportDesc}
                                 </Text>
                             </View>
@@ -214,27 +219,27 @@ export default function CookstoveScreen() {
 
                         {/* Serial Number Input */}
                         <View style={{ marginBottom: 14, marginTop: 4 }}>
-                            <Text style={{ fontSize: 13, fontWeight: '700', color: '#475569', marginBottom: 6, marginLeft: 2 }}>
+                            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textSecondary, marginBottom: 6, marginLeft: 2 }}>
                                 {t.cookstove.serialNo} ({isOdia ? 'ସିରିଏଲ ନମ୍ବର' : 'Serial No.'})
                             </Text>
                             <View
                                 style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
-                                    backgroundColor: '#F8FAFC',
+                                    backgroundColor: colors.inputBg,
                                     borderRadius: 16,
                                     borderWidth: 1,
-                                    borderColor: '#E2E8F0',
+                                    borderColor: colors.inputBorder,
                                     paddingHorizontal: 14,
                                     height: 52,
                                 }}
                             >
-                                <Ionicons name="barcode-outline" size={20} color="#64748B" style={{ marginRight: 10 }} />
+                                <Ionicons name="barcode-outline" size={20} color={colors.textSecondary} style={{ marginRight: 10 }} />
                                 <TextInput
                                     style={{
                                         flex: 1,
                                         fontSize: 15,
-                                        color: '#1E293B',
+                                        color: colors.text,
                                         height: '100%',
                                         paddingVertical: 0,
                                         textAlignVertical: 'center',
@@ -242,7 +247,7 @@ export default function CookstoveScreen() {
                                     placeholder={isOdia ? 'ସିରିଏଲ ନମ୍ବର ଲେଖନ୍ତୁ (ଉଦାହରଣ: UU-8921)' : 'Enter Serial Number (e.g. UU-8921)'}
                                     value={serialNo}
                                     onChangeText={setSerialNo}
-                                    placeholderTextColor="#94A3B8"
+                                    placeholderTextColor={isDark ? '#64748B' : '#94A3B8'}
                                     autoCapitalize="characters"
                                 />
                             </View>
@@ -250,27 +255,27 @@ export default function CookstoveScreen() {
 
                         {/* Aadhaar Number Input */}
                         <View style={{ marginBottom: 18 }}>
-                            <Text style={{ fontSize: 13, fontWeight: '700', color: '#475569', marginBottom: 6, marginLeft: 2 }}>
+                            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textSecondary, marginBottom: 6, marginLeft: 2 }}>
                                 {t.cookstove.aadhaarNo} ({isOdia ? 'ଆଧାର ନମ୍ବର' : 'Aadhaar No.'})
                             </Text>
                             <View
                                 style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
-                                    backgroundColor: '#F8FAFC',
+                                    backgroundColor: colors.inputBg,
                                     borderRadius: 16,
                                     borderWidth: 1,
-                                    borderColor: '#E2E8F0',
+                                    borderColor: colors.inputBorder,
                                     paddingHorizontal: 14,
                                     height: 52,
                                 }}
                             >
-                                <Ionicons name="card-outline" size={20} color="#64748B" style={{ marginRight: 10 }} />
+                                <Ionicons name="card-outline" size={20} color={colors.textSecondary} style={{ marginRight: 10 }} />
                                 <TextInput
                                     style={{
                                         flex: 1,
                                         fontSize: 15,
-                                        color: '#1E293B',
+                                        color: colors.text,
                                         height: '100%',
                                         paddingVertical: 0,
                                         textAlignVertical: 'center',
@@ -279,7 +284,7 @@ export default function CookstoveScreen() {
                                     value={aadhaarNo}
                                     onChangeText={setAadhaarNo}
                                     keyboardType="numeric"
-                                    placeholderTextColor="#94A3B8"
+                                    placeholderTextColor={isDark ? '#64748B' : '#94A3B8'}
                                     maxLength={14}
                                 />
                             </View>
@@ -330,7 +335,7 @@ export default function CookstoveScreen() {
                     {/* Features & Why Use Section */}
                     <View style={{ marginHorizontal: 18, marginBottom: 20 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                            <Text style={{ fontSize: 19, fontWeight: '800', color: '#1E293B' }}>
+                            <Text style={{ fontSize: 19, fontWeight: '800', color: colors.text }}>
                                 {isOdia ? 'ଉନ୍ନତ ଚୁଲିର ଲାଭ' : 'Why Use This Cookstove?'}
                             </Text>
                             <View style={{ backgroundColor: '#FFEDE5', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 }}>
@@ -342,14 +347,16 @@ export default function CookstoveScreen() {
 
                         <View
                             style={{
-                                backgroundColor: '#FFFFFF',
+                                backgroundColor: colors.card,
                                 borderRadius: 24,
                                 padding: 16,
                                 elevation: 4,
                                 shadowColor: '#000',
                                 shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: 0.06,
+                                shadowOpacity: isDark ? 0.3 : 0.06,
                                 shadowRadius: 8,
+                                borderWidth: isDark ? 1 : 0,
+                                borderColor: colors.cardBorder,
                             }}
                         >
                             {FEATURES.map((feature, idx) => (
@@ -360,7 +367,7 @@ export default function CookstoveScreen() {
                                         alignItems: 'flex-start',
                                         paddingVertical: 12,
                                         borderBottomWidth: idx < FEATURES.length - 1 ? 1 : 0,
-                                        borderBottomColor: '#F1F5F9',
+                                        borderBottomColor: colors.divider,
                                     }}
                                 >
                                     <View
@@ -368,7 +375,7 @@ export default function CookstoveScreen() {
                                             width: 44,
                                             height: 44,
                                             borderRadius: 14,
-                                            backgroundColor: feature.bgColor,
+                                            backgroundColor: isDark ? feature.color + '25' : feature.bgColor,
                                             justifyContent: 'center',
                                             alignItems: 'center',
                                             marginRight: 14,
@@ -378,10 +385,10 @@ export default function CookstoveScreen() {
                                         <Ionicons name={feature.icon as any} size={22} color={feature.color} />
                                     </View>
                                     <View style={{ flex: 1 }}>
-                                        <Text style={{ fontSize: 15, fontWeight: '800', color: '#1E293B', marginBottom: 3 }}>
+                                        <Text style={{ fontSize: 15, fontWeight: '800', color: colors.text, marginBottom: 3 }}>
                                             {feature.title}
                                         </Text>
-                                        <Text style={{ fontSize: 13, color: '#64748B', lineHeight: 18 }}>
+                                        <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>
                                             {feature.desc}
                                         </Text>
                                     </View>
@@ -395,13 +402,13 @@ export default function CookstoveScreen() {
                         style={{
                             marginHorizontal: 18,
                             marginBottom: 20,
-                            backgroundColor: '#FFF7ED',
+                            backgroundColor: isDark ? 'rgba(234, 88, 12, 0.15)' : '#FFF7ED',
                             borderRadius: 20,
                             padding: 16,
                             flexDirection: 'row',
                             alignItems: 'center',
                             borderWidth: 1,
-                            borderColor: '#FED7AA',
+                            borderColor: isDark ? 'rgba(234, 88, 12, 0.3)' : '#FED7AA',
                         }}
                     >
                         <View
@@ -409,7 +416,7 @@ export default function CookstoveScreen() {
                                 width: 40,
                                 height: 40,
                                 borderRadius: 20,
-                                backgroundColor: '#FFEDD5',
+                                backgroundColor: isDark ? 'rgba(234, 88, 12, 0.25)' : '#FFEDD5',
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 marginRight: 12,
@@ -418,10 +425,10 @@ export default function CookstoveScreen() {
                             <Ionicons name="call" size={20} color="#EA580C" />
                         </View>
                         <View style={{ flex: 1 }}>
-                            <Text style={{ fontSize: 14, fontWeight: '800', color: '#9A3412' }}>
+                            <Text style={{ fontSize: 14, fontWeight: '800', color: isDark ? '#FDBA74' : '#9A3412' }}>
                                 {isOdia ? 'ସହାୟତା ହେଲ୍ପଲାଇନ୍' : 'Helpline Support'}
                             </Text>
-                            <Text style={{ fontSize: 12, color: '#C2410C', marginTop: 1 }}>
+                            <Text style={{ fontSize: 12, color: isDark ? '#FED7AA' : '#C2410C', marginTop: 1 }}>
                                 {isOdia ? 'ଯେକୌଣସି ସାହାଯ୍ୟ ପାଇଁ ଆମ ଟିମ୍ ପ୍ରସ୍ତୁତ।' : 'Our technical support team is ready to assist.'}
                             </Text>
                         </View>
@@ -434,3 +441,4 @@ export default function CookstoveScreen() {
         </SafeAreaView>
     );
 }
+

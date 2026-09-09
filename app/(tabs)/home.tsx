@@ -10,6 +10,7 @@ import Animated, { Easing as ReanimatedEasing, interpolate, useAnimatedStyle, us
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useLanguage } from '../../context/LanguageContext';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -26,6 +27,8 @@ const CAROUSEL_CACHE_KEY = 'utkal_udaya_carousel_cache';
 
 export default function HomeScreen() {
   const { t } = useLanguage();
+  const { isDark, colors } = useAppTheme();
+
   const [weather, setWeather] = useState({ temp: '--', city: t.common.loading, icon: '', code: '01d', lat: 21.4937, lon: 83.9812 });
   const [activeIndex, setActiveIndex] = useState(0);
   const [isSahayikaVisible, setIsSahayikaVisible] = useState(false);
@@ -332,7 +335,7 @@ export default function HomeScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F0F7FF]" edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -502,43 +505,45 @@ export default function HomeScreen() {
         <View style={{ marginHorizontal: 16, marginTop: 16 }}>
           <View
             style={{
-              backgroundColor: '#FFF',
+              backgroundColor: colors.card,
               borderRadius: 24,
               overflow: 'hidden',
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.08,
+              shadowOpacity: isDark ? 0.3 : 0.08,
               shadowRadius: 12,
               elevation: 8,
+              borderWidth: isDark ? 1 : 0,
+              borderColor: colors.cardBorder,
             }}
           >
             <View style={{ padding: 20 }}>
               <View className="flex-row justify-between items-center">
-                <Text className="text-2xl font-bold text-[#333]">“{t.common.bahni}” {t.cookstove.title}</Text>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>“{t.common.bahni}” {t.cookstove.title}</Text>
               </View>
-              <Text className="text-sm text-[#777] mb-5">{t.cookstove.subtitle}</Text>
+              <Text style={{ fontSize: 14, color: colors.textSecondary, marginBottom: 20 }}>{t.cookstove.subtitle}</Text>
 
               {/* Stats Grid - flex for iOS consistency */}
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 }}>
-                <View style={{ flex: 1, marginHorizontal: 4, padding: 14, borderRadius: 18, alignItems: 'center', backgroundColor: '#E8F5E9' }}>
+                <View style={{ flex: 1, marginHorizontal: 4, padding: 14, borderRadius: 18, alignItems: 'center', backgroundColor: isDark ? 'rgba(34, 197, 94, 0.15)' : '#E8F5E9' }}>
                   <Ionicons name="leaf-outline" size={24} color="#2E7D32" />
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#333', marginTop: 8 }} maxFontSizeMultiplier={1.2}>12.5 {t.common.kg}</Text>
-                  <Text style={{ fontSize: 10, fontWeight: '600', color: '#666', textTransform: 'uppercase', marginTop: 2 }} maxFontSizeMultiplier={1.2}>{t.cookstove.co2Saved}</Text>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text, marginTop: 8 }} maxFontSizeMultiplier={1.2}>12.5 {t.common.kg}</Text>
+                  <Text style={{ fontSize: 10, fontWeight: '600', color: colors.textSecondary, textTransform: 'uppercase', marginTop: 2 }} maxFontSizeMultiplier={1.2}>{t.cookstove.co2Saved}</Text>
                 </View>
-                <View style={{ flex: 1, marginHorizontal: 4, padding: 14, borderRadius: 18, alignItems: 'center', backgroundColor: '#FFF3E0' }}>
+                <View style={{ flex: 1, marginHorizontal: 4, padding: 14, borderRadius: 18, alignItems: 'center', backgroundColor: isDark ? 'rgba(234, 88, 12, 0.15)' : '#FFF3E0' }}>
                   <Ionicons name="flame-outline" size={24} color="#E65100" />
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#333', marginTop: 8 }} maxFontSizeMultiplier={1.2}>32%</Text>
-                  <Text style={{ fontSize: 10, fontWeight: '600', color: '#666', textTransform: 'uppercase', marginTop: 2 }} maxFontSizeMultiplier={1.2}>{t.common.efficiency}</Text>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text, marginTop: 8 }} maxFontSizeMultiplier={1.2}>32%</Text>
+                  <Text style={{ fontSize: 10, fontWeight: '600', color: colors.textSecondary, textTransform: 'uppercase', marginTop: 2 }} maxFontSizeMultiplier={1.2}>{t.common.efficiency}</Text>
                 </View>
-                <View style={{ flex: 1, marginHorizontal: 4, padding: 14, borderRadius: 18, alignItems: 'center', backgroundColor: '#E1F5FE' }}>
+                <View style={{ flex: 1, marginHorizontal: 4, padding: 14, borderRadius: 18, alignItems: 'center', backgroundColor: isDark ? 'rgba(2, 132, 199, 0.15)' : '#E1F5FE' }}>
                   <Ionicons name="timer-outline" size={24} color="#0277BD" />
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#333', marginTop: 8 }} maxFontSizeMultiplier={1.2}>48 {t.cookstove.hours}</Text>
-                  <Text style={{ fontSize: 10, fontWeight: '600', color: '#666', textTransform: 'uppercase', marginTop: 2 }} maxFontSizeMultiplier={1.2}>{t.cookstove.usageTime}</Text>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text, marginTop: 8 }} maxFontSizeMultiplier={1.2}>48 {t.cookstove.hours}</Text>
+                  <Text style={{ fontSize: 10, fontWeight: '600', color: colors.textSecondary, textTransform: 'uppercase', marginTop: 2 }} maxFontSizeMultiplier={1.2}>{t.cookstove.usageTime}</Text>
                 </View>
               </View>
 
               {/* Action Grid - explicit styles for iOS */}
-              <Text style={{ fontSize: 18, fontWeight: '700', color: '#333', marginBottom: 16 }} maxFontSizeMultiplier={1.2}>{t.common.quickActions}</Text>
+              <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 16 }} maxFontSizeMultiplier={1.2}>{t.common.quickActions}</Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 24 }}>
                 {[
                   { title: t.common.odishaSuccess, icon: 'alert-circle-outline' as const, color: '#FF5252' },
@@ -555,16 +560,16 @@ export default function HomeScreen() {
                       borderRadius: 18,
                       flexDirection: 'row',
                       alignItems: 'center',
-                      backgroundColor: '#F8F9FA',
+                      backgroundColor: isDark ? '#0F172A' : '#F8F9FA',
                       borderWidth: 1,
-                      borderColor: '#F0F0F0',
+                      borderColor: isDark ? '#334155' : '#F0F0F0',
                       marginBottom: 12,
                     }}
                   >
                     <View style={{ width: 36, height: 36, borderRadius: 18, borderWidth: 2, borderColor: action.color, justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
                       <Ionicons name={action.icon} size={20} color={action.color} />
                     </View>
-                    <Text style={{ fontSize: 13, fontWeight: '600', color: '#444', flex: 1 }} numberOfLines={2} maxFontSizeMultiplier={1.2}>{action.title}</Text>
+                    <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text, flex: 1 }} numberOfLines={2} maxFontSizeMultiplier={1.2}>{action.title}</Text>
                   </TouchableOpacity>
                 ))}
               </View>

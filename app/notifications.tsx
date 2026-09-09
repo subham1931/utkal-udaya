@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAppTheme } from '../context/ThemeContext';
 
 const CATEGORIES_DATA = [
     { id: '1345', title: 'କୃଷି (Agri)' },
@@ -17,6 +18,8 @@ const CATEGORIES_DATA = [
 
 export default function NotificationsScreen() {
     const router = useRouter();
+    const { isDark, colors } = useAppTheme();
+
     // const { t } = useLanguage();
     const [notifications, setNotifications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -89,12 +92,28 @@ export default function NotificationsScreen() {
                     });
                 }
             }}
-            className={`mx-4 mb-3 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm elevation-2 flex-row ${!item.read ? 'bg-orange-50/50' : ''}`}
+            style={{
+                marginHorizontal: 16,
+                marginBottom: 12,
+                padding: 16,
+                borderRadius: 16,
+                backgroundColor: !item.read 
+                    ? (isDark ? 'rgba(255, 69, 0, 0.12)' : '#FFF7ED')
+                    : colors.card,
+                borderWidth: 1,
+                borderColor: isDark ? colors.cardBorder : '#F1F5F9',
+                flexDirection: 'row',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: isDark ? 0.3 : 0.05,
+                shadowRadius: 4,
+                elevation: 2,
+            }}
         >
             <View className="mr-3 relative">
                 <Image
                     source={item.image ? { uri: item.image } : null}
-                    style={{ width: 50, height: 50, borderRadius: 12, backgroundColor: '#f0f0f0' }}
+                    style={{ width: 50, height: 50, borderRadius: 12, backgroundColor: isDark ? '#1E293B' : '#f0f0f0' }}
                     contentFit="cover"
                 />
                 <View className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
@@ -109,12 +128,11 @@ export default function NotificationsScreen() {
                     <Text className="text-[10px] mobile:text-xs font-bold text-[#FF4500] uppercase tracking-wider">
                         {item.category}
                     </Text>
-                    <Text className="text-[10px] text-gray-400">
+                    <Text style={{ fontSize: 10, color: colors.textSecondary }}>
                         Today
-                        {/* Replace with actual relative time if available */}
                     </Text>
                 </View>
-                <Text className="text-sm font-semibold text-gray-800 leading-tight" numberOfLines={2}>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text, lineHeight: 19 }} numberOfLines={2}>
                     {item.title}
                 </Text>
             </View>
@@ -128,18 +146,35 @@ export default function NotificationsScreen() {
     );
 
     return (
-        <SafeAreaView className="flex-1 bg-[#F0F7FF]" edges={['top', 'bottom']}>
-            <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm mb-2">
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top', 'bottom']}>
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    backgroundColor: colors.card,
+                    borderBottomWidth: 1,
+                    borderBottomColor: colors.divider,
+                    marginBottom: 8,
+                }}
+            >
                 <TouchableOpacity
                     onPress={() => router.back()}
-                    className="w-10 h-10 rounded-full bg-gray-50 justify-center items-center"
+                    style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 20,
+                        backgroundColor: isDark ? '#334155' : '#F1F5F9',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
                 >
-                    <Ionicons name="arrow-back" size={24} color="#333" />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text className="text-lg font-bold text-gray-800">Notifications</Text>
-                <TouchableOpacity className="w-10 h-10 justify-center items-center opacity-0">
-                    <Ionicons name="settings-outline" size={24} color="#333" />
-                </TouchableOpacity>
+                <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text }}>Notifications</Text>
+                <View style={{ width: 40, height: 40 }} />
             </View>
 
             {loading ? (
@@ -157,10 +192,10 @@ export default function NotificationsScreen() {
                     }
                     ListEmptyComponent={
                         <View className="flex-1 justify-center items-center mt-20 px-8">
-                            <View className="w-20 h-20 bg-gray-100 rounded-full justify-center items-center mb-4">
-                                <Ionicons name="notifications-off-outline" size={40} color="#AAA" />
+                            <View style={{ width: 80, height: 80, backgroundColor: isDark ? '#1E293B' : '#F1F5F9', borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+                                <Ionicons name="notifications-off-outline" size={40} color={colors.textSecondary} />
                             </View>
-                            <Text className="text-gray-500 text-center font-medium">
+                            <Text style={{ color: colors.textSecondary, textAlign: 'center', fontWeight: '500' }}>
                                 No new notifications at the moment.
                             </Text>
                         </View>

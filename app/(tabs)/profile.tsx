@@ -20,6 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import EditProfileModal from '../../components/EditProfileModal';
 import { useLanguage } from '../../context/LanguageContext';
 import { useProfile } from '../../context/ProfileContext';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -27,10 +28,10 @@ export default function ProfileScreen() {
     const router = useRouter();
     const { profile, logout } = useProfile();
     const { t, language, setLanguage } = useLanguage();
+    const { isDark, toggleTheme, colors } = useAppTheme();
     const isOdia = language === 'or';
 
     const [notifications, setNotifications] = useState(true);
-    const [darkMode, setDarkMode] = useState(false);
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
     const handleShare = async () => {
@@ -90,7 +91,7 @@ export default function ProfileScreen() {
                 paddingVertical: 14,
                 paddingHorizontal: 16,
                 borderBottomWidth: showDivider ? 1 : 0,
-                borderBottomColor: '#F1F5F9',
+                borderBottomColor: colors.divider,
             }}
         >
             <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
@@ -99,7 +100,7 @@ export default function ProfileScreen() {
                         width: 38,
                         height: 38,
                         borderRadius: 12,
-                        backgroundColor: color + '15',
+                        backgroundColor: color + '18',
                         justifyContent: 'center',
                         alignItems: 'center',
                         marginRight: 14,
@@ -108,24 +109,25 @@ export default function ProfileScreen() {
                     <Ionicons name={icon} size={20} color={color} />
                 </View>
                 <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 15, fontWeight: '700', color: '#1E293B' }}>{title}</Text>
-                    {subtitle && <Text style={{ fontSize: 12, color: '#64748B', marginTop: 1 }}>{subtitle}</Text>}
+                    <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>{title}</Text>
+                    {subtitle && <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 1 }}>{subtitle}</Text>}
                 </View>
             </View>
-            {rightElement ? rightElement : <Ionicons name="chevron-forward" size={18} color="#94A3B8" />}
+            {rightElement ? rightElement : <Ionicons name="chevron-forward" size={18} color={isDark ? '#64748B' : '#94A3B8'} />}
         </TouchableOpacity>
     );
 
     const BADGES = [
-        { name: isOdia ? 'ପ୍ରକୃତି ବନ୍ଧୁ' : 'Eco Hero', icon: 'leaf', color: '#16A34A', bg: '#DCFCE7' },
-        { name: isOdia ? 'ସ୍ୱଚ୍ଛ ରନ୍ଧନ' : 'Clean Cook', icon: 'flame', color: '#EA580C', bg: '#FFEDD5' },
-        { name: isOdia ? 'ସଚେତନ କୃଷକ' : 'Smart Farmer', icon: 'school', color: '#0284C7', bg: '#E0F2FE' },
-        { name: isOdia ? 'ପରିବେଶ ରକ୍ଷକ' : 'Green Guard', icon: 'shield-checkmark', color: '#9333EA', bg: '#F3E8FF' },
+        { name: isOdia ? 'ପ୍ରକୃତି ବନ୍ଧୁ' : 'Eco Hero', icon: 'leaf', color: '#16A34A', bg: isDark ? 'rgba(22, 163, 74, 0.2)' : '#DCFCE7' },
+        { name: isOdia ? 'ସ୍ୱଚ୍ଛ ରନ୍ଧନ' : 'Clean Cook', icon: 'flame', color: '#EA580C', bg: isDark ? 'rgba(234, 88, 12, 0.2)' : '#FFEDD5' },
+        { name: isOdia ? 'ସଚେତନ କୃଷକ' : 'Smart Farmer', icon: 'school', color: '#0284C7', bg: isDark ? 'rgba(2, 132, 199, 0.2)' : '#E0F2FE' },
+        { name: isOdia ? 'ପରିବେଶ ରକ୍ଷକ' : 'Green Guard', icon: 'shield-checkmark', color: '#9333EA', bg: isDark ? 'rgba(147, 51, 234, 0.2)' : '#F3E8FF' },
     ];
 
     return (
-        <SafeAreaView className="flex-1 bg-[#F0F7FF]" edges={['top']}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
             <ScrollView showsVerticalScrollIndicator={false}>
+
                 {/* Hero Profile Header */}
                 <LinearGradient
                     colors={['#FF6F00', '#FF3D00']}
@@ -282,7 +284,7 @@ export default function ProfileScreen() {
                     {/* Impact Statistics Card */}
                     <View
                         style={{
-                            backgroundColor: '#FFFFFF',
+                            backgroundColor: colors.card,
                             borderRadius: 24,
                             paddingVertical: 18,
                             paddingHorizontal: 14,
@@ -290,8 +292,10 @@ export default function ProfileScreen() {
                             elevation: 5,
                             shadowColor: '#000',
                             shadowOffset: { width: 0, height: 3 },
-                            shadowOpacity: 0.08,
+                            shadowOpacity: isDark ? 0.3 : 0.08,
                             shadowRadius: 8,
+                            borderWidth: isDark ? 1 : 0,
+                            borderColor: colors.cardBorder,
                             flexDirection: 'row',
                             justifyContent: 'space-around',
                             alignItems: 'center',
@@ -301,29 +305,29 @@ export default function ProfileScreen() {
                             <Text style={{ fontSize: 22, fontWeight: '900', color: '#16A34A' }}>
                                 {profile.co2Saved || '120'} kg
                             </Text>
-                            <Text style={{ fontSize: 11, color: '#64748B', marginTop: 2, fontWeight: '600' }}>
+                            <Text style={{ fontSize: 11, color: colors.textSecondary, marginTop: 2, fontWeight: '600' }}>
                                 {isOdia ? 'CO2 ସଞ୍ଚୟ' : 'CO2 Saved'}
                             </Text>
                         </View>
 
-                        <View style={{ width: 1, height: 32, backgroundColor: '#E2E8F0' }} />
+                        <View style={{ width: 1, height: 32, backgroundColor: colors.divider }} />
 
                         <View style={{ alignItems: 'center' }}>
                             <Text style={{ fontSize: 22, fontWeight: '900', color: '#EA580C' }}>
                                 4
                             </Text>
-                            <Text style={{ fontSize: 11, color: '#64748B', marginTop: 2, fontWeight: '600' }}>
+                            <Text style={{ fontSize: 11, color: colors.textSecondary, marginTop: 2, fontWeight: '600' }}>
                                 {isOdia ? 'ପଦକ ଅର୍ଜିତ' : 'Badges Won'}
                             </Text>
                         </View>
 
-                        <View style={{ width: 1, height: 32, backgroundColor: '#E2E8F0' }} />
+                        <View style={{ width: 1, height: 32, backgroundColor: colors.divider }} />
 
                         <View style={{ alignItems: 'center' }}>
                             <Text style={{ fontSize: 22, fontWeight: '900', color: '#0284C7' }}>
                                 48 hrs
                             </Text>
-                            <Text style={{ fontSize: 11, color: '#64748B', marginTop: 2, fontWeight: '600' }}>
+                            <Text style={{ fontSize: 11, color: colors.textSecondary, marginTop: 2, fontWeight: '600' }}>
                                 {isOdia ? 'ରନ୍ଧନ ସମୟ' : 'Cook Time'}
                             </Text>
                         </View>
@@ -331,7 +335,7 @@ export default function ProfileScreen() {
 
                     {/* Badges Section */}
                     <View style={{ marginBottom: 20 }}>
-                        <Text style={{ fontSize: 16, fontWeight: '800', color: '#1E293B', marginBottom: 12, marginLeft: 2 }}>
+                        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 12, marginLeft: 2 }}>
                             {isOdia ? 'ମୋର ପଦକ ଓ ସଫଳତା' : 'My Achievements & Badges'}
                         </Text>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -4 }}>
@@ -340,7 +344,7 @@ export default function ProfileScreen() {
                                     key={idx}
                                     style={{
                                         alignItems: 'center',
-                                        backgroundColor: '#FFFFFF',
+                                        backgroundColor: colors.card,
                                         paddingHorizontal: 14,
                                         paddingVertical: 12,
                                         borderRadius: 20,
@@ -349,8 +353,10 @@ export default function ProfileScreen() {
                                         elevation: 2,
                                         shadowColor: '#000',
                                         shadowOffset: { width: 0, height: 2 },
-                                        shadowOpacity: 0.05,
+                                        shadowOpacity: isDark ? 0.25 : 0.05,
                                         shadowRadius: 4,
+                                        borderWidth: isDark ? 1 : 0,
+                                        borderColor: colors.cardBorder,
                                     }}
                                 >
                                     <View
@@ -366,7 +372,7 @@ export default function ProfileScreen() {
                                     >
                                         <Ionicons name={badge.icon as any} size={24} color={badge.color} />
                                     </View>
-                                    <Text style={{ fontSize: 11, fontWeight: '700', color: '#334155' }}>
+                                    <Text style={{ fontSize: 11, fontWeight: '700', color: colors.text }}>
                                         {badge.name}
                                     </Text>
                                 </View>
@@ -376,19 +382,21 @@ export default function ProfileScreen() {
 
                     {/* Language Selector */}
                     <View style={{ marginBottom: 20 }}>
-                        <Text style={{ fontSize: 14, fontWeight: '800', color: '#64748B', marginBottom: 8, marginLeft: 2, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textSecondary, marginBottom: 8, marginLeft: 2, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                             {t.settings.language} ({isOdia ? 'ଭାଷା ଚୟନ' : 'SELECT LANGUAGE'})
                         </Text>
                         <View
                             style={{
-                                backgroundColor: '#FFFFFF',
+                                backgroundColor: colors.card,
                                 borderRadius: 20,
                                 padding: 8,
                                 elevation: 3,
                                 shadowColor: '#000',
                                 shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: 0.06,
+                                shadowOpacity: isDark ? 0.3 : 0.06,
                                 shadowRadius: 6,
+                                borderWidth: isDark ? 1 : 0,
+                                borderColor: colors.cardBorder,
                                 flexDirection: 'row',
                             }}
                         >
@@ -403,7 +411,7 @@ export default function ProfileScreen() {
                                     backgroundColor: language === 'en' ? '#FF4500' : 'transparent',
                                 }}
                             >
-                                <Text style={{ fontSize: 14, fontWeight: '800', color: language === 'en' ? '#FFFFFF' : '#64748B' }}>
+                                <Text style={{ fontSize: 14, fontWeight: '800', color: language === 'en' ? '#FFFFFF' : colors.textSecondary }}>
                                     English
                                 </Text>
                             </TouchableOpacity>
@@ -419,7 +427,7 @@ export default function ProfileScreen() {
                                     backgroundColor: language === 'or' ? '#FF4500' : 'transparent',
                                 }}
                             >
-                                <Text style={{ fontSize: 14, fontWeight: '800', color: language === 'or' ? '#FFFFFF' : '#64748B' }}>
+                                <Text style={{ fontSize: 14, fontWeight: '800', color: language === 'or' ? '#FFFFFF' : colors.textSecondary }}>
                                     ଓଡ଼ିଆ (Odia)
                                 </Text>
                             </TouchableOpacity>
@@ -428,19 +436,21 @@ export default function ProfileScreen() {
 
                     {/* App Preferences */}
                     <View style={{ marginBottom: 20 }}>
-                        <Text style={{ fontSize: 14, fontWeight: '800', color: '#64748B', marginBottom: 8, marginLeft: 2, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textSecondary, marginBottom: 8, marginLeft: 2, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                             {isOdia ? 'ପସନ୍ଦ ଓ ସେଟିଂସ୍' : 'PREFERENCES'}
                         </Text>
                         <View
                             style={{
-                                backgroundColor: '#FFFFFF',
+                                backgroundColor: colors.card,
                                 borderRadius: 22,
                                 overflow: 'hidden',
                                 elevation: 3,
                                 shadowColor: '#000',
                                 shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: 0.06,
+                                shadowOpacity: isDark ? 0.3 : 0.06,
                                 shadowRadius: 6,
+                                borderWidth: isDark ? 1 : 0,
+                                borderColor: colors.cardBorder,
                             }}
                         >
                             <SettingRow
@@ -452,8 +462,8 @@ export default function ProfileScreen() {
                                     <Switch
                                         value={notifications}
                                         onValueChange={setNotifications}
-                                        trackColor={{ false: '#E2E8F0', true: '#FED7AA' }}
-                                        thumbColor={notifications ? '#FF4500' : '#F1F5F9'}
+                                        trackColor={{ false: isDark ? '#334155' : '#E2E8F0', true: '#FED7AA' }}
+                                        thumbColor={notifications ? '#FF4500' : (isDark ? '#94A3B8' : '#F1F5F9')}
                                     />
                                 }
                             />
@@ -465,10 +475,10 @@ export default function ProfileScreen() {
                                 showDivider={false}
                                 rightElement={
                                     <Switch
-                                        value={darkMode}
-                                        onValueChange={setDarkMode}
-                                        trackColor={{ false: '#E2E8F0', true: '#DDD6FE' }}
-                                        thumbColor={darkMode ? '#8B5CF6' : '#F1F5F9'}
+                                        value={isDark}
+                                        onValueChange={() => toggleTheme()}
+                                        trackColor={{ false: isDark ? '#334155' : '#E2E8F0', true: '#DDD6FE' }}
+                                        thumbColor={isDark ? '#8B5CF6' : '#F1F5F9'}
                                     />
                                 }
                             />
@@ -477,19 +487,21 @@ export default function ProfileScreen() {
 
                     {/* Support & Legal */}
                     <View style={{ marginBottom: 20 }}>
-                        <Text style={{ fontSize: 14, fontWeight: '800', color: '#64748B', marginBottom: 8, marginLeft: 2, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textSecondary, marginBottom: 8, marginLeft: 2, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                             {isOdia ? 'ସହାୟତା ଓ ଆଇନଗତ' : 'SUPPORT & LEGAL'}
                         </Text>
                         <View
                             style={{
-                                backgroundColor: '#FFFFFF',
+                                backgroundColor: colors.card,
                                 borderRadius: 22,
                                 overflow: 'hidden',
                                 elevation: 3,
                                 shadowColor: '#000',
                                 shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: 0.06,
+                                shadowOpacity: isDark ? 0.3 : 0.06,
                                 shadowRadius: 6,
+                                borderWidth: isDark ? 1 : 0,
+                                borderColor: colors.cardBorder,
                             }}
                         >
                             <SettingRow
@@ -535,25 +547,25 @@ export default function ProfileScreen() {
                             activeOpacity={0.8}
                             onPress={handleLogout}
                             style={{
-                                backgroundColor: '#FEE2E2',
+                                backgroundColor: isDark ? 'rgba(220, 38, 38, 0.16)' : '#FEE2E2',
                                 flexDirection: 'row',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 paddingVertical: 14,
                                 borderRadius: 18,
                                 borderWidth: 1,
-                                borderColor: '#FECACA',
+                                borderColor: isDark ? 'rgba(220, 38, 38, 0.35)' : '#FECACA',
                             }}
                         >
-                            <Ionicons name="log-out-outline" size={20} color="#DC2626" style={{ marginRight: 8 }} />
-                            <Text style={{ fontSize: 16, fontWeight: '800', color: '#DC2626' }}>
+                            <Ionicons name="log-out-outline" size={20} color="#EF4444" style={{ marginRight: 8 }} />
+                            <Text style={{ fontSize: 16, fontWeight: '800', color: '#EF4444' }}>
                                 {isOdia ? 'ଲଗ୍ ଆଉଟ୍ (Log Out)' : 'Log Out'}
                             </Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* Version */}
-                    <Text style={{ textAlign: 'center', fontSize: 12, color: '#94A3B8', fontWeight: '600', marginBottom: 20 }}>
+                    <Text style={{ textAlign: 'center', fontSize: 12, color: colors.textSecondary, fontWeight: '600', marginBottom: 20 }}>
                         Utkal Udaya v1.0.0 • Clean Energy Initiative
                     </Text>
 

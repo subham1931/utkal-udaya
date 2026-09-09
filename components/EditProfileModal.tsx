@@ -4,8 +4,9 @@ import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
-import { useProfile } from '../context/ProfileContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useProfile } from '../context/ProfileContext';
+import { useAppTheme } from '../context/ThemeContext';
 import * as ImagePicker from 'expo-image-picker';
 
 interface Props {
@@ -16,6 +17,8 @@ interface Props {
 export default function EditProfileModal({ isVisible, onClose }: Props) {
     const { profile, updateProfile } = useProfile();
     const { t } = useLanguage();
+    const { isDark, colors } = useAppTheme();
+
     
     const [name, setName] = useState(profile.name);
     const [email, setEmail] = useState(profile.email || '');
@@ -175,10 +178,10 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                 <View className="flex-1 justify-end">
                     <BlurView intensity={80} tint="dark" className="absolute inset-0" />
                     
-                    <View className="bg-white rounded-t-[40px] max-h-[90%]">
+                    <View style={{ backgroundColor: colors.card, borderTopLeftRadius: 40, borderTopRightRadius: 40, maxHeight: '90%' }}>
                         <LinearGradient
                             colors={['#FF8C00', '#FF4500']}
-                            className="rounded-t-[40px] pt-6 pb-4 px-6"
+                            style={{ borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingTop: 24, paddingBottom: 16, paddingHorizontal: 24 }}
                         >
                             <View className="flex-row items-center justify-between mb-4">
                                 <Text className="text-2xl font-bold text-white">
@@ -218,27 +221,28 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                                         </View>
                                     </View>
                                 </TouchableOpacity>
-                                <Text className="text-sm text-[#666] mt-2 font-medium">
+                                <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 8, fontWeight: '500' }}>
                                     {t.profile.tapToChangePhoto || 'Tap to change photo'}
                                 </Text>
                             </View>
 
                             {/* Form Fields */}
                             <View className="mb-4">
-                                <Text className="text-sm font-semibold text-[#333] mb-2">
+                                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 }}>
                                     {t.profile.name || 'Name'} *
                                 </Text>
-                                <View className="bg-[#F5F5F5] rounded-xl px-4 border border-[#E0E0E0] justify-center h-[50px]">
+                                <View style={{ backgroundColor: colors.inputBg, borderRadius: 12, paddingHorizontal: 16, borderWidth: 1, borderColor: colors.inputBorder, height: 50, justifyContent: 'center' }}>
                                     <TextInput
                                         value={name}
                                         onChangeText={setName}
                                         placeholder={t.profile.namePlaceholder || 'Enter your name'}
-                                        className="text-[#333]"
+                                        placeholderTextColor={isDark ? '#64748B' : '#94A3B8'}
                                         style={{
                                             fontSize: 15,
                                             height: '100%',
                                             paddingVertical: 0,
                                             textAlignVertical: 'center',
+                                            color: colors.text,
                                         }}
                                         autoCapitalize="words"
                                     />
@@ -246,20 +250,21 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                             </View>
 
                             <View className="mb-4">
-                                <Text className="text-sm font-semibold text-[#333] mb-2">
+                                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 }}>
                                     {t.profile.email || 'Email'}
                                 </Text>
-                                <View className="bg-[#F5F5F5] rounded-xl px-4 border border-[#E0E0E0] justify-center h-[50px]">
+                                <View style={{ backgroundColor: colors.inputBg, borderRadius: 12, paddingHorizontal: 16, borderWidth: 1, borderColor: colors.inputBorder, height: 50, justifyContent: 'center' }}>
                                     <TextInput
                                         value={email}
                                         onChangeText={setEmail}
                                         placeholder={t.profile.emailPlaceholder || 'Enter your email'}
-                                        className="text-[#333]"
+                                        placeholderTextColor={isDark ? '#64748B' : '#94A3B8'}
                                         style={{
                                             fontSize: 15,
                                             height: '100%',
                                             paddingVertical: 0,
                                             textAlignVertical: 'center',
+                                            color: colors.text,
                                         }}
                                         keyboardType="email-address"
                                         autoCapitalize="none"
@@ -268,20 +273,21 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                             </View>
 
                             <View className="mb-4">
-                                <Text className="text-sm font-semibold text-[#333] mb-2">
+                                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 }}>
                                     {t.profile.phone || 'Phone'}
                                 </Text>
-                                <View className="bg-[#F5F5F5] rounded-xl px-4 border border-[#E0E0E0] justify-center h-[50px]">
+                                <View style={{ backgroundColor: colors.inputBg, borderRadius: 12, paddingHorizontal: 16, borderWidth: 1, borderColor: colors.inputBorder, height: 50, justifyContent: 'center' }}>
                                     <TextInput
                                         value={phone}
                                         onChangeText={setPhone}
                                         placeholder={t.profile.phonePlaceholder || 'Enter your phone number'}
-                                        className="text-[#333]"
+                                        placeholderTextColor={isDark ? '#64748B' : '#94A3B8'}
                                         style={{
                                             fontSize: 15,
                                             height: '100%',
                                             paddingVertical: 0,
                                             textAlignVertical: 'center',
+                                            color: colors.text,
                                         }}
                                         keyboardType="phone-pad"
                                     />
@@ -289,20 +295,21 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                             </View>
 
                             <View className="mb-4">
-                                <Text className="text-sm font-semibold text-[#333] mb-2">
+                                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 }}>
                                     {t.profile.village || 'Village'}
                                 </Text>
-                                <View className="bg-[#F5F5F5] rounded-xl px-4 border border-[#E0E0E0] justify-center h-[50px]">
+                                <View style={{ backgroundColor: colors.inputBg, borderRadius: 12, paddingHorizontal: 16, borderWidth: 1, borderColor: colors.inputBorder, height: 50, justifyContent: 'center' }}>
                                     <TextInput
                                         value={village}
                                         onChangeText={setVillage}
                                         placeholder={t.profile.villagePlaceholder || 'Enter your village'}
-                                        className="text-[#333]"
+                                        placeholderTextColor={isDark ? '#64748B' : '#94A3B8'}
                                         style={{
                                             fontSize: 15,
                                             height: '100%',
                                             paddingVertical: 0,
                                             textAlignVertical: 'center',
+                                            color: colors.text,
                                         }}
                                         autoCapitalize="words"
                                     />
@@ -310,20 +317,21 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                             </View>
 
                             <View className="mb-6">
-                                <Text className="text-sm font-semibold text-[#333] mb-2">
+                                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 }}>
                                     {t.profile.district || 'District'}
                                 </Text>
-                                <View className="bg-[#F5F5F5] rounded-xl px-4 border border-[#E0E0E0] justify-center h-[50px]">
+                                <View style={{ backgroundColor: colors.inputBg, borderRadius: 12, paddingHorizontal: 16, borderWidth: 1, borderColor: colors.inputBorder, height: 50, justifyContent: 'center' }}>
                                     <TextInput
                                         value={district}
                                         onChangeText={setDistrict}
                                         placeholder={t.profile.districtPlaceholder || 'Enter your district'}
-                                        className="text-[#333]"
+                                        placeholderTextColor={isDark ? '#64748B' : '#94A3B8'}
                                         style={{
                                             fontSize: 15,
                                             height: '100%',
                                             paddingVertical: 0,
                                             textAlignVertical: 'center',
+                                            color: colors.text,
                                         }}
                                         autoCapitalize="words"
                                     />
@@ -334,10 +342,16 @@ export default function EditProfileModal({ isVisible, onClose }: Props) {
                             <View className="flex-row gap-3 mb-6">
                                 <TouchableOpacity
                                     onPress={onClose}
-                                    className="flex-1 bg-[#F5F5F5] rounded-xl py-4 items-center"
+                                    style={{
+                                        flex: 1,
+                                        backgroundColor: isDark ? '#334155' : '#F5F5F5',
+                                        borderRadius: 12,
+                                        paddingVertical: 14,
+                                        alignItems: 'center',
+                                    }}
                                     activeOpacity={0.7}
                                 >
-                                    <Text className="text-[#666] font-bold text-base">
+                                    <Text style={{ color: isDark ? '#E2E8F0' : '#64748B', fontWeight: '700', fontSize: 16 }}>
                                         {t.profile.cancel || 'Cancel'}
                                     </Text>
                                 </TouchableOpacity>

@@ -10,22 +10,41 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    text: '#1E293B',
+    textSecondary: '#64748B',
+    textMuted: '#94A3B8',
+    background: '#F0F7FF',
+    surface: '#FFFFFF',
+    card: '#FFFFFF',
+    cardBorder: '#F1F5F9',
+    divider: '#F1F5F9',
+    inputBg: '#F8FAFC',
+    inputBorder: '#E2E8F0',
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    icon: '#64748B',
+    tabBar: '#1A1A1A',
+    tabIconDefault: '#888888',
     tabIconSelected: tintColorLight,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: '#F8FAFC',
+    textSecondary: '#94A3B8',
+    textMuted: '#64748B',
+    background: '#0B0F19',
+    surface: '#1E293B',
+    card: '#1E293B',
+    cardBorder: '#334155',
+    divider: '#334155',
+    inputBg: '#0F172A',
+    inputBorder: '#334155',
+    tint: tintColorLight,
+    icon: '#94A3B8',
+    tabBar: '#0B1120',
+    tabIconDefault: '#64748B',
+    tabIconSelected: tintColorLight,
   },
 };
+
 
 export const Fonts = Platform.select({
   ios: {

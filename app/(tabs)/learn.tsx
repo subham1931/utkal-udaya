@@ -17,8 +17,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
+
 
 const LEARN_CAROUSEL_CACHE_KEY = 'utkal_udaya_learn_carousel_cache_v2';
 
@@ -142,8 +144,10 @@ const DEFAULT_FEATURED_NEWS = [
 
 export default function LearnScreen() {
     const { t, language } = useLanguage();
+    const { isDark, colors } = useAppTheme();
     const router = useRouter();
     const isOdia = language === 'or';
+
 
     const [activeIndex, setActiveIndex] = useState(0);
     const [refreshing, setRefreshing] = useState(false);
@@ -358,7 +362,7 @@ export default function LearnScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['top']}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 refreshControl={
@@ -428,7 +432,7 @@ export default function LearnScreen() {
                 <View style={{ marginTop: 22 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 12 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 19, fontWeight: '800', color: '#1E293B' }}>
+                            <Text style={{ fontSize: 19, fontWeight: '800', color: colors.text }}>
                                 {isOdia ? 'ମୁଖ୍ୟ ଖବର' : 'Featured News'}
                             </Text>
                             <View style={{ backgroundColor: '#FFEDE5', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, marginLeft: 8 }}>
@@ -437,7 +441,7 @@ export default function LearnScreen() {
                                 </Text>
                             </View>
                         </View>
-                        <Text style={{ fontSize: 12, color: '#94A3B8', fontWeight: '600' }}>
+                        <Text style={{ fontSize: 12, color: colors.textSecondary, fontWeight: '600' }}>
                             {carouselNews.length} {isOdia ? 'ଖବର' : 'stories'}
                         </Text>
                     </View>
@@ -454,34 +458,34 @@ export default function LearnScreen() {
                                 renderItem={renderCarouselItem}
                                 horizontal
                                 pagingEnabled
-                                snapToInterval={width - 36}
+                                snapToInterval={width - 40}
                                 decelerationRate="fast"
                                 showsHorizontalScrollIndicator={false}
                                 onScroll={(e) => {
                                     const x = e.nativeEvent.contentOffset.x;
-                                    const newIdx = Math.round(x / (width - 36));
-                                    if (newIdx !== activeIndex && newIdx >= 0 && newIdx < carouselNews.length) {
-                                        setActiveIndex(newIdx);
-                                    }
+                                    setActiveIndex(Math.round(x / (width - 40)));
                                 }}
-                                keyExtractor={(item, index) => item.id || `carousel-${index}`}
-                                contentContainerStyle={{ paddingHorizontal: 18 }}
+                                keyExtractor={(item) => item.id}
+                                contentContainerStyle={{ paddingHorizontal: 20 }}
                             />
 
-                            {/* Carousel Indicators */}
-                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 12 }}>
-                                {carouselNews.map((_, i) => (
-                                    <View
-                                        key={i}
-                                        style={{
-                                            height: 6,
-                                            borderRadius: 3,
-                                            marginHorizontal: 3,
-                                            width: activeIndex === i ? 22 : 6,
-                                            backgroundColor: activeIndex === i ? '#FF4500' : '#E2E8F0',
-                                        }}
-                                    />
-                                ))}
+                            {/* Pagination Dots */}
+                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 14 }}>
+                                {carouselNews.map((_, i) => {
+                                    const isActive = activeIndex === i;
+                                    return (
+                                        <View
+                                            key={i}
+                                            style={{
+                                                width: isActive ? 22 : 7,
+                                                height: 7,
+                                                borderRadius: 4,
+                                                backgroundColor: isActive ? '#FF4500' : (isDark ? '#334155' : 'rgba(0,0,0,0.15)'),
+                                                marginHorizontal: 3,
+                                            }}
+                                        />
+                                    );
+                                })}
                             </View>
                         </>
                     )}
@@ -491,16 +495,16 @@ export default function LearnScreen() {
                 <View style={{ paddingHorizontal: 20, marginTop: 24 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                         <View>
-                            <Text style={{ fontSize: 19, fontWeight: '800', color: '#1E293B' }}>
+                            <Text style={{ fontSize: 19, fontWeight: '800', color: colors.text }}>
                                 {isOdia ? 'ବିଷୟବସ୍ତୁ' : 'Explore Topics'}
                             </Text>
-                            <Text style={{ fontSize: 12, color: '#94A3B8', fontWeight: '500', marginTop: 2 }}>
+                            <Text style={{ fontSize: 12, color: colors.textSecondary, fontWeight: '500', marginTop: 2 }}>
                                 {isOdia ? 'ବିଭାଗ ଅନୁଯାୟୀ ଖବର ପଢ଼ନ୍ତୁ' : 'Browse stories by category'}
                             </Text>
                         </View>
 
-                        <View style={{ backgroundColor: '#F1F5F9', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
-                            <Text style={{ color: '#64748B', fontSize: 11, fontWeight: '700' }}>
+                        <View style={{ backgroundColor: isDark ? '#1E293B' : '#F1F5F9', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 11, fontWeight: '700' }}>
                                 {CATEGORIES_DATA.length} {isOdia ? 'ବିଭାଗ' : 'Categories'}
                             </Text>
                         </View>
@@ -522,12 +526,14 @@ export default function LearnScreen() {
                                         marginBottom: 14,
                                         borderRadius: 20,
                                         overflow: 'hidden',
-                                        backgroundColor: '#FFFFFF',
+                                        backgroundColor: colors.card,
                                         elevation: 5,
                                         shadowColor: '#000',
                                         shadowOffset: { width: 0, height: 4 },
-                                        shadowOpacity: 0.12,
+                                        shadowOpacity: isDark ? 0.3 : 0.12,
                                         shadowRadius: 6,
+                                        borderWidth: isDark ? 1 : 0,
+                                        borderColor: colors.cardBorder,
                                     }}
                                     onPress={() => {
                                         router.push({

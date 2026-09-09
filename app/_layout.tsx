@@ -1,10 +1,10 @@
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { LogBox } from 'react-native';
 import 'react-native-reanimated';
 import { LanguageProvider } from '../context/LanguageContext';
 import { ProfileProvider } from '../context/ProfileContext';
+import { AppThemeProvider, useAppTheme } from '../context/ThemeContext';
 import "../global.css";
 
 // Ignore SafeAreaView deprecation warning - we're already using react-native-safe-area-context
@@ -14,28 +14,36 @@ export const unstable_settings = {
   initialRouteName: 'index',
 };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function RootLayoutNav() {
+  const { isDark } = useAppTheme();
 
   return (
-    <LanguageProvider>
-      <ProfileProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack initialRouteName="index">
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)/welcome" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)/sign-in" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)/sign-up" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="learn/[id]" options={{ presentation: 'card' }} />
-            <Stack.Screen name="learn/story/[storyId]" options={{ presentation: 'card', title: 'News' }} />
-            <Stack.Screen name="weather-detail" options={{ presentation: 'card', headerShown: false }} />
-            <Stack.Screen name="notifications" options={{ presentation: 'card', headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </ProfileProvider>
-    </LanguageProvider>
+    <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+      <Stack initialRouteName="index">
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)/welcome" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)/sign-in" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)/sign-up" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="learn/[id]" options={{ presentation: 'card' }} />
+        <Stack.Screen name="learn/story/[storyId]" options={{ presentation: 'card', title: 'News' }} />
+        <Stack.Screen name="weather-detail" options={{ presentation: 'card', headerShown: false }} />
+        <Stack.Screen name="notifications" options={{ presentation: 'card', headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+      </Stack>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+    </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AppThemeProvider>
+      <LanguageProvider>
+        <ProfileProvider>
+          <RootLayoutNav />
+        </ProfileProvider>
+      </LanguageProvider>
+    </AppThemeProvider>
   );
 }
