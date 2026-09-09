@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EditProfileModal from '../../components/EditProfileModal';
+import ChangePasswordModal from '../../components/ChangePasswordModal';
 import { useLanguage } from '../../context/LanguageContext';
 import { useProfile } from '../../context/ProfileContext';
 import { useAppTheme } from '../../context/ThemeContext';
@@ -30,6 +31,7 @@ export default function ProfileScreen() {
 
     const [notifications, setNotifications] = useState(true);
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+    const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
 
     const handleShare = async () => {
         try {
@@ -323,6 +325,41 @@ export default function ProfileScreen() {
                         </View>
                     </View>
 
+                    {/* Account Settings */}
+                    <View style={{ marginBottom: 20 }}>
+                        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, marginLeft: 2 }}>
+                            {isOdia ? 'ଆକାଉଣ୍ଟ' : 'Account'}
+                        </Text>
+                        <View
+                            style={{
+                                backgroundColor: colors.card,
+                                borderRadius: 20,
+                                overflow: 'hidden',
+                                elevation: 3,
+                                shadowColor: '#000',
+                                shadowOffset: { width: 0, height: 2 },
+                                shadowOpacity: isDark ? 0.3 : 0.06,
+                                shadowRadius: 6,
+                                borderWidth: isDark ? 1 : 0,
+                                borderColor: colors.cardBorder,
+                            }}
+                        >
+                            <SettingRow
+                                icon="person-outline"
+                                title={isOdia ? 'ପ୍ରୋଫାଇଲ୍ ସଂପାଦନ' : 'Edit Profile'}
+                                subtitle={isOdia ? 'ନାମ, ଫୋନ୍, ଗ୍ରାମ ଓ ଫଟୋ ଅପଡେଟ୍ କରନ୍ତୁ' : 'Update name, phone, village & photo'}
+                                onPress={() => setIsEditModalVisible(true)}
+                            />
+                            <SettingRow
+                                icon="lock-closed-outline"
+                                title={isOdia ? 'ପାସୱାର୍ଡ଼ ପରିବର୍ତ୍ତନ' : 'Change Password'}
+                                subtitle={isOdia ? 'ଆପଣଙ୍କର ଆକାଉଣ୍ଟ ପାସୱାର୍ଡ଼ ବଦଳାନ୍ତୁ' : 'Update your account password'}
+                                showDivider={false}
+                                onPress={() => setIsPasswordModalVisible(true)}
+                            />
+                        </View>
+                    </View>
+
                     {/* Language Selector */}
                     <View style={{ marginBottom: 20 }}>
                         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, marginLeft: 2 }}>
@@ -512,6 +549,11 @@ export default function ProfileScreen() {
             <EditProfileModal
                 isVisible={isEditModalVisible}
                 onClose={() => setIsEditModalVisible(false)}
+            />
+
+            <ChangePasswordModal
+                isVisible={isPasswordModalVisible}
+                onClose={() => setIsPasswordModalVisible(false)}
             />
         </SafeAreaView>
     );
