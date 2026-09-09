@@ -22,7 +22,7 @@ function validateEmailOrPhone(value: string): boolean {
 
 export default function SignUpScreen() {
     const router = useRouter();
-    const { updateProfile } = useProfile();
+    const { login } = useProfile();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -76,7 +76,7 @@ export default function SignUpScreen() {
 
         setIsLoading(true);
         try {
-            await updateProfile({
+            await login({
                 name: name.trim(),
                 email: email.trim(),
                 id: 'UU-' + Math.floor(Math.random() * 10000),

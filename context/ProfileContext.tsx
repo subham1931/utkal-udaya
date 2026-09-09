@@ -17,7 +17,9 @@ export interface UserProfile {
 type ProfileContextType = {
     profile: UserProfile;
     updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
+    login: (userData?: Partial<UserProfile>) => Promise<void>;
     logout: () => Promise<void>;
+    isLoggedIn: boolean;
     isLoading: boolean;
 };
 
@@ -33,6 +35,7 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
     const [profile, setProfile] = useState<UserProfile>(defaultProfile);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -41,13 +44,28 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
     const loadProfile = async () => {
         try {
-            const savedProfile = await AsyncStorage.getItem('user-profile');
+            const [savedProfile, loggedInFlag] = await Promise.all([
+                AsyncStorage.getItem('user-profile'),
+                AsyncStorage.getItem('is-logged-in'),
+            ]);
+
             if (savedProfile) {
                 const parsed = JSON.parse(savedProfile);
                 setProfile({ ...defaultProfile, ...parsed });
             }
+
+            // If user explicitly logged out previously
+            if (loggedInFlag === 'false') {
+                setIsLoggedIn(false);
+            } else if (loggedInFlag === 'true' || savedProfile !== null) {
+                setIsLoggedIn(true);
+            } else {
+                // If unset (active app session), keep logged in by default until explicit logout
+                setIsLoggedIn(true);
+            }
         } catch (error) {
             console.error('Failed to load profile', error);
+            setIsLoggedIn(false);
         } finally {
             setIsLoading(false);
         }
@@ -70,9 +88,26 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
             }
 
             setProfile(updatedProfile);
-            await AsyncStorage.setItem('user-profile', JSON.stringify(updatedProfile));
+            await Promise.all([
+                AsyncStorage.setItem('user-profile', JSON.stringify(updatedProfile)),
+                AsyncStorage.setItem('is-logged-in', 'true'),
+            ]);
+            setIsLoggedIn(true);
         } catch (error) {
             console.error('Failed to update profile', error);
+            throw error;
+        }
+    };
+
+    const login = async (userData?: Partial<UserProfile>) => {
+        try {
+            await AsyncStorage.setItem('is-logged-in', 'true');
+            setIsLoggedIn(true);
+            if (userData) {
+                await updateProfile(userData);
+            }
+        } catch (error) {
+            console.error('Failed to log in', error);
             throw error;
         }
     };
@@ -80,7 +115,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     const logout = async () => {
         try {
             await AsyncStorage.removeItem('user-profile');
+            await AsyncStorage.setItem('is-logged-in', 'false');
             setProfile(defaultProfile);
+            setIsLoggedIn(false);
         } catch (error) {
             console.error('Failed to logout', error);
         }
@@ -89,7 +126,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     const value = {
         profile,
         updateProfile,
+        login,
         logout,
+        isLoggedIn,
         isLoading,
     };
 

@@ -20,7 +20,7 @@ function validateEmailOrPhone(value: string): boolean {
 
 export default function SignInScreen() {
     const router = useRouter();
-    const { updateProfile } = useProfile();
+    const { login } = useProfile();
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -54,7 +54,7 @@ export default function SignInScreen() {
         setIsLoading(true);
         try {
             const isEmail = phoneNumber.includes('@');
-            await updateProfile({
+            await login({
                 email: isEmail ? phoneNumber : undefined,
                 phone: !isEmail ? phoneNumber : undefined,
                 name: isEmail ? phoneNumber.split('@')[0] : 'User ' + phoneNumber,
