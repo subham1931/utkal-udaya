@@ -218,28 +218,6 @@ export default function ProfileScreen() {
                         <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.9)', marginTop: 3, fontWeight: '500' }}>
                             {profile.email || profile.phone || (isOdia ? 'କେନ୍ଦ୍ରାପଡ଼ା, ଓଡ଼ିଶା' : 'Kendrapara, Odisha')}
                         </Text>
-
-                        {/* Edit Profile Button */}
-                        <TouchableOpacity
-                            onPress={() => setIsEditModalVisible(true)}
-                            activeOpacity={0.8}
-                            style={{
-                                marginTop: 12,
-                                backgroundColor: 'rgba(255, 255, 255, 0.22)',
-                                paddingHorizontal: 16,
-                                paddingVertical: 7,
-                                borderRadius: 20,
-                                borderWidth: 1,
-                                borderColor: 'rgba(255, 255, 255, 0.4)',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <Ionicons name="create-outline" size={15} color="#FFF" style={{ marginRight: 6 }} />
-                            <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '700' }}>
-                                {isOdia ? 'ପ୍ରୋଫାଇଲ୍ ସଂପାଦନ' : 'Edit Profile'}
-                            </Text>
-                        </TouchableOpacity>
                     </View>
                 </LinearGradient>
 
