@@ -8,7 +8,8 @@ export const translations = {
             back: "Back",
             efficiency: "Efficiency",
             kg: "kg",
-            bahni: "Bahni",
+            bahni: "Prathamesh",
+            prathamesh: "Prathamesh",
             quickActions: "Quick Actions",
             getHelp: "Get Help",
             communityImpact: "Community Impact",
@@ -28,7 +29,7 @@ export const translations = {
             subtitle: "Clean Energy, Better Life",
             carousel: [
                 {
-                    title: "Utkal Udaya\nAdvanced Cookstove Project",
+                    title: "Utkal Udaya\nPrathamesh Cookstove Project",
                     subtitle: "Meensou India Pvt Ltd",
                 },
                 {
@@ -54,7 +55,7 @@ export const translations = {
             demoNews: "Farmers Fair is going to start from today in Sambalpur.",
         },
         cookstove: {
-            title: "Advanced Cookstove",
+            title: "Prathamesh Cookstove",
             subtitle: "See the impact of your clean cooking",
             co2Saved: "CO2 Saved",
             status: "Status",
@@ -90,16 +91,16 @@ export const translations = {
             version: "Utkal Udaya v1.0.0",
         },
         sahayika: {
-            title: "Bahni Sahayika",
-            greeting: "Greetings! I am Bahni Sahayika. How can I help you today?",
+            title: "Prathamesh Sahayika",
+            greeting: "Greetings! I am Prathamesh Sahayika. How can I help you today?",
             listening: "Listening...",
             tapToSpeak: "Tap the mic to speak",
             stop: "Stop",
             voiceError: "Sorry, I couldn't hear that. Please try again.",
             aiThinking: "Thinking...",
             responses: {
-                maintenance: "To maintain your Bahni stove, keep the combustion chamber clean and use dry wood sticks.",
-                benefits: "Using Bahni stove reduces smoke, saves fuel, and keeps your family healthy.",
+                maintenance: "To maintain your Prathamesh stove, keep the combustion chamber clean and use dry wood sticks.",
+                benefits: "Using Prathamesh stove reduces smoke, saves fuel, and keeps your family healthy.",
                 usage: "Place the wood sticks inside, light it up, and adjust the airflow for best efficiency.",
                 unknown: "I'm sorry, I didn't get that. Can you ask about stove maintenance or benefits?"
             }
@@ -151,7 +152,8 @@ export const translations = {
             back: "ପଛକୁ",
             efficiency: "ଦକ୍ଷତା",
             kg: "କି.ଗ୍ରା",
-            bahni: "ବହ୍ନି",
+            bahni: "ପ୍ରଥମେଶ",
+            prathamesh: "ପ୍ରଥମେଶ",
             quickActions: "ତୁରନ୍ତ କାର୍ଯ୍ୟ",
             getHelp: "ସହାୟତା ପାଆନ୍ତୁ",
             communityImpact: "ସମୁଦାୟ ପ୍ରଭାବ",
@@ -171,7 +173,7 @@ export const translations = {
             subtitle: "ସ୍ୱଚ୍ଛ ଇନ୍ଧନ, ସୁସ୍ଥ ଜୀବନ",
             carousel: [
                 {
-                    title: "ଉତ୍କଳ ଉଦୟ\nଉନ୍ନତ ଚୁଲି ପ୍ରକଳ୍ପ",
+                    title: "ଉତ୍କଳ ଉଦୟ\nପ୍ରଥମେଶ ଚୁଲି ପ୍ରକଳ୍ପ",
                     subtitle: "ମିନସୁ ଇଣ୍ଧିଆ ପ୍ରାଇଭେଟ୍ ଲିମିଟେଡ୍",
                 },
                 {
@@ -197,7 +199,7 @@ export const translations = {
             demoNews: "ସମ୍ବଲପୁରରେ କୃଷକ ମେଳା ଆଜିଠାରୁ ଆରମ୍ଭ ହେବାକୁ ଯାଉଛି ।",
         },
         cookstove: {
-            title: "ଉନ୍ନତ ଚୁଲି",
+            title: "ପ୍ରଥମେଶ ଚୁଲି",
             subtitle: "ଆପଣଙ୍କ ସ୍ୱଚ୍ଛ ରୋଷେଇର ପ୍ରଭାବ ଦେଖନ୍ତୁ",
             co2Saved: "CO2 ବଞ୍ଚାଗଲା",
             status: "ସ୍ଥିତି",
@@ -233,16 +235,16 @@ export const translations = {
             version: "ଉତ୍କଳ ଉଦୟ v1.0.0",
         },
         sahayika: {
-            title: "ବହ୍ନି ସହାୟିକା",
-            greeting: "ନମସ୍କାର! ମୁଁ ବହ୍ନି ସହାୟିକା । ମୁଁ ଆପଣଙ୍କୁ କିପରି ସାହାଯ୍ୟ କରିପାରିବି?",
+            title: "ପ୍ରଥମେଶ ସହାୟିକା",
+            greeting: "ନମସ୍କାର! ମୁଁ ପ୍ରଥମେଶ ସହାୟିକା । ମୁଁ ଆପଣଙ୍କୁ କିପରି ସାହାଯ୍ୟ କରିପାରିବି?",
             listening: "ଶୁଣୁଛି...",
             tapToSpeak: "କହିବା ପାଇଁ ମାଇକକୁ ଟ୍ୟାପ୍ କରନ୍ତୁ",
             stop: "ବନ୍ଦ କରନ୍ତୁ",
             voiceError: "କ୍ଷମା କରିବେ, ମୁଁ ଶୁଣିପାରିଲି ନାହିଁ । ଦୟାକରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ ।",
             aiThinking: "ଭାବୁଛି...",
             responses: {
-                maintenance: "ବହ୍ନି ଚୁଲିର ଯତ୍ନ ପାଇଁ, ଜଳିବା ସ୍ଥାନକୁ ସଫା ରଖନ୍ତୁ ଏବଂ ଶୁଖିଲା କାଠ ବ୍ୟବହାର କରନ୍ତୁ ।",
-                benefits: "ବହ୍ନି ଚୁଲି ବ୍ୟବହାର କଲେ ଧୂଆଁ କମ ହୁଏ, କାଠ ସଞ୍ଚୟ ହୁଏ ଏବଂ ପରିବାର ସୁସ୍ଥ ରୁହନ୍ତି ।",
+                maintenance: "ପ୍ରଥମେଶ ଚୁଲିର ଯତ୍ନ ପାଇଁ, ଜଳିବା ସ୍ଥାନକୁ ସଫା ରଖନ୍ତୁ ଏବଂ ଶୁଖିଲା କାଠ ବ୍ୟବହାର କରନ୍ତୁ ।",
+                benefits: "ପ୍ରଥମେଶ ଚୁଲି ବ୍ୟବହାର କଲେ ଧୂଆଁ କମ ହୁଏ, କାଠ ସଞ୍ଚୟ ହୁଏ ଏବଂ ପରିବାର ସୁସ୍ଥ ରୁହନ୍ତି ।",
                 usage: "କାଠ କାଠି ଗୁଡିକୁ ଭିତରେ ରଖନ୍ତୁ, ନିଆଁ ଲଗାନ୍ତୁ ଏବଂ ଭଲ ଦକ୍ଷତା ପାଇଁ ପବନ ଚଳାଚଳ ନିୟନ୍ତ୍ରଣ କରନ୍ତୁ ।",
                 unknown: "କ୍ଷମା କରିବେ, ମୁଁ ବୁଝିପାରିଲି ନାହିଁ । ଆପଣ ଚୁଲିର ଯତ୍ନ କିମ୍ବା ଲାଭ ବିଷୟରେ ପଚାରିପାରିବେ ।"
             }

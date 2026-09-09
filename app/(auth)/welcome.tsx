@@ -57,7 +57,7 @@ export default function WelcomeScreen() {
                         style={{ fontSize: IS_SMALL_DEVICE ? 28 : 36 }}
                         maxFontSizeMultiplier={1.3}
                     >
-                        Bahni <Text className="text-[#FF5722]">Cookstove</Text>
+                        Prathamesh <Text className="text-[#FF5722]">Cookstove</Text>
                     </Text>
                     <Text
                         className="text-gray-500 text-center font-medium leading-6 px-4"

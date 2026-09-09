@@ -524,7 +524,7 @@ export default function HomeScreen() {
           </View>
         </TouchableOpacity> */}
 
-        {/* Bahni Spotlight - iOS/Android consistent */}
+        {/* Prathamesh Spotlight - iOS/Android consistent */}
         <View style={{ marginHorizontal: 16, marginTop: 16 }}>
           <View
             style={{
@@ -542,7 +542,7 @@ export default function HomeScreen() {
           >
             <View style={{ padding: 20 }}>
               <View className="flex-row justify-between items-center">
-                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>“{t.common.bahni}” {t.cookstove.title}</Text>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>{t.cookstove.title}</Text>
               </View>
               <Text style={{ fontSize: 14, color: colors.textSecondary, marginBottom: 20 }}>{t.cookstove.subtitle}</Text>
 
