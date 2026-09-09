@@ -5,9 +5,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, FlatList, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { Easing as ReanimatedEasing, interpolate, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
 
 import { useLanguage } from '../../context/LanguageContext';
 import { useAppTheme } from '../../context/ThemeContext';
@@ -27,8 +29,18 @@ const CATEGORIES_DATA = [
 const CAROUSEL_CACHE_KEY = 'utkal_udaya_carousel_cache';
 
 export default function HomeScreen() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { isDark, colors } = useAppTheme();
+  const isOdia = language === 'or';
+
+  const [isMaintenanceModalVisible, setIsMaintenanceModalVisible] = useState(false);
+  const [isImpactModalVisible, setIsImpactModalVisible] = useState(false);
+  const [checkedTasks, setCheckedTasks] = useState<Record<number, boolean>>({ 0: true, 1: true });
+
+  const toggleTask = (index: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setCheckedTasks(prev => ({ ...prev, [index]: !prev[index] }));
+  };
 
   const [weather, setWeather] = useState({ temp: '--', city: t.common.loading, icon: '', code: '01d', lat: 21.4937, lon: 83.9812 });
   const [activeIndex, setActiveIndex] = useState(0);
@@ -571,17 +583,59 @@ export default function HomeScreen() {
               </View>
 
               {/* Action Grid - explicit styles for iOS */}
-              <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 16 }} maxFontSizeMultiplier={1.2}>{t.common.quickActions}</Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 24 }}>
+              <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 16 }} maxFontSizeMultiplier={1.2}>
+                {t.common.quickActions}
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 20 }}>
                 {[
-                  { title: t.common.odishaSuccess, icon: 'alert-circle-outline' as const, color: '#FF5252' },
-                  { title: t.cookstove.requestCallback, icon: 'construct-outline' as const, color: '#FFA000' },
-                  { title: t.cookstove.maintenance, icon: 'book-outline' as const, color: '#448AFF' },
-                  { title: t.home.impactDesc, icon: 'shield-checkmark-outline' as const, color: '#4CAF50' },
+                  {
+                    title: isOdia ? 'ସଫଳତା କାହାଣୀ' : 'Odisha Success',
+                    icon: 'ribbon-outline' as const,
+                    color: '#FF5252',
+                    bgColor: isDark ? 'rgba(255, 82, 82, 0.18)' : '#FFEBEE',
+                    onPress: () => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      router.push({
+                        pathname: '/learn/[id]',
+                        params: { id: '1064', title: isOdia ? 'ସଫଳତା (Success)' : 'Success across Odisha' }
+                      });
+                    }
+                  },
+                  {
+                    title: t.cookstove.requestCallback,
+                    icon: 'construct-outline' as const,
+                    color: '#FFA000',
+                    bgColor: isDark ? 'rgba(255, 160, 0, 0.18)' : '#FFF8E1',
+                    onPress: () => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      router.push('/(tabs)/cookstove');
+                    }
+                  },
+                  {
+                    title: t.cookstove.maintenance,
+                    icon: 'book-outline' as const,
+                    color: '#448AFF',
+                    bgColor: isDark ? 'rgba(68, 138, 255, 0.18)' : '#E3F2FD',
+                    onPress: () => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      setIsMaintenanceModalVisible(true);
+                    }
+                  },
+                  {
+                    title: isOdia ? 'ସମୁଦାୟ ପ୍ରଭାବ' : 'Community Impact',
+                    icon: 'shield-checkmark-outline' as const,
+                    color: '#4CAF50',
+                    bgColor: isDark ? 'rgba(76, 175, 80, 0.18)' : '#E8F5E9',
+                    onPress: () => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      setIsImpactModalVisible(true);
+                    }
+                  },
                 ].map((action, idx) => (
                   <TouchableOpacity
                     key={idx}
                     activeOpacity={0.7}
+                    onPress={action.onPress}
                     style={{
                       width: '48%',
                       padding: 14,
@@ -594,17 +648,19 @@ export default function HomeScreen() {
                       marginBottom: 12,
                     }}
                   >
-                    <View style={{ width: 36, height: 36, borderRadius: 18, borderWidth: 2, borderColor: action.color, justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
+                    <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: action.bgColor, justifyContent: 'center', alignItems: 'center', marginRight: 10 }}>
                       <Ionicons name={action.icon} size={20} color={action.color} />
                     </View>
-                    <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text, flex: 1 }} numberOfLines={2} maxFontSizeMultiplier={1.2}>{action.title}</Text>
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: colors.text, flex: 1 }} numberOfLines={2} maxFontSizeMultiplier={1.2}>
+                      {action.title}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => router.push('/cookstove')}
+                onPress={() => router.push('/(tabs)/cookstove')}
                 style={{ width: '100%', height: 52, borderRadius: 20, overflow: 'hidden' }}
               >
                 <LinearGradient
@@ -621,9 +677,368 @@ export default function HomeScreen() {
           </View>
         </View>
 
-
         <View className="h-[100px]" />
       </ScrollView>
+
+      {/* Maintenance Checklist Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isMaintenanceModalVisible}
+        onRequestClose={() => setIsMaintenanceModalVisible(false)}
+      >
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => setIsMaintenanceModalVisible(false)}
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+          >
+            <BlurView intensity={80} tint="dark" style={{ flex: 1 }} />
+          </TouchableOpacity>
+
+          <View
+            style={{
+              backgroundColor: colors.card,
+              borderTopLeftRadius: 36,
+              borderTopRightRadius: 36,
+              maxHeight: '85%',
+              overflow: 'hidden',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: -4 },
+              shadowOpacity: isDark ? 0.4 : 0.15,
+              shadowRadius: 16,
+              elevation: 20,
+            }}
+          >
+            <LinearGradient
+              colors={['#1E88E5', '#1565C0']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                paddingTop: 22,
+                paddingBottom: 18,
+                paddingHorizontal: 24,
+                borderTopLeftRadius: 36,
+                borderTopRightRadius: 36,
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View style={{ flex: 1, marginRight: 12 }}>
+                  <Text style={{ fontSize: 22, fontWeight: '800', color: '#FFF' }}>
+                    {isOdia ? 'ଚୁଲି ପରିଚାଳନା ଯାଞ୍ଚ' : 'Maintenance Checklist'}
+                  </Text>
+                  <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', marginTop: 2 }}>
+                    {isOdia ? 'ପ୍ରଥମେଶ ଚୁଲିର ନିତିଦିନିଆ ଯତ୍ନ' : 'Daily care for your Prathamesh stove'}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => setIsMaintenanceModalVisible(false)}
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Ionicons name="close" size={22} color="#FFF" />
+                </TouchableOpacity>
+              </View>
+            </LinearGradient>
+
+            <ScrollView
+              contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 }}
+              showsVerticalScrollIndicator={false}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 14, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                {isOdia ? 'ନିୟମିତ ଯାଞ୍ଚ ତାଲିକା (ଟ୍ୟାପ୍ କରି ଟିକ୍ କରନ୍ତୁ)' : 'Checklist Tasks (Tap to toggle)'}
+              </Text>
+
+              {[
+                {
+                  title: isOdia ? 'ଜଳିବା କକ୍ଷରୁ ପାଉଁଶ ସଫା କରନ୍ତୁ' : 'Clear ash from combustion chamber',
+                  desc: isOdia ? 'ଅଧିକ ପାଉଁଶ ଜମା ହେଲେ ପବନ ଚଳାଚଳ ବାଧାପ୍ରାପ୍ତ ହୁଏ ।' : 'Prevents airflow blockage and improves burning heat.',
+                },
+                {
+                  title: isOdia ? 'ବାହ୍ୟ ଶରୀର ଓ ଫାଟ ଯାଞ୍ଚ କରନ୍ତୁ' : 'Inspect stove body and joints for cracks',
+                  desc: isOdia ? 'କୌଣସି ଫାଟ ଥିଲେ ତୁରନ୍ତ ସହାୟତା ପାଇଁ ଅନୁରୋଧ କରନ୍ତୁ ।' : 'Report any structural damage or cracks immediately.',
+                },
+                {
+                  title: isOdia ? 'ଶୁଖିଲା କାଠ କାଠି ବ୍ୟବହାର କରନ୍ତୁ' : 'Use dry wood sticks',
+                  desc: isOdia ? 'ଓଦା କାଠ ବ୍ୟବହାର କଲେ ଧୂଆଁ ଅଧିକ ହୁଏ ।' : 'Dry fuel ensures smokeless cooking and highest fuel savings.',
+                },
+                {
+                  title: isOdia ? 'ପବନ ଚଳାଚଳ ଦ୍ୱାର ଖୋଲା ରଖନ୍ତୁ' : 'Ensure airflow vents are clear',
+                  desc: isOdia ? 'ପବନ ସଠିକ୍ ଭାବେ ପ୍ରବେଶ କଲେ ନିଆଁ ଭଲ ଜଳେ ।' : 'Allows optimal oxygen intake for cleaner combustion.',
+                },
+                {
+                  title: isOdia ? 'ଚୁଲି ଥଣ୍ଡା ହେଲେ ବାହାର ଅଂଶ ପୋଛନ୍ତୁ' : 'Wipe exterior once stove is cold',
+                  desc: isOdia ? 'ଚୁଲିର ରଙ୍ଗ ଓ ସ୍ଥାୟିତ୍ୱ ବଜାୟ ରଖେ ।' : 'Keeps the surface clean and prolongs stove lifespan.',
+                },
+              ].map((task, idx) => {
+                const isChecked = !!checkedTasks[idx];
+                return (
+                  <TouchableOpacity
+                    key={idx}
+                    activeOpacity={0.8}
+                    onPress={() => toggleTask(idx)}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      backgroundColor: isChecked
+                        ? (isDark ? 'rgba(34, 197, 94, 0.15)' : '#F0FDF4')
+                        : (isDark ? '#1E293B' : '#F8FAFC'),
+                      borderWidth: 1,
+                      borderColor: isChecked ? '#22C55E' : (isDark ? '#334155' : '#E2E8F0'),
+                      borderRadius: 18,
+                      padding: 16,
+                      marginBottom: 12,
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 14,
+                        backgroundColor: isChecked ? '#22C55E' : 'transparent',
+                        borderWidth: isChecked ? 0 : 2,
+                        borderColor: isChecked ? 'transparent' : (isDark ? '#64748B' : '#94A3B8'),
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 14,
+                      }}
+                    >
+                      {isChecked && <Ionicons name="checkmark" size={18} color="#FFF" />}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text
+                        style={{
+                          fontSize: 15,
+                          fontWeight: '700',
+                          color: colors.text,
+                          textDecorationLine: isChecked ? 'line-through' : 'none',
+                        }}
+                      >
+                        {task.title}
+                      </Text>
+                      <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 2 }}>
+                        {task.desc}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+
+              <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    setIsMaintenanceModalVisible(false);
+                    router.push('/(tabs)/cookstove');
+                  }}
+                  style={{
+                    flex: 1,
+                    backgroundColor: isDark ? '#334155' : '#E2E8F0',
+                    borderRadius: 14,
+                    paddingVertical: 14,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text style={{ color: colors.text, fontWeight: '700', fontSize: 14 }}>
+                    {isOdia ? 'ସହାୟତା ଚାହାଁନ୍ତି କି?' : 'Need Help?'}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => setIsMaintenanceModalVisible(false)}
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#1E88E5',
+                    borderRadius: 14,
+                    paddingVertical: 14,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text style={{ color: '#FFF', fontWeight: '700', fontSize: 14 }}>
+                    {isOdia ? 'ଠିକ୍ ଅଛି' : 'Done'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Community Impact Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isImpactModalVisible}
+        onRequestClose={() => setIsImpactModalVisible(false)}
+      >
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => setIsImpactModalVisible(false)}
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+          >
+            <BlurView intensity={80} tint="dark" style={{ flex: 1 }} />
+          </TouchableOpacity>
+
+          <View
+            style={{
+              backgroundColor: colors.card,
+              borderTopLeftRadius: 36,
+              borderTopRightRadius: 36,
+              maxHeight: '85%',
+              overflow: 'hidden',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: -4 },
+              shadowOpacity: isDark ? 0.4 : 0.15,
+              shadowRadius: 16,
+              elevation: 20,
+            }}
+          >
+            <LinearGradient
+              colors={['#2E7D32', '#1B5E20']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                paddingTop: 22,
+                paddingBottom: 18,
+                paddingHorizontal: 24,
+                borderTopLeftRadius: 36,
+                borderTopRightRadius: 36,
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View style={{ flex: 1, marginRight: 12 }}>
+                  <Text style={{ fontSize: 22, fontWeight: '800', color: '#FFF' }}>
+                    {isOdia ? 'ସମୁଦାୟ ପରିବେଶ ପ୍ରଭାବ' : 'Community Impact'}
+                  </Text>
+                  <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', marginTop: 2 }}>
+                    {isOdia ? 'ଓଡ଼ିଶାର ସ୍ୱଚ୍ଛ ଭବିଷ୍ୟତ ପାଇଁ ଆମର ଅବଦାନ' : 'Empowering clean cooking across Odisha'}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => setIsImpactModalVisible(false)}
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Ionicons name="close" size={22} color="#FFF" />
+                </TouchableOpacity>
+              </View>
+            </LinearGradient>
+
+            <ScrollView
+              contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40 }}
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 16 }}>
+                {[
+                  {
+                    val: '12.5 T',
+                    lbl: isOdia ? 'CO2 ବଞ୍ଚାଗଲା' : 'CO2 Prevented',
+                    icon: 'leaf-outline',
+                    color: '#2E7D32',
+                    bg: isDark ? 'rgba(46, 125, 50, 0.18)' : '#E8F5E9',
+                  },
+                  {
+                    val: '25,000+',
+                    lbl: isOdia ? 'ସକ୍ରିୟ ପରିବାର' : 'Active Families',
+                    icon: 'people-outline',
+                    color: '#E65100',
+                    bg: isDark ? 'rgba(230, 81, 0, 0.18)' : '#FFF3E0',
+                  },
+                  {
+                    val: '32%',
+                    lbl: isOdia ? 'କାଠ ସଞ୍ଚୟ' : 'Fuel Wood Saved',
+                    icon: 'flame-outline',
+                    color: '#0284C7',
+                    bg: isDark ? 'rgba(2, 132, 199, 0.18)' : '#E1F5FE',
+                  },
+                  {
+                    val: '120 Pts',
+                    lbl: isOdia ? 'କାର୍ବନ ପଏଣ୍ଟ' : 'Carbon Points',
+                    icon: 'trophy-outline',
+                    color: '#7C3AED',
+                    bg: isDark ? 'rgba(124, 58, 237, 0.18)' : '#F3E8FF',
+                  },
+                ].map((item, idx) => (
+                  <View
+                    key={idx}
+                    style={{
+                      width: '48%',
+                      padding: 16,
+                      borderRadius: 18,
+                      backgroundColor: item.bg,
+                      marginBottom: 12,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Ionicons name={item.icon as any} size={26} color={item.color} />
+                    <Text style={{ fontSize: 20, fontWeight: '900', color: colors.text, marginTop: 6 }}>
+                      {item.val}
+                    </Text>
+                    <Text style={{ fontSize: 11, fontWeight: '600', color: colors.textSecondary, textAlign: 'center', marginTop: 2 }}>
+                      {item.lbl}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+
+              <View
+                style={{
+                  backgroundColor: isDark ? '#1E293B' : '#F1F5F9',
+                  borderRadius: 20,
+                  padding: 16,
+                  borderWidth: 1,
+                  borderColor: isDark ? '#334155' : '#E2E8F0',
+                  marginBottom: 20,
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                  <Ionicons name="sparkles" size={18} color="#2E7D32" />
+                  <Text style={{ fontSize: 14, fontWeight: '800', color: colors.text, marginLeft: 6 }}>
+                    {isOdia ? 'ସ୍ୱଚ୍ଛ ଶକ୍ତି ସଂକଳ୍ପ' : 'Our Clean Energy Mission'}
+                  </Text>
+                </View>
+                <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 20 }}>
+                  {isOdia
+                    ? 'ପ୍ରଥମେଶ ଚୁଲି ବ୍ୟବହାର କରି ଆପଣ ନିଜ ଘରକୁ ଧୂଆଁମୁକ୍ତ ରଖୁଛନ୍ତି ଏବଂ ଓଡ଼ିଶାର ଜଙ୍ଗଲ ଓ ପରିବେଶକୁ ସୁରକ୍ଷିତ କରୁଛନ୍ତି । ଆମେ ସମସ୍ତେ ମିଶି ଏକ ସୁସ୍ଥ ଓ ଉନ୍ନତ ଓଡ଼ିଶା ଗଠନ କରୁଛୁ ।'
+                    : 'By using your Prathamesh Cookstove daily, your family eliminates toxic indoor smoke, cuts firewood consumption, and helps preserve Odisha’s lush forest cover.'}
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => setIsImpactModalVisible(false)}
+                style={{
+                  backgroundColor: '#2E7D32',
+                  borderRadius: 14,
+                  paddingVertical: 14,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{ color: '#FFF', fontWeight: '700', fontSize: 15 }}>
+                  {isOdia ? 'ଧନ୍ୟବାଦ (ବନ୍ଦ କରନ୍ତୁ)' : 'Got it (Close)'}
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
 
       {/* Floating Bahni Sahayika Button */}
       {/* <TouchableOpacity
