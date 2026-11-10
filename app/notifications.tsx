@@ -8,7 +8,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../context/ThemeContext';
 const CATEGORIES_DATA = [
     { id: '1345', title: 'କୃଷି (Agri)' },
-    { id: '1062', title: 'ଉଦ୍ୟାନ (Horti)' },
     { id: '1063', title: 'ପଶୁପାଳନ (Fish)' },
     { id: '1061', title: 'ସ୍ୱାସ୍ଥ୍ୟ (Health)' },
     { id: '1064', title: 'ସଫଳତା (Success)' },

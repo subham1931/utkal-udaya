@@ -18,7 +18,6 @@ const { width } = Dimensions.get('window');
 
 const CATEGORIES_DATA = [
   { id: '1345', title: 'କୃଷି (Agri)' },
-  { id: '1062', title: 'ଉଦ୍ୟାନ (Horti)' },
   { id: '1063', title: 'ପଶୁପାଳନ (Fish)' },
   { id: '1061', title: 'ସ୍ୱାସ୍ଥ୍ୟ (Health)' },
   { id: '1064', title: 'ସଫଳତା (Success)' },
@@ -74,28 +73,6 @@ export default function HomeScreen() {
     transform: [{ scale: pulse.value }],
     opacity: interpolate(pulse.value, [1, 1.5], [0.6, 0]),
   }));
-
-  const getWeatherGradients = () => {
-    const code = weather.code || '01d';
-    // Mapping: https://openweathermap.org/img/wn/01d@2x.png
-    if (code.includes('01') || code.includes('02')) {
-      // Sunny / Few Clouds
-      return code.endsWith('n') ? ['#1A237E', '#0D47A1'] : ['#FF8C00', '#FF4500'];
-    }
-    if (code.includes('03') || code.includes('04')) {
-      // Cloudy
-      return ['#455A64', '#263238'];
-    }
-    if (code.includes('09') || code.includes('10') || code.includes('11')) {
-      // Rain / Storm
-      return ['#01579B', '#0277BD'];
-    }
-    if (code.includes('13') || code.includes('50')) {
-      // Snow / Mist
-      return ['#78909C', '#546E7A'];
-    }
-    return ['#FF8C00', '#FF4500']; // Default Orange
-  };
 
   const getWeatherConditionIcon = (): keyof typeof Ionicons.glyphMap => {
     const code = weather.code || '01d';
@@ -428,7 +405,7 @@ export default function HomeScreen() {
         }}
       >
         <LinearGradient
-          colors={getWeatherGradients() as [string, string, ...string[]]}
+          colors={['#FF8C00', '#FF4500']}
           style={{
             height: 96 + insets.top,
             paddingHorizontal: 20,

@@ -39,18 +39,6 @@ const CATEGORIES_DATA = [
     },
     {
         id: '2',
-        apiId: '1062',
-        title: 'ଉଦ୍ୟାନ',
-        titleEn: 'Horticulture',
-        subtitle: 'ଫଳ ଓ ପନିପରିବା',
-        subtitleEn: 'Fruits & Plants',
-        icon: 'flower-outline',
-        image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=600',
-        color: '#F59E0B',
-        tag: 'Horti',
-    },
-    {
-        id: '3',
         apiId: '1063',
         title: 'ପଶୁପାଳନ',
         titleEn: 'Livestock & Dairy',
@@ -62,7 +50,7 @@ const CATEGORIES_DATA = [
         tag: 'Dairy',
     },
     {
-        id: '4',
+        id: '3',
         apiId: '1061',
         title: 'ସ୍ୱାସ୍ଥ୍ୟ',
         titleEn: 'Health & Living',
@@ -74,7 +62,7 @@ const CATEGORIES_DATA = [
         tag: 'Health',
     },
     {
-        id: '5',
+        id: '4',
         apiId: '1064',
         title: 'ସଫଳତା',
         titleEn: 'Success Stories',
@@ -86,7 +74,7 @@ const CATEGORIES_DATA = [
         tag: 'Success',
     },
     {
-        id: '6',
+        id: '5',
         apiId: '48591',
         title: 'ଯୋଜନା',
         titleEn: 'Govt Schemes',

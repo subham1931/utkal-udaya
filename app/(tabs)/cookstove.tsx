@@ -351,16 +351,9 @@ export default function CookstoveScreen() {
 
                     {/* Features & Why Use Section */}
                     <View style={{ marginHorizontal: 18, marginBottom: 20 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                            <Text style={{ fontSize: 19, fontWeight: '800', color: colors.text }}>
-                                {isOdia ? 'ଉନ୍ନତ ଚୁଲିର ଲାଭ' : 'Why Use This Cookstove?'}
-                            </Text>
-                            <View style={{ backgroundColor: '#FFEDE5', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 }}>
-                                <Text style={{ color: '#FF4500', fontSize: 10, fontWeight: '800' }}>
-                                    BENEFITS
-                                </Text>
-                            </View>
-                        </View>
+                        <Text style={{ fontSize: 19, fontWeight: '800', color: colors.text, marginBottom: 12 }}>
+                            {isOdia ? 'ଉନ୍ନତ ଚୁଲିର ଲାଭ' : 'Why Use This Cookstove?'}
+                        </Text>
 
                         <View
                             style={{
