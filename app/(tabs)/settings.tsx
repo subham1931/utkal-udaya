@@ -1,5 +1,1 @@
-import ProfileScreen from './profile';
-
-export default function SettingsScreen() {
-    return <ProfileScreen />;
-}
+export { ProfileScreen as default } from './profile';

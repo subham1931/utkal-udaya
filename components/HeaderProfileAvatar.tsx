@@ -20,7 +20,7 @@ export default function HeaderProfileAvatar({
     const { profile } = useProfile();
 
     const handlePress = () => {
-        router.push('/(tabs)/profile');
+        router.push('/(tabs)/settings');
     };
 
     const initials = profile?.initials || 'UU';
@@ -29,7 +29,7 @@ export default function HeaderProfileAvatar({
         <TouchableOpacity
             activeOpacity={0.8}
             onPress={handlePress}
-            accessibilityLabel="Go to profile"
+            accessibilityLabel="Go to settings"
             accessibilityRole="button"
             style={[
                 styles.container,

@@ -5,8 +5,6 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../context/ThemeContext';
-import HeaderProfileAvatar from '../components/HeaderProfileAvatar';
-
 const API_KEY = "b035fffc7179d3075edb423469937601";
 
 export default function WeatherDetailScreen() {
@@ -88,24 +86,21 @@ export default function WeatherDetailScreen() {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top', 'bottom']}>
-            <View style={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity
-                        onPress={() => router.back()}
-                        style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 20,
-                            backgroundColor: isDark ? '#1E293B' : 'rgba(255,255,255,0.7)',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Ionicons name="chevron-back" size={24} color={colors.text} />
-                    </TouchableOpacity>
-                    <Text style={{ fontSize: 20, fontWeight: '900', marginLeft: 14, color: colors.text }}>Local Forecast</Text>
-                </View>
-                <HeaderProfileAvatar size={38} borderColor={isDark ? colors.cardBorder : '#FF5722'} />
+            <View style={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 6, flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 20,
+                        backgroundColor: isDark ? '#1E293B' : 'rgba(255,255,255,0.7)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Ionicons name="chevron-back" size={24} color={colors.text} />
+                </TouchableOpacity>
+                <Text style={{ fontSize: 20, fontWeight: '900', marginLeft: 14, color: colors.text }}>Local Forecast</Text>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} className="p-5">

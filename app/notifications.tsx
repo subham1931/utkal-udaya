@@ -6,8 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../context/ThemeContext';
-import HeaderProfileAvatar from '../components/HeaderProfileAvatar';
-
 const CATEGORIES_DATA = [
     { id: '1345', title: 'କୃଷି (Agri)' },
     { id: '1062', title: 'ଉଦ୍ୟାନ (Horti)' },
@@ -194,8 +192,7 @@ export default function NotificationsScreen() {
                 >
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text }}>Notifications</Text>
-                <HeaderProfileAvatar size={38} borderColor={isDark ? colors.cardBorder : '#FF5722'} />
+                <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text, flex: 1, marginLeft: 12 }}>Notifications</Text>
             </View>
 
             {loading ? (

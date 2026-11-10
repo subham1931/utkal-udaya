@@ -3,7 +3,6 @@ import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
-import HeaderProfileAvatar from '../../components/HeaderProfileAvatar';
 import { Colors } from '../../constants/theme';
 import { useColorScheme } from '../../hooks/use-color-scheme';
 
@@ -372,7 +371,6 @@ export default function CategoryNewsScreen() {
                             <Ionicons name="chevron-back" size={20} color={colors.text} />
                         </TouchableOpacity>
                     ),
-                    headerRight: () => <HeaderProfileAvatar size={34} style={{ marginRight: 16 }} />,
                 }}
             />
 

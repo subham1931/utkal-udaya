@@ -7,13 +7,12 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { Easing as ReanimatedEasing, interpolate, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 
 import { useLanguage } from '../../context/LanguageContext';
 import { useAppTheme } from '../../context/ThemeContext';
-import HeaderProfileAvatar from '../../components/HeaderProfileAvatar';
 
 const { width } = Dimensions.get('window');
 
@@ -31,6 +30,7 @@ const CAROUSEL_CACHE_KEY = 'utkal_udaya_carousel_cache';
 export default function HomeScreen() {
   const { t, language } = useLanguage();
   const { isDark, colors } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const isOdia = language === 'or';
 
   const [isMaintenanceModalVisible, setIsMaintenanceModalVisible] = useState(false);
@@ -64,19 +64,6 @@ export default function HomeScreen() {
     );
   }, [pulse]);
 
-  const pulseStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulse.value }],
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#7FFF00',
-    shadowColor: '#7FFF00',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
-    marginLeft: 8,
-  }));
-
   const indicatorPulseStyle = useAnimatedStyle(() => ({
     position: 'absolute',
     width: 14,
@@ -108,6 +95,18 @@ export default function HomeScreen() {
       return ['#78909C', '#546E7A'];
     }
     return ['#FF8C00', '#FF4500']; // Default Orange
+  };
+
+  const getWeatherConditionIcon = (): keyof typeof Ionicons.glyphMap => {
+    const code = weather.code || '01d';
+    if (code.includes('01')) return code.endsWith('n') ? 'moon' : 'sunny';
+    if (code.includes('02')) return code.endsWith('n') ? 'cloudy-night' : 'partly-sunny';
+    if (code.includes('03') || code.includes('04')) return 'cloudy';
+    if (code.includes('09') || code.includes('10')) return 'rainy';
+    if (code.includes('11')) return 'thunderstorm';
+    if (code.includes('13')) return 'snow';
+    if (code.includes('50')) return 'cloudy';
+    return 'partly-sunny';
   };
 
   const fetchCarouselNews = useCallback(async () => {
@@ -178,89 +177,135 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchWeather = useCallback(async () => {
-    try {
-      // First check existing permissions
-      let { status } = await Location.getForegroundPermissionsAsync();
+    const apiKey = 'b035fffc7179d3075edb423469937601';
 
-      // If not granted, request them
-      if (status !== 'granted') {
-        // console.log('Location permission not granted. Requesting...');
-        const { status: newStatus } = await Location.requestForegroundPermissionsAsync();
-        status = newStatus;
+    const applyWeather = async (latitude: number, longitude: number) => {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
+      );
+      const data = await response.json();
+      if (!response.ok || !data?.weather || !data?.main) {
+        throw new Error(data?.message || 'Weather unavailable');
       }
+      setWeather({
+        temp: `${Math.round(data.main.temp)}°C`,
+        city: data.name || 'Your area',
+        icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+        code: data.weather[0].icon,
+        lat: latitude,
+        lon: longitude,
+      });
+    };
 
-      if (status !== 'granted') {
-        // console.log('Location permission denied after request.');
-        setWeather(prev => ({ ...prev, city: 'Permission Denied' }));
-        Alert.alert(
-          "Permission Required",
-          "This app needs location access to show accurate local weather. Please enable it in your device settings.",
-          [{ text: "OK" }]
+    const readApproximateCoords = async () => {
+      const response = await fetch(
+        'https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=en'
+      );
+      if (!response.ok) return null;
+      const data = await response.json();
+      if (typeof data.latitude !== 'number' || typeof data.longitude !== 'number') return null;
+      return { latitude: data.latitude, longitude: data.longitude };
+    };
+
+    const readWebCoords = () =>
+      new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
+        const geolocation = globalThis.navigator?.geolocation;
+        if (!geolocation) {
+          reject(new Error('location-unavailable'));
+          return;
+        }
+        geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          (error) => reject(error),
+          { enableHighAccuracy: false, timeout: 12000, maximumAge: 5 * 60 * 1000 }
         );
-        return;
+      });
+
+    const readNativeCoords = async () => {
+      const existing = await Location.getForegroundPermissionsAsync();
+      let status = existing.status;
+      if (status !== 'granted') {
+        const requested = await Location.requestForegroundPermissionsAsync();
+        status = requested.status;
+      }
+      if (status !== 'granted') {
+        throw new Error('permission-denied');
       }
 
-      // Check if location services are enabled
-      const enabled = await Location.hasServicesEnabledAsync();
-      if (!enabled) {
-        // console.log('Location services disabled. Attempting to prompt user...');
+      const servicesOn = await Location.hasServicesEnabledAsync();
+      if (!servicesOn) {
         if (Platform.OS === 'android') {
-          try {
-            await Location.enableNetworkProviderAsync();
-            const reCheckEnabled = await Location.hasServicesEnabledAsync();
-            if (!reCheckEnabled) {
-              setWeather(prev => ({ ...prev, city: 'Location Disabled' }));
-              return;
-            }
-          } catch {
-            setWeather(prev => ({ ...prev, city: 'Location Disabled' }));
-            return;
-          }
+          await Location.enableNetworkProviderAsync();
         } else {
-          setWeather(prev => ({ ...prev, city: 'Location Disabled' }));
+          throw new Error('location-disabled');
+        }
+      }
+
+      const lastKnown = await Location.getLastKnownPositionAsync();
+      if (lastKnown?.coords) {
+        return {
+          latitude: lastKnown.coords.latitude,
+          longitude: lastKnown.coords.longitude,
+        };
+      }
+
+      const current = await Promise.race([
+        Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }),
+        new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('location-timeout')), 12000);
+        }),
+      ]);
+      return {
+        latitude: current.coords.latitude,
+        longitude: current.coords.longitude,
+      };
+    };
+
+    try {
+      let coords: { latitude: number; longitude: number } | null = null;
+      try {
+        coords = Platform.OS === 'web' ? await readWebCoords() : await readNativeCoords();
+      } catch (locationError) {
+        const locationCode = (locationError as { code?: number })?.code;
+        const locationMessage = locationError instanceof Error ? locationError.message : '';
+        const denied = locationCode === 1 || locationMessage === 'permission-denied';
+        if (denied) {
+          setWeather((prev) => ({ ...prev, city: 'Permission Denied', temp: '--' }));
           Alert.alert(
-            "Location Services Disabled",
-            "Please enable location services to see the weather for your area.",
-            [{ text: "OK" }]
+            'Permission Required',
+            'This app needs location access to show accurate local weather. Please enable it in your device settings.',
+            [{ text: 'OK' }]
           );
           return;
         }
-      }
-
-      // Fetch location and weather
-      let location = await Location.getLastKnownPositionAsync();
-
-      if (!location) {
-        location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
-        });
-      }
-
-      if (location) {
-        const { latitude, longitude } = location.coords;
-        // console.log(`Weather trigger - Fresh Location:`, { latitude, longitude });
-
-
-        const apiKey = "b035fffc7179d3075edb423469937601";
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`);
-        const data = await response.json();
-
-        // console.log('Weather API Response:', data);
-
-        if (data.weather && data.main) {
-          setWeather({
-            temp: `${Math.round(data.main.temp)}°C`,
-            city: data.name,
-            icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
-            code: data.weather[0].icon,
-            lat: latitude,
-            lon: longitude
-          });
+        if (locationError instanceof Error && locationError.message === 'location-disabled') {
+          setWeather((prev) => ({ ...prev, city: 'Location Disabled', temp: '--' }));
+          Alert.alert(
+            'Location Services Disabled',
+            'Please enable location services to see the weather for your area.',
+            [{ text: 'OK' }]
+          );
+          return;
         }
+        // GPS can hang or fail after the user allows location (web has no timeout,
+        // and the simulator often has no fix). Approximate location still loads weather.
+        coords = await readApproximateCoords();
       }
+
+      if (!coords) {
+        setWeather((prev) => ({ ...prev, city: 'Unavailable', temp: '--', icon: '', code: '01d' }));
+        return;
+      }
+
+      await applyWeather(coords.latitude, coords.longitude);
     } catch (error) {
       console.warn('Weather fetch error:', error);
-      setWeather(prev => ({ ...prev, temp: '--°C', city: 'Unavailable', icon: '', code: '01d' }));
+      setWeather((prev) => ({ ...prev, temp: '--', city: 'Unavailable', icon: '', code: '01d' }));
     }
   }, []);
 
@@ -371,52 +416,44 @@ export default function HomeScreen() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      {/* Sticky top header — extends under the status bar */}
+      <LinearGradient
+        colors={getWeatherGradients() as [string, string, ...string[]]}
+        style={{
+          height: 96 + insets.top,
+          paddingHorizontal: 20,
+          paddingTop: 16 + insets.top,
+          paddingBottom: 26,
+          borderBottomLeftRadius: 28,
+          borderBottomRightRadius: 28,
+          justifyContent: 'center',
+          elevation: 6,
+          shadowColor: '#FF4500',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.25,
+          shadowRadius: 8,
+          zIndex: 2,
+        }}
       >
-        {/* Dynamic Weather Header - Compact */}
-        <LinearGradient
-          colors={getWeatherGradients() as [string, string, ...string[]]}
-          style={{
-            paddingTop: 14,
-            paddingHorizontal: 18,
-            paddingBottom: 42,
-            borderBottomLeftRadius: 28,
-            borderBottomRightRadius: 28,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.12,
-            shadowRadius: 10,
-            elevation: 10,
-          }}
-        >
-          {/* Title, Greeting & Profile Avatar */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <View>
-              <Text
-                className="text-white font-bold tracking-tight"
-                style={{ fontSize: 24, letterSpacing: -0.3 }}
-                maxFontSizeMultiplier={1.2}
-              >
-                {t.home.title}
-              </Text>
-              <Text
-                className="text-white/90 font-medium"
-                style={{ fontSize: 13, marginTop: 2 }}
-                maxFontSizeMultiplier={1.2}
-              >
-                {t.common.namaskar}
-              </Text>
-            </View>
-
-            <HeaderProfileAvatar size={42} />
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <View style={{ flexShrink: 1, marginRight: 10 }}>
+            <Text
+              style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}
+              maxFontSizeMultiplier={1.2}
+              numberOfLines={1}
+            >
+              {t.home.title}
+            </Text>
+            <Text
+              style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }}
+              maxFontSizeMultiplier={1.2}
+              numberOfLines={1}
+            >
+              {t.common.namaskar}
+            </Text>
           </View>
 
-          {/* Weather Card - Compact */}
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => router.push({
@@ -426,38 +463,36 @@ export default function HomeScreen() {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              alignSelf: 'flex-start',
+              flexShrink: 1,
+              maxWidth: '42%',
               backgroundColor: 'rgba(0,0,0,0.2)',
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              borderRadius: 20,
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderRadius: 16,
               borderWidth: 1,
               borderColor: 'rgba(255,255,255,0.2)',
-              minHeight: 38,
             }}
           >
-            <Ionicons name="location-sharp" size={14} color="#FFF" />
+            <Ionicons name="location-sharp" size={13} color="#FFF" />
             <Text
-              className="text-white font-semibold ml-2"
-              style={{ fontSize: 12 }}
+              style={{ color: '#FFF', fontWeight: '600', marginLeft: 5, marginRight: 5, fontSize: 12, flexShrink: 1 }}
               maxFontSizeMultiplier={1.2}
+              numberOfLines={1}
             >
               {weather.city} • {weather.temp}
             </Text>
-            <Animated.View style={pulseStyle} />
-            {weather.icon && (
-              <Image
-                source={{ uri: weather.icon }}
-                style={{ width: 22, height: 22, marginLeft: 5 }}
-                contentFit="contain"
-              />
-            )}
-            <Ionicons name="chevron-forward" size={12} color="#FFF" style={{ marginLeft: 5, opacity: 0.9 }} />
+            <Ionicons name={getWeatherConditionIcon()} size={14} color="#FFF" />
           </TouchableOpacity>
-        </LinearGradient>
+        </View>
+      </LinearGradient>
 
-        {/* Carousel - Overlaps header for hero effect */}
-        <View style={{ marginTop: -32, height: 300 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={{ marginTop: 16, height: 300 }}>
           {carouselLoading ? (
             <View className="flex-1 justify-center items-center bg-white rounded-[32px]">
               <ActivityIndicator size="large" color="#FF4500" />
@@ -674,6 +709,92 @@ export default function HomeScreen() {
                 </LinearGradient>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+
+        <View style={{ marginHorizontal: 16, marginTop: 18, marginBottom: 8 }}>
+          <Text style={{ fontSize: 19, fontWeight: '800', color: colors.text, marginBottom: 12 }} numberOfLines={1}>
+            {isOdia ? 'ଉନ୍ନତ ଚୁଲିର ଲାଭ' : 'Why Use This Cookstove?'}
+          </Text>
+
+          <View
+            style={{
+              backgroundColor: colors.card,
+              borderRadius: 24,
+              padding: 16,
+              elevation: 4,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: isDark ? 0.3 : 0.06,
+              shadowRadius: 8,
+              borderWidth: isDark ? 1 : 0,
+              borderColor: colors.cardBorder,
+            }}
+          >
+            {[
+              {
+                icon: 'flame' as const,
+                color: '#EA580C',
+                bgColor: '#FFF7ED',
+                title: isOdia ? 'ଜାଳେଣି ସଞ୍ଚୟ' : 'Fuel Efficient',
+                desc: isOdia ? '୫୦% କମ୍ କାଠ ଖର୍ଚ୍ଚ ହୁଏ, ଟଙ୍କା ସଞ୍ଚୟ ହୁଏ ଓ ଜଙ୍ଗଲ ସୁରକ୍ଷିତ ରହେ।' : 'Consumes up to 50% less firewood, saving money and reducing smoke.',
+              },
+              {
+                icon: 'leaf' as const,
+                color: '#16A34A',
+                bgColor: '#F0FDF4',
+                title: isOdia ? 'ପରିବେଶ ଅନୁକୂଳ' : 'Eco-Friendly & Smoke-Free',
+                desc: isOdia ? 'ଧୂଆଁ ଓ ବିଷାକ୍ତ ଗ୍ୟାସ୍ ହ୍ରାସ କରି ରୋଷେଇ ଘରର ବାୟୁକୁ ସ୍ୱଚ୍ଛ ରଖେ।' : 'Significantly reduces smoke and harmful emissions for a cleaner kitchen.',
+              },
+              {
+                icon: 'flash' as const,
+                color: '#2563EB',
+                bgColor: '#EFF6FF',
+                title: isOdia ? 'ଦ୍ରୁତ ରନ୍ଧନ' : 'Faster Cooking Time',
+                desc: isOdia ? 'ଉନ୍ନତ ବାୟୁ ଚଳାଚଳ ଡିଜାଇନ୍ ଯୋଗୁଁ ଉତ୍ତାପ ଅଧିକ ହୁଏ ଓ ଖାଦ୍ୟ ଶୀଘ୍ର ପ୍ରସ୍ତୁତ ହୁଏ।' : 'Optimized airflow design concentrates flame heat, cooking food much faster.',
+              },
+              {
+                icon: 'shield-checkmark' as const,
+                color: '#9333EA',
+                bgColor: '#FAF5FF',
+                title: isOdia ? 'ସୁରକ୍ଷିତ ଓ ଦୀର୍ଘସ୍ଥାୟୀ' : 'Durable & Safe Design',
+                desc: isOdia ? 'ଉଚ୍ଚମାନର ଇସ୍ପାତ ନିର୍ମିତ, ବ୍ୟବହାର କରିବା ଅତ୍ୟନ୍ତ ସହଜ ଓ ନିରାପଦ।' : 'Engineered with high-grade durable metal for years of safe daily usage.',
+              },
+            ].map((feature, idx, features) => (
+              <View
+                key={feature.title}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'flex-start',
+                  paddingVertical: 12,
+                  borderBottomWidth: idx < features.length - 1 ? 1 : 0,
+                  borderBottomColor: colors.divider,
+                }}
+              >
+                <View
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 14,
+                    backgroundColor: isDark ? feature.color + '25' : feature.bgColor,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 14,
+                    marginTop: 2,
+                  }}
+                >
+                  <Ionicons name={feature.icon} size={22} color={feature.color} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 15, fontWeight: '800', color: colors.text, marginBottom: 3 }}>
+                    {feature.title}
+                  </Text>
+                  <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>
+                    {feature.desc}
+                  </Text>
+                </View>
+              </View>
+            ))}
           </View>
         </View>
 
@@ -1059,6 +1180,6 @@ export default function HomeScreen() {
         isVisible={isSahayikaVisible}
         onClose={() => setIsSahayikaVisible(false)}
       /> */}
-    </SafeAreaView>
+    </View>
   );
 }

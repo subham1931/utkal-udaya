@@ -11,7 +11,7 @@ import "../global.css";
 LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
 
 export const unstable_settings = {
-  initialRouteName: 'index',
+  anchor: 'index',
 };
 
 function RootLayoutNav() {
@@ -20,7 +20,6 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
       <Stack
-        initialRouteName="index"
         screenOptions={{
           headerBackTitle: 'Back',
           headerBackButtonDisplayMode: 'minimal',

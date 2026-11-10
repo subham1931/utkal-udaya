@@ -13,14 +13,14 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAppTheme } from '../../context/ThemeContext';
-import HeaderProfileAvatar from '../../components/HeaderProfileAvatar';
 
 export default function CookstoveScreen() {
     const { t, language } = useLanguage();
     const { isDark, colors } = useAppTheme();
+    const insets = useSafeAreaInsets();
     const isOdia = language === 'or';
 
 
@@ -111,45 +111,42 @@ export default function CookstoveScreen() {
     ];
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
+            <LinearGradient
+                colors={['#FF6F00', '#FF3D00']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                    height: 96 + insets.top,
+                    paddingHorizontal: 20,
+                    paddingTop: 16 + insets.top,
+                    paddingBottom: 26,
+                    borderBottomLeftRadius: 28,
+                    borderBottomRightRadius: 28,
+                    justifyContent: 'center',
+                    elevation: 6,
+                    shadowColor: '#FF4500',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 8,
+                    zIndex: 2,
+                }}
+            >
+                <View>
+                    <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }} numberOfLines={1}>
+                        {t.cookstove.title}
+                    </Text>
+                    <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }} numberOfLines={1}>
+                        {t.cookstove.subtitle}
+                    </Text>
+                </View>
+            </LinearGradient>
+
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                className="flex-1"
+                style={{ flex: 1 }}
             >
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    {/* Hero Header */}
-                    <LinearGradient
-                        colors={['#FF6F00', '#FF3D00']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingTop: 16,
-                            paddingBottom: 26,
-                            borderBottomLeftRadius: 28,
-                            borderBottomRightRadius: 28,
-                            elevation: 6,
-                            shadowColor: '#FF4500',
-                            shadowOffset: { width: 0, height: 4 },
-                            shadowOpacity: 0.25,
-                            shadowRadius: 8,
-                        }}
-                    >
-                        {/* Header: Title, Subtitle & Profile Avatar */}
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <View style={{ flex: 1, marginRight: 12 }}>
-                                <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}>
-                                    {t.cookstove.title}
-                                </Text>
-                                <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }}>
-                                    {t.cookstove.subtitle}
-                                </Text>
-                            </View>
-
-                            <HeaderProfileAvatar size={42} />
-                        </View>
-                    </LinearGradient>
-
                     {/* Support & Callback Card */}
                     <View
                         style={{
@@ -372,48 +369,11 @@ export default function CookstoveScreen() {
                         </View>
                     </View>
 
-                    {/* Quick Support Banner */}
-                    <View
-                        style={{
-                            marginHorizontal: 18,
-                            marginBottom: 20,
-                            backgroundColor: isDark ? 'rgba(234, 88, 12, 0.15)' : '#FFF7ED',
-                            borderRadius: 20,
-                            padding: 16,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            borderWidth: 1,
-                            borderColor: isDark ? 'rgba(234, 88, 12, 0.3)' : '#FED7AA',
-                        }}
-                    >
-                        <View
-                            style={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: 20,
-                                backgroundColor: isDark ? 'rgba(234, 88, 12, 0.25)' : '#FFEDD5',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginRight: 12,
-                            }}
-                        >
-                            <Ionicons name="call" size={20} color="#EA580C" />
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            <Text style={{ fontSize: 14, fontWeight: '800', color: isDark ? '#FDBA74' : '#9A3412' }}>
-                                {isOdia ? 'ସହାୟତା ହେଲ୍ପଲାଇନ୍' : 'Helpline Support'}
-                            </Text>
-                            <Text style={{ fontSize: 12, color: isDark ? '#FED7AA' : '#C2410C', marginTop: 1 }}>
-                                {isOdia ? 'ଯେକୌଣସି ସାହାଯ୍ୟ ପାଇଁ ଆମ ଟିମ୍ ପ୍ରସ୍ତୁତ।' : 'Our technical support team is ready to assist.'}
-                            </Text>
-                        </View>
-                    </View>
-
                     {/* Bottom Spacer for floating Tab Bar */}
                     <View style={{ height: 120 }} />
                 </ScrollView>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </View>
     );
 }
 

@@ -3,10 +3,16 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
+import { useLanguage } from '@/context/LanguageContext';
 import { useAppTheme } from '@/context/ThemeContext';
+
+function tabIconColor(color: unknown) {
+  return typeof color === 'string' ? color : undefined;
+}
 
 export default function TabLayout() {
   const { isDark } = useAppTheme();
+  const { t } = useLanguage();
 
   return (
     <Tabs
@@ -44,32 +50,32 @@ export default function TabLayout() {
         name="home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Ionicons size={24} name="home-outline" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons size={24} name="home-outline" color={tabIconColor(color)} />,
         }}
       />
       <Tabs.Screen
         name="learn"
         options={{
           title: 'News',
-          tabBarIcon: ({ color }) => <Ionicons size={24} name="newspaper-outline" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons size={24} name="newspaper-outline" color={tabIconColor(color)} />,
         }}
       />
       <Tabs.Screen
         name="cookstove"
         options={{
           title: 'Cookstove',
-          tabBarIcon: ({ color }) => <Ionicons size={24} name="flame-outline" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <Ionicons size={24} name="person-outline" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons size={24} name="flame-outline" color={tabIconColor(color)} />,
         }}
       />
       <Tabs.Screen
         name="settings"
+        options={{
+          title: t.tabs.settings,
+          tabBarIcon: ({ color }) => <Ionicons size={24} name="settings-outline" color={tabIconColor(color)} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
         options={{
           href: null,
         }}

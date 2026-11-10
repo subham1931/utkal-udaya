@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Audio } from 'expo-av';
+import { setAudioModeAsync } from 'expo-audio';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -27,11 +27,10 @@ export default function BahniSahayikaModal({ isVisible, onClose }: Props) {
 
     const setupAudio = useCallback(async () => {
         try {
-            await Audio.setAudioModeAsync({
-                allowsRecordingIOS: false,
-                playsInSilentModeIOS: true,
-                staysActiveInBackground: false,
-                shouldDuckAndroid: true,
+            await setAudioModeAsync({
+                playsInSilentMode: true,
+                shouldPlayInBackground: false,
+                interruptionMode: 'duckOthers',
             });
         } catch (e) {
             console.log('Audio mode error:', e);

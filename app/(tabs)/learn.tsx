@@ -15,10 +15,9 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAppTheme } from '../../context/ThemeContext';
-import HeaderProfileAvatar from '../../components/HeaderProfileAvatar';
 
 const { width } = Dimensions.get('window');
 
@@ -146,6 +145,7 @@ const DEFAULT_FEATURED_NEWS = [
 export default function LearnScreen() {
     const { t, language } = useLanguage();
     const { isDark, colors } = useAppTheme();
+    const insets = useSafeAreaInsets();
     const router = useRouter();
     const isOdia = language === 'or';
 
@@ -391,61 +391,48 @@ export default function LearnScreen() {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
+            <LinearGradient
+                colors={['#FF6F00', '#FF3D00']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                    height: 96 + insets.top,
+                    paddingHorizontal: 20,
+                    paddingTop: 16 + insets.top,
+                    paddingBottom: 26,
+                    borderBottomLeftRadius: 28,
+                    borderBottomRightRadius: 28,
+                    justifyContent: 'center',
+                    elevation: 6,
+                    shadowColor: '#FF4500',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 8,
+                    zIndex: 2,
+                }}
+            >
+                <View>
+                    <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }} numberOfLines={1}>
+                        {t.learn.title}
+                    </Text>
+                    <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }} numberOfLines={1}>
+                        {t.learn.subtitle}
+                    </Text>
+                </View>
+            </LinearGradient>
+
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#FF4500']} tintColor="#FF4500" />
                 }
             >
-                {/* Hero Header */}
-                <LinearGradient
-                    colors={['#FF6F00', '#FF3D00']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={{
-                        paddingHorizontal: 20,
-                        paddingTop: 16,
-                        paddingBottom: 26,
-                        borderBottomLeftRadius: 28,
-                        borderBottomRightRadius: 28,
-                        elevation: 6,
-                        shadowColor: '#FF4500',
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 8,
-                    }}
-                >
-                    {/* Header: Title, Subtitle & Profile Avatar */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ flex: 1, marginRight: 12 }}>
-                            <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}>
-                                {t.learn.title}
-                            </Text>
-                            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }}>
-                                {t.learn.subtitle}
-                            </Text>
-                        </View>
-
-                        <HeaderProfileAvatar size={42} />
-                    </View>
-                </LinearGradient>
-
                 {/* Featured Carousel Section */}
                 <View style={{ marginTop: 22 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 12 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 19, fontWeight: '800', color: colors.text }}>
-                                {isOdia ? 'ମୁଖ୍ୟ ଖବର' : 'Featured News'}
-                            </Text>
-                            <View style={{ backgroundColor: '#FFEDE5', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, marginLeft: 8 }}>
-                                <Text style={{ color: '#FF4500', fontSize: 10, fontWeight: '800' }}>
-                                    {isOdia ? 'ଆଜି' : 'TOP'}
-                                </Text>
-                            </View>
-                        </View>
-                        <Text style={{ fontSize: 12, color: colors.textSecondary, fontWeight: '600' }}>
-                            {carouselNews.length} {isOdia ? 'ଖବର' : 'stories'}
+                    <View style={{ paddingHorizontal: 20, marginBottom: 12 }}>
+                        <Text style={{ fontSize: 19, fontWeight: '800', color: colors.text }}>
+                            {isOdia ? 'ମୁଖ୍ୟ ଖବର' : 'Featured News'}
                         </Text>
                     </View>
 
@@ -496,21 +483,13 @@ export default function LearnScreen() {
 
                 {/* Explore Topics (Categories) */}
                 <View style={{ paddingHorizontal: 20, marginTop: 24 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                        <View>
-                            <Text style={{ fontSize: 19, fontWeight: '800', color: colors.text }}>
-                                {isOdia ? 'ବିଷୟବସ୍ତୁ' : 'Explore Topics'}
-                            </Text>
-                            <Text style={{ fontSize: 12, color: colors.textSecondary, fontWeight: '500', marginTop: 2 }}>
-                                {isOdia ? 'ବିଭାଗ ଅନୁଯାୟୀ ଖବର ପଢ଼ନ୍ତୁ' : 'Browse stories by category'}
-                            </Text>
-                        </View>
-
-                        <View style={{ backgroundColor: isDark ? '#1E293B' : '#F1F5F9', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
-                            <Text style={{ color: colors.textSecondary, fontSize: 11, fontWeight: '700' }}>
-                                {CATEGORIES_DATA.length} {isOdia ? 'ବିଭାଗ' : 'Categories'}
-                            </Text>
-                        </View>
+                    <View style={{ marginBottom: 14 }}>
+                        <Text style={{ fontSize: 19, fontWeight: '800', color: colors.text }}>
+                            {isOdia ? 'ବିଷୟବସ୍ତୁ' : 'Explore Topics'}
+                        </Text>
+                        <Text style={{ fontSize: 12, color: colors.textSecondary, fontWeight: '500', marginTop: 2 }}>
+                            {isOdia ? 'ବିଭାଗ ଅନୁଯାୟୀ ଖବର ପଢ଼ନ୍ତୁ' : 'Browse stories by category'}
+                        </Text>
                     </View>
 
                     {/* 2-Column Responsive Card Grid */}
@@ -625,6 +604,6 @@ export default function LearnScreen() {
                 {/* Bottom Spacer for floating Tab Bar */}
                 <View style={{ height: 120 }} />
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
