@@ -280,7 +280,8 @@ export default function LearnScreen() {
                                 storyId: item.id || 'feat-1',
                                 title: displayTitle,
                                 image: imageSource,
-                                url: item.url || ''
+                                url: item.url || '',
+                                description: item.short_desc || item.summary || item.description || '',
                             }
                         });
                     }
@@ -392,37 +393,40 @@ export default function LearnScreen() {
 
     return (
         <View style={{ flex: 1, backgroundColor: colors.background }}>
-            <LinearGradient
-                colors={['#FF6F00', '#FF3D00']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
+            <View
                 style={{
-                    height: 96 + insets.top,
-                    paddingHorizontal: 20,
-                    paddingTop: 16 + insets.top,
-                    paddingBottom: 26,
+                    zIndex: 2,
                     borderBottomLeftRadius: 28,
                     borderBottomRightRadius: 28,
-                    justifyContent: 'center',
-                    elevation: 6,
-                    shadowColor: '#FF4500',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 8,
-                    zIndex: 2,
+                    overflow: 'hidden',
+                    backgroundColor: 'transparent',
                 }}
             >
-                <View>
-                    <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }} numberOfLines={1}>
-                        {t.learn.title}
-                    </Text>
-                    <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }} numberOfLines={1}>
-                        {t.learn.subtitle}
-                    </Text>
-                </View>
-            </LinearGradient>
+                <LinearGradient
+                    colors={['#FF6F00', '#FF3D00']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                        height: 96 + insets.top,
+                        paddingHorizontal: 20,
+                        paddingTop: 16 + insets.top,
+                        paddingBottom: 26,
+                        justifyContent: 'center',
+                    }}
+                >
+                    <View>
+                        <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }} numberOfLines={1}>
+                            {t.learn.title}
+                        </Text>
+                        <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }} numberOfLines={1}>
+                            {t.learn.subtitle}
+                        </Text>
+                    </View>
+                </LinearGradient>
+            </View>
 
             <ScrollView
+                style={{ flex: 1, backgroundColor: colors.background }}
                 showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#FF4500']} tintColor="#FF4500" />

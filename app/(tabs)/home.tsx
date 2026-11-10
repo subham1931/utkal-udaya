@@ -350,7 +350,8 @@ export default function HomeScreen() {
             storyId: item.id,
             title: item.title,
             image: item.coverImage,
-            url: item.url
+            url: item.url || '',
+            description: item.short_desc || item.summary || item.description || '',
           }
         });
       }}
@@ -417,76 +418,78 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      {/* Sticky top header — extends under the status bar */}
-      <LinearGradient
-        colors={getWeatherGradients() as [string, string, ...string[]]}
+      <View
         style={{
-          height: 96 + insets.top,
-          paddingHorizontal: 20,
-          paddingTop: 16 + insets.top,
-          paddingBottom: 26,
+          zIndex: 2,
+          overflow: 'hidden',
           borderBottomLeftRadius: 28,
           borderBottomRightRadius: 28,
-          justifyContent: 'center',
-          elevation: 6,
-          shadowColor: '#FF4500',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.25,
-          shadowRadius: 8,
-          zIndex: 2,
+          backgroundColor: 'transparent',
         }}
       >
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <View style={{ flexShrink: 1, marginRight: 10 }}>
-            <Text
-              style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}
-              maxFontSizeMultiplier={1.2}
-              numberOfLines={1}
-            >
-              {t.home.title}
-            </Text>
-            <Text
-              style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }}
-              maxFontSizeMultiplier={1.2}
-              numberOfLines={1}
-            >
-              {t.common.namaskar}
-            </Text>
-          </View>
+        <LinearGradient
+          colors={getWeatherGradients() as [string, string, ...string[]]}
+          style={{
+            height: 96 + insets.top,
+            paddingHorizontal: 20,
+            paddingTop: 16 + insets.top,
+            paddingBottom: 26,
+            justifyContent: 'center',
+          }}
+        >
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View style={{ flexShrink: 1, marginRight: 10 }}>
+              <Text
+                style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }}
+                maxFontSizeMultiplier={1.2}
+                numberOfLines={1}
+              >
+                {t.home.title}
+              </Text>
+              <Text
+                style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }}
+                maxFontSizeMultiplier={1.2}
+                numberOfLines={1}
+              >
+                {t.common.namaskar}
+              </Text>
+            </View>
 
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => router.push({
-              pathname: '/weather-detail',
-              params: { lat: weather.lat, lon: weather.lon }
-            })}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              flexShrink: 1,
-              maxWidth: '42%',
-              backgroundColor: 'rgba(0,0,0,0.2)',
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              borderRadius: 16,
-              borderWidth: 1,
-              borderColor: 'rgba(255,255,255,0.2)',
-            }}
-          >
-            <Ionicons name="location-sharp" size={13} color="#FFF" />
-            <Text
-              style={{ color: '#FFF', fontWeight: '600', marginLeft: 5, marginRight: 5, fontSize: 12, flexShrink: 1 }}
-              maxFontSizeMultiplier={1.2}
-              numberOfLines={1}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => router.push({
+                pathname: '/weather-detail',
+                params: { lat: weather.lat, lon: weather.lon }
+              })}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                flexShrink: 1,
+                maxWidth: '42%',
+                backgroundColor: 'rgba(0,0,0,0.2)',
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                borderRadius: 16,
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.2)',
+              }}
             >
-              {weather.city} • {weather.temp}
-            </Text>
-            <Ionicons name={getWeatherConditionIcon()} size={14} color="#FFF" />
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
+              <Ionicons name="location-sharp" size={13} color="#FFF" />
+              <Text
+                style={{ color: '#FFF', fontWeight: '600', marginLeft: 5, marginRight: 5, fontSize: 12, flexShrink: 1 }}
+                maxFontSizeMultiplier={1.2}
+                numberOfLines={1}
+              >
+                {weather.city} • {weather.temp}
+              </Text>
+              <Ionicons name={getWeatherConditionIcon()} size={14} color="#FFF" />
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+      </View>
 
       <ScrollView
+        style={{ flex: 1, backgroundColor: colors.background }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

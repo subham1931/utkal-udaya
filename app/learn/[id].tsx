@@ -223,7 +223,13 @@ export default function CategoryNewsScreen() {
 
     const categoryConfig = getCategoryConfig();
 
-    const handleNewsPress = (storyId: string, itemTitle: string, image: string, url: string) => {
+    const handleNewsPress = (
+        storyId: string,
+        itemTitle: string,
+        image: string,
+        url: string,
+        description = '',
+    ) => {
         router.push({
             pathname: '/learn/story/[storyId]',
             params: {
@@ -231,6 +237,7 @@ export default function CategoryNewsScreen() {
                 title: itemTitle || 'News Story',
                 image: image || categoryConfig.defaultImage,
                 url: url || '',
+                description: description || '',
             }
         });
     };
@@ -292,7 +299,13 @@ export default function CategoryNewsScreen() {
             }}
             className="mx-4 mb-4 rounded-[24px] overflow-hidden shadow-sm elevation-3"
             activeOpacity={0.75}
-            onPress={() => handleNewsPress(item.id, item.title, item.coverImage, item.url)}
+            onPress={() => handleNewsPress(
+                item.id,
+                item.title,
+                item.coverImage,
+                item.url,
+                item.summary || item.short_desc || item.description || '',
+            )}
         >
             <View className="flex-row p-3">
                 <View className="relative">

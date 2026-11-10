@@ -29,7 +29,10 @@ export default function CookstoveScreen() {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleRequestCallback = async () => {
-        if (!serialNo.trim() || !aadhaarNo.trim()) {
+        const barcode = serialNo.trim();
+        const aadhar = aadhaarNo.trim();
+
+        if (!barcode || !aadhar) {
             Alert.alert(
                 isOdia ? 'ତ୍ରୁଟି' : 'Missing Information',
                 isOdia ? 'ଦୟାକରି ସିରିଏଲ ନମ୍ବର ଏବଂ ଆଧାର ନମ୍ବର ଦିଅନ୍ତୁ।' : 'Please enter both Serial Number and Aadhaar Number.'
@@ -37,43 +40,80 @@ export default function CookstoveScreen() {
             return;
         }
 
+        if (!/^\d{12}$/.test(aadhar)) {
+            Alert.alert(
+                isOdia ? 'ତ୍ରୁଟି' : 'Invalid Aadhaar',
+                isOdia ? 'ଦୟାକରି ୧୨ ଅଙ୍କର ଆଧାର ନମ୍ବର ଦିଅନ୍ତୁ।' : 'Please enter a valid 12-digit Aadhaar number.'
+            );
+            return;
+        }
+
         setIsLoading(true);
         try {
-            const response = await fetch('https://meensou.com/myclimate/app/beneficiary/request_call_back.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    serial_no: serialNo.trim(),
-                    aadhaar_no: aadhaarNo.trim(),
-                }),
-            });
+            const body = new FormData();
+            body.append('barcode', barcode);
+            body.append('aadhar', aadhar);
+            body.append('registered_by', 'beneficiary');
 
-            const data = await response.json();
-            if (data?.status === 'success' || data?.message) {
+            const response = await fetch(
+                'https://meensou.com/myclimate/app/beneficiary/cookstove/requestcall.php',
+                {
+                    method: 'POST',
+                    body,
+                }
+            );
+
+            const raw = (await response.text()).trim();
+            const result = raw.toLowerCase();
+
+            if (!response.ok) {
+                throw new Error(raw || `Request failed (${response.status})`);
+            }
+
+            if (result === 'success') {
                 Alert.alert(
                     isOdia ? 'ଅନୁରୋଧ ସଫଳ ହେଲା' : 'Request Submitted',
-                    isOdia ? 'ଆମର ପ୍ରତିନିଧି ଖୁବ୍ ଶୀଘ୍ର ଆପଣଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରିବେ।' : 'Our support representative will contact you shortly.'
+                    isOdia
+                        ? 'ଆମର ପ୍ରତିନିଧି ଖୁବ୍ ଶୀଘ୍ର ଆପଣଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରିବେ।'
+                        : 'Our support representative will contact you shortly.'
                 );
                 setSerialNo('');
                 setAadhaarNo('');
-            } else {
-                Alert.alert(
-                    isOdia ? 'ସୂଚନା' : 'Submitted',
-                    isOdia ? 'ଆପଣଙ୍କ କଲବ୍ୟାକ୍ ଅନୁରୋଧ ଗ୍ରହଣ କରାଗଲା।' : 'Your callback request has been recorded.'
-                );
-                setSerialNo('');
-                setAadhaarNo('');
+                return;
             }
-        } catch {
-            // Friendly fallback if endpoint is unavailable
+
+            if (result.includes('no match found')) {
+                Alert.alert(
+                    isOdia ? 'ମେଳ ମିଳିଲା ନାହିଁ' : 'No Match Found',
+                    isOdia
+                        ? 'ଏହି ସିରିଏଲ ନମ୍ବର ଓ ଆଧାର ନମ୍ବର ରେକର୍ଡରେ ମିଳିଲା ନାହିଁ। ଦୟାକରି ସଠିକ୍ ବିବରଣୀ ଦିଅନ୍ତୁ।'
+                        : 'This Serial Number and Aadhaar were not found in our records. Please check and try again.'
+                );
+                return;
+            }
+
+            if (result.includes('previous request is open')) {
+                Alert.alert(
+                    isOdia ? 'ଅନୁରୋଧ ଅଛି' : 'Request Already Open',
+                    isOdia
+                        ? 'ଆପଣଙ୍କର ଏକ ପୂର୍ବ ଅନୁରୋଧ ଏପର୍ଯ୍ୟନ୍ତ ଖୋଲା ଅଛି। ସମାଧାନ ହେବା ପର୍ଯ୍ୟନ୍ତ ଅପେକ୍ଷା କରନ୍ତୁ।'
+                        : 'A previous callback request is still open. Please wait until it is resolved.'
+                );
+                return;
+            }
+
             Alert.alert(
-                isOdia ? 'ଅନୁରୋଧ ଗୃହୀତ' : 'Request Received',
-                isOdia ? 'ଆପଣଙ୍କ ଅନୁରୋଧ ଗ୍ରହଣ କରାଯାଇଛି। ଆମ ଟିମ୍ ଶୀଘ୍ର କଲ୍ କରିବେ।' : 'Thank you! Your request has been logged. Our team will contact you soon.'
+                isOdia ? 'ତ୍ରୁଟି' : 'Request Failed',
+                raw || (isOdia ? 'ଅନୁରୋଧ ବିଫଳ ହେଲା। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।' : 'Could not submit the request. Please try again.')
             );
-            setSerialNo('');
-            setAadhaarNo('');
+        } catch (error) {
+            console.warn('Callback request error:', error);
+            Alert.alert(
+                isOdia ? 'ନେଟୱାର୍କ ତ୍ରୁଟି' : 'Network Error',
+                isOdia
+                    ? 'ସର୍ଭର ସହିତ ଯୋଗାଯୋଗ ହୋଇପାରିଲା ନାହିଁ। ଇଣ୍ଟରନେଟ୍ ଯାଞ୍ଚ କରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।'
+                    : 'Could not reach the server. Please check your internet and try again.'
+            );
         } finally {
             setIsLoading(false);
         }
@@ -112,41 +152,46 @@ export default function CookstoveScreen() {
 
     return (
         <View style={{ flex: 1, backgroundColor: colors.background }}>
-            <LinearGradient
-                colors={['#FF6F00', '#FF3D00']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
+            <View
                 style={{
-                    height: 96 + insets.top,
-                    paddingHorizontal: 20,
-                    paddingTop: 16 + insets.top,
-                    paddingBottom: 26,
+                    zIndex: 2,
+                    overflow: 'hidden',
                     borderBottomLeftRadius: 28,
                     borderBottomRightRadius: 28,
-                    justifyContent: 'center',
-                    elevation: 6,
-                    shadowColor: '#FF4500',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 8,
-                    zIndex: 2,
+                    backgroundColor: 'transparent',
                 }}
             >
-                <View>
-                    <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }} numberOfLines={1}>
-                        {t.cookstove.title}
-                    </Text>
-                    <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }} numberOfLines={1}>
-                        {t.cookstove.subtitle}
-                    </Text>
-                </View>
-            </LinearGradient>
+                <LinearGradient
+                    colors={['#FF6F00', '#FF3D00']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                        height: 96 + insets.top,
+                        paddingHorizontal: 20,
+                        paddingTop: 16 + insets.top,
+                        paddingBottom: 26,
+                        justifyContent: 'center',
+                    }}
+                >
+                    <View>
+                        <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }} numberOfLines={1}>
+                            {t.cookstove.title}
+                        </Text>
+                        <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.92)', marginTop: 4, fontWeight: '500' }} numberOfLines={1}>
+                            {t.cookstove.subtitle}
+                        </Text>
+                    </View>
+                </LinearGradient>
+            </View>
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView
+                    style={{ flex: 1, backgroundColor: colors.background }}
+                    showsVerticalScrollIndicator={false}
+                >
                     {/* Support & Callback Card */}
                     <View
                         style={{

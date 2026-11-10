@@ -106,7 +106,8 @@ export default function NotificationsScreen() {
                             storyId: item.id,
                             title: item.title,
                             image: item.image,
-                            url: item.url
+                            url: item.url || '',
+                            description: item.subtitle || item.summary || item.description || '',
                         }
                     });
                 }

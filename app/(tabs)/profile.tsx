@@ -91,32 +91,37 @@ export function ProfileScreen() {
 
     return (
         <View style={{ flex: 1, backgroundColor: colors.background }}>
-            <LinearGradient
-                colors={['#FF6F00', '#FF3D00']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
+            <View
                 style={{
-                    height: 96 + insets.top,
-                    paddingHorizontal: 20,
-                    paddingTop: 16 + insets.top,
-                    paddingBottom: 26,
+                    zIndex: 2,
+                    overflow: 'hidden',
                     borderBottomLeftRadius: 28,
                     borderBottomRightRadius: 28,
-                    justifyContent: 'center',
-                    elevation: 6,
-                    shadowColor: '#FF4500',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 8,
-                    zIndex: 2,
+                    backgroundColor: 'transparent',
                 }}
             >
-                <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }} numberOfLines={1}>
-                    {t.settings.title}
-                </Text>
-            </LinearGradient>
+                <LinearGradient
+                    colors={['#FF6F00', '#FF3D00']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                        height: 96 + insets.top,
+                        paddingHorizontal: 20,
+                        paddingTop: 16 + insets.top,
+                        paddingBottom: 26,
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Text style={{ fontSize: 28, fontWeight: '900', color: '#FFF', letterSpacing: 0.3 }} numberOfLines={1}>
+                        {t.settings.title}
+                    </Text>
+                </LinearGradient>
+            </View>
 
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+                style={{ flex: 1, backgroundColor: colors.background }}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={{ paddingHorizontal: 18, paddingTop: 18 }}>
 
                     {/* Language Selector */}
