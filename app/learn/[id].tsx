@@ -3,6 +3,7 @@ import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
+import { newsApiUrl } from '../../constants/config';
 import { Colors } from '../../constants/theme';
 import { useColorScheme } from '../../hooks/use-color-scheme';
 
@@ -247,9 +248,7 @@ export default function CategoryNewsScreen() {
             setLoading(true);
             const query = categoryConfig.query;
 
-            // Call NewsData.io with the category-specific query
-            const apiUrl = `https://newsdata.io/api/1/latest?apikey=pub_133361d89e574a76b448e577121addb2&q=${encodeURIComponent(query)}`;
-            const response = await fetch(apiUrl);
+            const response = await fetch(newsApiUrl(query));
             const data = await response.json();
 
             if (data?.results && Array.isArray(data.results) && data.results.length > 0) {

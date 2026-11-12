@@ -4,8 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { forecastApiUrl, weatherApiUrl } from '../constants/config';
 import { useAppTheme } from '../context/ThemeContext';
-const API_KEY = "b035fffc7179d3075edb423469937601";
 
 export default function WeatherDetailScreen() {
     const { lat, lon } = useLocalSearchParams();
@@ -19,18 +19,11 @@ export default function WeatherDetailScreen() {
     useEffect(() => {
         const fetchAllWeatherData = async () => {
             try {
-                // Current Weather
-                const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+                const weatherRes = await fetch(weatherApiUrl(String(lat), String(lon)));
                 const weather = await weatherRes.json();
 
-                // Forecast (5 days / 3 hour steps)
-                const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+                const forecastRes = await fetch(forecastApiUrl(String(lat), String(lon)));
                 const forecast = await forecastRes.json();
-
-                console.log('--- WEATHER DETAIL LOGS ---');
-                console.log('Current Weather:', JSON.stringify(weather, null, 2));
-                console.log('Forecast Data:', JSON.stringify(forecast, null, 2));
-                console.log('---------------------------');
 
                 setWeatherData(weather);
                 setForecastData(forecast);

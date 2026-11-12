@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Redirect } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Linking,
     ScrollView,
@@ -13,43 +13,41 @@ import {
     View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PLAY_STORE_URL } from '../../constants/config';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAppTheme } from '../../context/ThemeContext';
+import {
+    areNotificationsEnabled,
+    registerForPushNotifications,
+    setNotificationsEnabled,
+} from '../../utils/notifications';
 
-export function ProfileScreen() {
-    const { t, language, setLanguage } = useLanguage();
-    const { isDark, toggleTheme, colors } = useAppTheme();
-    const insets = useSafeAreaInsets();
-    const isOdia = language === 'or';
-
-    const [notifications, setNotifications] = useState(true);
-
-    const handleShare = async () => {
-        try {
-            await Share.share({
-                message: 'Utkal Udaya - Clean cooking, improved cookstoves, and daily agriculture news for Odisha.',
-                title: 'Utkal Udaya',
-            });
-        } catch (error) {
-            console.error('Error sharing:', error);
-        }
+type SettingRowProps = {
+    icon: keyof typeof Ionicons.glyphMap;
+    title: string;
+    subtitle?: string;
+    onPress?: () => void;
+    rightElement?: React.ReactNode;
+    showDivider?: boolean;
+    isDark: boolean;
+    colors: {
+        text: string;
+        textSecondary: string;
+        divider: string;
     };
+};
 
-    const SettingRow = ({
-        icon,
-        title,
-        subtitle,
-        onPress,
-        rightElement,
-        showDivider = true,
-    }: {
-        icon: keyof typeof Ionicons.glyphMap;
-        title: string;
-        subtitle?: string;
-        onPress?: () => void;
-        rightElement?: React.ReactNode;
-        showDivider?: boolean;
-    }) => (
+function SettingRow({
+    icon,
+    title,
+    subtitle,
+    onPress,
+    rightElement,
+    showDivider = true,
+    isDark,
+    colors,
+}: SettingRowProps) {
+    return (
         <TouchableOpacity
             activeOpacity={onPress ? 0.7 : 1}
             onPress={onPress}
@@ -85,9 +83,58 @@ export function ProfileScreen() {
                     ) : null}
                 </View>
             </View>
-            {rightElement ? rightElement : <Ionicons name="chevron-forward" size={18} color={isDark ? '#64748B' : '#94A3B8'} />}
+            {rightElement ? (
+                rightElement
+            ) : (
+                <Ionicons name="chevron-forward" size={18} color={isDark ? '#64748B' : '#94A3B8'} />
+            )}
         </TouchableOpacity>
     );
+}
+
+export function ProfileScreen() {
+    const { t, language, setLanguage } = useLanguage();
+    const { isDark, toggleTheme, colors } = useAppTheme();
+    const insets = useSafeAreaInsets();
+    const isOdia = language === 'or';
+
+    const [notifications, setNotifications] = useState(true);
+
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            const enabled = await areNotificationsEnabled();
+            if (!cancelled) setNotifications(enabled);
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const handleNotificationsToggle = async (value: boolean) => {
+        setNotifications(value);
+        await setNotificationsEnabled(value);
+        if (value) {
+            await registerForPushNotifications();
+        }
+    };
+
+    const handleShare = async () => {
+        try {
+            const storeLine = PLAY_STORE_URL
+                ? `\n${PLAY_STORE_URL}`
+                : '\n(Play Store link coming soon)';
+            await Share.share({
+                message:
+                    'Utkal Udaya - Clean cooking, improved cookstoves, and daily agriculture news for Odisha.' +
+                    storeLine,
+                title: 'Utkal Udaya',
+                url: PLAY_STORE_URL || undefined,
+            });
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
+    };
 
     return (
         <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -123,8 +170,6 @@ export function ProfileScreen() {
                 showsVerticalScrollIndicator={false}
             >
                 <View style={{ paddingHorizontal: 18, paddingTop: 18 }}>
-
-                    {/* Language Selector */}
                     <View style={{ marginBottom: 20 }}>
                         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, marginLeft: 2 }}>
                             {isOdia ? 'ଭାଷା' : 'Language'}
@@ -178,7 +223,6 @@ export function ProfileScreen() {
                         </View>
                     </View>
 
-                    {/* App Preferences */}
                     <View style={{ marginBottom: 20 }}>
                         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, marginLeft: 2 }}>
                             {isOdia ? 'ପସନ୍ଦ ଓ ସେଟିଂସ୍' : 'Preferences'}
@@ -198,19 +242,23 @@ export function ProfileScreen() {
                             }}
                         >
                             <SettingRow
+                                isDark={isDark}
+                                colors={colors}
                                 icon="notifications-outline"
                                 title={t.profile.notifications}
-                                subtitle={isOdia ? 'ବାର୍ତ୍ତା ଏବଂ ଚୁଲି ଅପଡେଟ୍' : 'News and stove reminders'}
+                                subtitle={isOdia ? 'ନୂଆ ଖବର ଆଲର୍ଟ' : 'Alerts for new agriculture news'}
                                 rightElement={
                                     <Switch
                                         value={notifications}
-                                        onValueChange={setNotifications}
+                                        onValueChange={handleNotificationsToggle}
                                         trackColor={{ false: isDark ? '#334155' : '#E2E8F0', true: '#FED7AA' }}
                                         thumbColor={notifications ? '#FF4500' : (isDark ? '#94A3B8' : '#F1F5F9')}
                                     />
                                 }
                             />
                             <SettingRow
+                                isDark={isDark}
+                                colors={colors}
                                 icon="moon-outline"
                                 title={t.profile.darkMode}
                                 subtitle={isOdia ? 'ରାତ୍ରି ସମୟ ପାଇଁ ଡାର୍କ ଥିମ୍' : 'Low-light dark mode'}
@@ -227,7 +275,6 @@ export function ProfileScreen() {
                         </View>
                     </View>
 
-                    {/* Support & Legal */}
                     <View style={{ marginBottom: 20 }}>
                         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginBottom: 8, marginLeft: 2 }}>
                             {isOdia ? 'ସହାୟତା' : 'Support & Legal'}
@@ -247,28 +294,38 @@ export function ProfileScreen() {
                             }}
                         >
                             <SettingRow
+                                isDark={isDark}
+                                colors={colors}
                                 icon="call-outline"
                                 title={t.settings.contact}
                                 subtitle="www.meensou.com/connect"
                                 onPress={() => WebBrowser.openBrowserAsync('https://www.meensou.com/connect')}
                             />
                             <SettingRow
+                                isDark={isDark}
+                                colors={colors}
                                 icon="mail-outline"
                                 title={t.settings.email}
                                 subtitle="info@meensou.com"
                                 onPress={() => Linking.openURL('mailto:info@meensou.com')}
                             />
                             <SettingRow
+                                isDark={isDark}
+                                colors={colors}
                                 icon="document-text-outline"
                                 title={t.settings.terms}
                                 onPress={() => WebBrowser.openBrowserAsync('https://meensou.com/termsofservice/')}
                             />
                             <SettingRow
+                                isDark={isDark}
+                                colors={colors}
                                 icon="shield-checkmark-outline"
                                 title={t.settings.privacy}
                                 onPress={() => WebBrowser.openBrowserAsync('https://meensou.com/privacypolicy/')}
                             />
                             <SettingRow
+                                isDark={isDark}
+                                colors={colors}
                                 icon="share-social-outline"
                                 title={t.settings.share}
                                 showDivider={false}
@@ -277,12 +334,10 @@ export function ProfileScreen() {
                         </View>
                     </View>
 
-                    {/* Version */}
                     <Text style={{ textAlign: 'center', fontSize: 12, color: colors.textSecondary, fontWeight: '500', marginBottom: 20 }}>
                         Utkal Udaya v1.0.0
                     </Text>
 
-                    {/* Bottom Spacer for floating Tab Bar */}
                     <View style={{ height: 120 }} />
                 </View>
             </ScrollView>

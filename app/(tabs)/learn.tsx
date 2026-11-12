@@ -16,6 +16,7 @@ import {
     View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { newsApiUrl } from '../../constants/config';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAppTheme } from '../../context/ThemeContext';
 
@@ -179,8 +180,7 @@ export default function LearnScreen() {
             }
             */
 
-            // --- NEW API: NewsData.io ---
-            const response = await fetch('https://newsdata.io/api/1/latest?apikey=pub_133361d89e574a76b448e577121addb2&q=Odisha%20agriculture');
+            const response = await fetch(newsApiUrl('Odisha agriculture'));
             const data = await response.json();
 
             if (data?.results && Array.isArray(data.results) && data.results.length > 0) {

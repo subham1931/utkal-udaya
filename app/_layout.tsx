@@ -1,21 +1,31 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { LogBox } from 'react-native';
 import 'react-native-reanimated';
 import { LanguageProvider } from '../context/LanguageContext';
-import { ProfileProvider } from '../context/ProfileContext';
 import { AppThemeProvider, useAppTheme } from '../context/ThemeContext';
-import "../global.css";
+import '../global.css';
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 // Ignore SafeAreaView deprecation warning - we're already using react-native-safe-area-context
 LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
 
 export const unstable_settings = {
-  anchor: 'index',
+  anchor: '(tabs)',
 };
 
 function RootLayoutNav() {
   const { isDark } = useAppTheme();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      SplashScreen.hideAsync().catch(() => {});
+    }, 1600);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
@@ -26,9 +36,6 @@ function RootLayoutNav() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)/welcome" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)/sign-in" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)/sign-up" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Back' }} />
         <Stack.Screen name="learn/[id]" options={{ presentation: 'card', headerBackTitle: 'Back' }} />
         <Stack.Screen name="learn/story/[storyId]" options={{ presentation: 'card', title: 'News', headerBackTitle: 'Back' }} />
@@ -45,9 +52,7 @@ export default function RootLayout() {
   return (
     <AppThemeProvider>
       <LanguageProvider>
-        <ProfileProvider>
-          <RootLayoutNav />
-        </ProfileProvider>
+        <RootLayoutNav />
       </LanguageProvider>
     </AppThemeProvider>
   );

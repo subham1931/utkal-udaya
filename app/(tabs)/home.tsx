@@ -11,18 +11,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 
+import { newsApiUrl, weatherApiUrl } from '../../constants/config';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAppTheme } from '../../context/ThemeContext';
+import { requestLaunchPermissions } from '../../utils/launchPermissions';
+import { notifyNewNewsArticles } from '../../utils/notifications';
 
 const { width } = Dimensions.get('window');
-
-const CATEGORIES_DATA = [
-  { id: '1345', title: 'କୃଷି (Agri)' },
-  { id: '1063', title: 'ପଶୁପାଳନ (Fish)' },
-  { id: '1061', title: 'ସ୍ୱାସ୍ଥ୍ୟ (Health)' },
-  { id: '1064', title: 'ସଫଳତା (Success)' },
-  { id: '48591', title: 'ଯୋଜନା (Scheme)' },
-];
 
 const CAROUSEL_CACHE_KEY = 'utkal_udaya_carousel_cache';
 
@@ -43,7 +38,6 @@ export default function HomeScreen() {
 
   const [weather, setWeather] = useState({ temp: '--', city: t.common.loading, icon: '', code: '01d', lat: 21.4937, lon: 83.9812 });
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isSahayikaVisible, setIsSahayikaVisible] = useState(false);
   const flatListRef = useRef<FlatList>(null);
   const [carouselNews, setCarouselNews] = useState<any[]>([]);
   const [carouselLoading, setCarouselLoading] = useState(true);
@@ -88,33 +82,7 @@ export default function HomeScreen() {
 
   const fetchCarouselNews = useCallback(async () => {
     try {
-      /*
-      // --- OLD API (Commented out) ---
-      const newsPromises = CATEGORIES_DATA.map(async (cat) => {
-        try {
-          const response = await fetch(`https://meensou.com/myclimate/app/beneficiary/learn/getcategory_json.php?cat=${cat.id}`);
-          const data = await response.json();
-          const list = data.news || data['new   ws'] || data.new_ws || [];
-          if (list.length > 0) {
-            return { ...list[0], categoryName: cat.title };
-          }
-          return null;
-        } catch {
-          return null;
-        }
-      });
-
-      const results = await Promise.all(newsPromises);
-      const filtered = results.filter(n => n !== null).slice(0, 6);
-
-      if (filtered.length > 0) {
-        setCarouselNews(filtered);
-        await AsyncStorage.setItem(CAROUSEL_CACHE_KEY, JSON.stringify(filtered));
-      }
-      */
-
-      // --- NEW API: NewsData.io ---
-      const response = await fetch('https://newsdata.io/api/1/latest?apikey=pub_133361d89e574a76b448e577121addb2&q=Odisha%20agriculture');
+      const response = await fetch(newsApiUrl('Odisha agriculture'));
       const data = await response.json();
 
       if (data?.results && Array.isArray(data.results) && data.results.length > 0) {
@@ -131,6 +99,12 @@ export default function HomeScreen() {
 
         setCarouselNews(mappedNews);
         await AsyncStorage.setItem(CAROUSEL_CACHE_KEY, JSON.stringify(mappedNews));
+        await notifyNewNewsArticles(
+          mappedNews.map((item: { id: string; title: string }) => ({
+            id: item.id,
+            title: item.title,
+          }))
+        );
       }
     } catch (error) {
       console.error('Error fetching carousel news from NewsData.io:', error);
@@ -154,12 +128,8 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchWeather = useCallback(async () => {
-    const apiKey = 'b035fffc7179d3075edb423469937601';
-
     const applyWeather = async (latitude: number, longitude: number) => {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
-      );
+      const response = await fetch(weatherApiUrl(latitude, longitude));
       const data = await response.json();
       if (!response.ok || !data?.weather || !data?.main) {
         throw new Error(data?.message || 'Weather unavailable');
@@ -293,9 +263,22 @@ export default function HomeScreen() {
   }, [fetchWeather, fetchCarouselNews]);
 
   useEffect(() => {
-    loadCachedCarousel();
-    fetchWeather();
-    fetchCarouselNews();
+    let cancelled = false;
+
+    const boot = async () => {
+      loadCachedCarousel();
+      // Wait for splash to finish, then prompt for notification + location.
+      await new Promise((resolve) => setTimeout(resolve, 1700));
+      if (cancelled) return;
+      await requestLaunchPermissions();
+      if (cancelled) return;
+      await Promise.all([fetchWeather(), fetchCarouselNews()]);
+    };
+
+    boot();
+    return () => {
+      cancelled = true;
+    };
   }, [fetchWeather, fetchCarouselNews, loadCachedCarousel]);
 
   useEffect(() => {
@@ -1141,25 +1124,6 @@ export default function HomeScreen() {
         </View>
       </Modal>
 
-      {/* Floating Bahni Sahayika Button */}
-      {/* <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={() => setIsSahayikaVisible(true)}
-        className="absolute bottom-32 right-6 w-16 h-16 rounded-full shadow-2xl elevation-10 overflow-hidden"
-      >
-        <LinearGradient
-          colors={['#FF4500', '#FF8C00']}
-          className="flex-1 justify-center items-center"
-        >
-          <Ionicons name="sparkles" size={30} color="#FFF" />
-          <View className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white" />
-        </LinearGradient>
-      </TouchableOpacity>
-
-      <BahniSahayikaModal
-        isVisible={isSahayikaVisible}
-        onClose={() => setIsSahayikaVisible(false)}
-      /> */}
     </View>
   );
 }

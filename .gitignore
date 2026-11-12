@@ -31,7 +31,14 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
+google-service-account.json
+
+# server secrets (keep example only in git)
+server/api_config.php
+connection.php
+requestcall.php
 
 # typescript
 *.tsbuildinfo

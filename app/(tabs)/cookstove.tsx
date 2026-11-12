@@ -26,6 +26,7 @@ export default function CookstoveScreen() {
 
     const [serialNo, setSerialNo] = useState('');
     const [aadhaarNo, setAadhaarNo] = useState('');
+    const [aadhaarConsent, setAadhaarConsent] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const handleRequestCallback = async () => {
@@ -48,6 +49,16 @@ export default function CookstoveScreen() {
             return;
         }
 
+        if (!aadhaarConsent) {
+            Alert.alert(
+                isOdia ? 'ସମ୍ମତି ଆବଶ୍ୟକ' : 'Consent Required',
+                isOdia
+                    ? 'କଲ୍‌ବ୍ୟାକ୍ ଅନୁରୋଧ ପାଇଁ ଆଧାର ବ୍ୟବହାର କରିବାକୁ ସମ୍ମତି ଦିଅନ୍ତୁ।'
+                    : 'Please consent to use your Aadhaar number for this callback request.'
+            );
+            return;
+        }
+
         setIsLoading(true);
         try {
             const body = new FormData();
@@ -56,7 +67,7 @@ export default function CookstoveScreen() {
             body.append('registered_by', 'beneficiary');
 
             const response = await fetch(
-                'https://meensou.com/myclimate/app/beneficiary/cookstove/requestcall.php',
+                'https://meensou.com/myclimate/app/beneficiary/api/requestcall.php',
                 {
                     method: 'POST',
                     body,
@@ -79,6 +90,7 @@ export default function CookstoveScreen() {
                 );
                 setSerialNo('');
                 setAadhaarNo('');
+                setAadhaarConsent(false);
                 return;
             }
 
@@ -307,6 +319,29 @@ export default function CookstoveScreen() {
                             </View>
                         </View>
 
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPress={() => setAadhaarConsent((prev) => !prev)}
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'flex-start',
+                                marginBottom: 16,
+                                gap: 10,
+                            }}
+                        >
+                            <Ionicons
+                                name={aadhaarConsent ? 'checkbox' : 'square-outline'}
+                                size={22}
+                                color={aadhaarConsent ? '#16A34A' : colors.textSecondary}
+                                style={{ marginTop: 1 }}
+                            />
+                            <Text style={{ flex: 1, fontSize: 12, lineHeight: 18, color: colors.textSecondary }}>
+                                {isOdia
+                                    ? 'ମୁଁ ସମ୍ମତ ଯେ ମୋ ଆଧାର ନମ୍ବର କେବଳ କୁକ୍‌ଷ୍ଟୋଭ୍ କଲ୍‌ବ୍ୟାକ୍ ଯାଞ୍ଚ ପାଇଁ ବ୍ୟବହୃତ ହେବ ଏବଂ ଗୋପନୀୟତା ନୀତି ଅନୁଯାୟୀ ପ୍ରକ୍ରିୟାକରଣ ହେବ।'
+                                    : 'I consent to use my Aadhaar number only to verify this cookstove callback request, processed as described in the Privacy Policy.'}
+                            </Text>
+                        </TouchableOpacity>
+
                         {/* Submit Button */}
                         <TouchableOpacity
                             activeOpacity={0.88}
@@ -319,6 +354,7 @@ export default function CookstoveScreen() {
                                 shadowOffset: { width: 0, height: 3 },
                                 shadowOpacity: 0.3,
                                 shadowRadius: 6,
+                                opacity: aadhaarConsent ? 1 : 0.7,
                             }}
                             onPress={handleRequestCallback}
                             disabled={isLoading}

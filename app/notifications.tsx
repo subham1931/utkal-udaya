@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { newsApiUrl } from '../constants/config';
 import { useAppTheme } from '../context/ThemeContext';
 const CATEGORIES_DATA = [
     { id: '1345', title: 'କୃଷି (Agri)' },
@@ -59,8 +60,7 @@ export default function NotificationsScreen() {
             setNotifications(filtered);
             */
 
-            // --- NEW API: NewsData.io ---
-            const response = await fetch('https://newsdata.io/api/1/latest?apikey=pub_133361d89e574a76b448e577121addb2&q=Odisha%20agriculture');
+            const response = await fetch(newsApiUrl('Odisha agriculture'));
             const data = await response.json();
 
             if (data?.results && Array.isArray(data.results) && data.results.length > 0) {
